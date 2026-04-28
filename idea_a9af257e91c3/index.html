@@ -4,961 +4,1020 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SnapMacro — Photo-First Calorie & Macro Tracking</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --cream: #FAF6EF;
+    --cream: #FBF8F3;
     --sage: #E8EDE6;
-    --warm-white: #FFFDF9;
-    --charcoal: #1C1C1A;
-    --mid: #5A5A55;
-    --light: #9A9990;
-    --accent: #D4541A;
-    --accent-light: #F7EAE2;
-    --accent-dark: #A83E10;
-    --green: #2D7A4F;
-    --green-light: #E3F2EB;
-    --border: #E2DDD5;
-    --phone-bg: #F0EDE8;
+    --bark: #2E2A24;
+    --bark-mid: #5C5751;
+    --bark-light: #9A9490;
+    --accent: #D95F2B;
+    --accent-light: #FBEDE5;
+    --accent-hover: #BF4E1F;
+    --green: #3A7D5C;
+    --green-light: #E6F2EC;
+    --card: #FFFFFF;
+    --border: #E5E1DA;
+    --radius: 12px;
+    --phone-w: 320px;
+    --phone-h: 640px;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Manrope', sans-serif;
     background: var(--cream);
-    color: var(--charcoal);
-    font-size: 17px;
+    color: var(--bark);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
     line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  a { color: inherit; text-decoration: none; }
+  /* ── LAYOUT ── */
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  .section { padding: 80px 0; }
+  .section-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bark-light);
+    margin-bottom: 12px;
+  }
 
   /* ── NAV ── */
   nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(250,246,239,0.92);
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(251,248,243,0.92);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 14px 24px;
   }
-  .nav-logo {
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    font-size: 1.1rem;
-    letter-spacing: -0.02em;
-    color: var(--charcoal);
-  }
-  .nav-logo span { color: var(--accent); }
+  .nav-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--bark); text-decoration: none; }
+  .logo span { color: var(--accent); }
   .nav-cta {
-    background: var(--accent);
-    color: #fff;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 8px 18px;
-    border-radius: 100px;
-    transition: background 0.18s;
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 9px 18px; font-size: 13px; font-weight: 600; font-family: 'Manrope', sans-serif;
+    cursor: pointer; text-decoration: none; transition: background 0.18s;
   }
-  .nav-cta:hover { background: var(--accent-dark); }
-
-  /* ── LAYOUT ── */
-  .section { padding: 96px 24px; }
-  .section-inner { max-width: 900px; margin: 0 auto; }
-  .section-inner-wide { max-width: 1100px; margin: 0 auto; }
+  .nav-cta:hover { background: var(--accent-hover); }
 
   /* ── HERO ── */
   #hero {
-    background: var(--warm-white);
-    padding: 88px 24px 80px;
-    border-bottom: 1px solid var(--border);
-  }
-  .hero-inner {
-    max-width: 720px;
-    margin: 0 auto;
+    padding: 72px 24px 64px;
     text-align: center;
   }
-  .hero-eyebrow {
+  #hero .wrap { max-width: 640px; }
+  .hero-pill {
     display: inline-block;
-    font-size: 0.8rem;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-light);
-    padding: 4px 12px;
-    border-radius: 100px;
-    margin-bottom: 24px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
   }
   h1 {
     font-family: 'Fraunces', serif;
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-size: clamp(2.1rem, 5vw, 3rem);
     font-weight: 700;
-    line-height: 1.12;
-    letter-spacing: -0.03em;
-    color: var(--charcoal);
-    margin-bottom: 20px;
+    line-height: 1.18;
+    color: var(--bark);
+    margin-bottom: 18px;
   }
-  h1 em {
-    font-style: italic;
-    color: var(--accent);
-  }
-  .hero-tagline {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--mid);
-    line-height: 1.55;
-    margin-bottom: 12px;
-    max-width: 560px;
-    margin-left: auto;
-    margin-right: auto;
+  .tagline {
+    font-size: 1.05rem;
+    color: var(--bark-mid);
+    max-width: 500px;
+    margin: 0 auto 12px;
+    line-height: 1.65;
   }
   .hero-sub {
-    font-size: 0.9rem;
-    color: var(--light);
-    margin-bottom: 36px;
+    font-size: 0.85rem;
+    color: var(--bark-light);
+    margin-bottom: 32px;
   }
-  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .cta-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 14px 32px;
-    border-radius: 100px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.18s, transform 0.12s;
+    background: var(--accent); color: #fff; border: none; border-radius: 10px;
+    padding: 14px 28px; font-size: 15px; font-weight: 700; font-family: 'Manrope', sans-serif;
+    cursor: pointer; transition: background 0.18s, transform 0.12s; text-decoration: none; display: inline-block;
   }
-  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
   .btn-ghost {
-    background: transparent;
-    color: var(--charcoal);
-    font-family: 'Manrope', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 14px 28px;
-    border-radius: 100px;
-    border: 1.5px solid var(--border);
-    cursor: pointer;
-    transition: border-color 0.18s;
+    background: transparent; color: var(--bark); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 13px 24px; font-size: 15px; font-weight: 600;
+    font-family: 'Manrope', sans-serif; cursor: pointer; transition: border-color 0.18s; text-decoration: none; display: inline-block;
   }
-  .btn-ghost:hover { border-color: var(--charcoal); }
+  .btn-ghost:hover { border-color: var(--bark-mid); }
 
-  /* ── DEMO SECTION ── */
-  #demo {
-    background: var(--sage);
-    padding: 80px 24px;
-  }
-  .demo-label {
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--mid);
-    margin-bottom: 12px;
-  }
-  .section-title {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
-    color: var(--charcoal);
-    text-align: center;
-    margin-bottom: 12px;
-  }
-  .section-sub {
-    text-align: center;
-    color: var(--mid);
-    font-size: 1rem;
-    max-width: 520px;
-    margin: 0 auto 48px;
-    line-height: 1.55;
-  }
+  /* ── DEMO ── */
+  #demo { padding: 60px 0; background: var(--sage); }
+  .demo-header { text-align: center; margin-bottom: 40px; }
+  .demo-header h2 { font-family: 'Fraunces', serif; font-size: clamp(1.6rem, 4vw, 2.2rem); margin-bottom: 8px; }
+  .demo-header p { color: var(--bark-mid); font-size: 0.95rem; }
 
-  /* Phone frame */
-  .phone-wrap {
+  .phone-scene {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 48px;
+    gap: 32px;
     flex-wrap: wrap;
   }
+
+  /* Phone frame */
   .phone-frame {
-    width: 320px;
-    min-width: 280px;
-    background: #1A1A1A;
-    border-radius: 44px;
-    padding: 14px 12px;
-    box-shadow:
-      0 0 0 1px #333,
-      0 30px 80px rgba(0,0,0,0.28),
-      inset 0 0 0 1px #444;
+    width: var(--phone-w);
+    height: var(--phone-h);
+    background: var(--bark);
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 24px 80px rgba(46,42,36,0.28), 0 2px 8px rgba(46,42,36,0.12);
     position: relative;
     flex-shrink: 0;
   }
   .phone-notch {
-    width: 110px;
-    height: 28px;
-    background: #1A1A1A;
+    width: 100px; height: 26px; background: var(--bark);
     border-radius: 0 0 18px 18px;
-    margin: 0 auto 8px;
-    position: relative;
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
     z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .phone-notch-camera {
-    width: 10px; height: 10px;
-    background: #2A2A2A;
-    border-radius: 50%;
-    border: 1.5px solid #333;
   }
   .phone-screen {
-    background: var(--cream);
-    border-radius: 32px;
+    width: 100%; height: 100%;
+    background: #fff;
+    border-radius: 30px;
     overflow: hidden;
-    height: 620px;
-    display: flex;
-    flex-direction: column;
     position: relative;
   }
-  .phone-status-bar {
-    background: var(--cream);
-    padding: 8px 20px 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--charcoal);
-    flex-shrink: 0;
-  }
-  .status-icons { display: flex; gap: 4px; align-items: center; }
 
-  /* App UI */
-  .app-topbar {
-    padding: 4px 20px 12px;
-    background: var(--cream);
-    flex-shrink: 0;
-  }
-  .app-greeting {
-    font-size: 0.75rem;
-    color: var(--light);
-  }
-  .app-title-row {
+  /* Phone UI tabs */
+  .phone-tabs {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+    position: relative;
+    z-index: 5;
   }
-  .app-title {
-    font-family: 'Fraunces', serif;
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--charcoal);
-    letter-spacing: -0.02em;
+  .phone-tab {
+    flex: 1; text-align: center; padding: 10px 4px 8px;
+    font-size: 10px; font-weight: 600; color: var(--bark-light);
+    cursor: pointer; transition: color 0.15s; border: none; background: none;
+    font-family: 'Manrope', sans-serif; letter-spacing: 0.03em;
   }
-  .app-avatar {
-    width: 32px; height: 32px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
+  .phone-tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+  .phone-tab-icon { display: block; font-size: 16px; margin-bottom: 2px; }
+
+  /* Phone views */
+  .phone-view { display: none; flex-direction: column; height: calc(100% - 46px); overflow-y: auto; }
+  .phone-view.active { display: flex; }
+
+  /* Status bar */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 18px 6px; font-size: 10px; font-weight: 700; color: var(--bark);
   }
 
-  /* Tab bar */
-  .app-tabs {
-    display: flex;
-    gap: 0;
-    padding: 0 16px;
-    border-bottom: 1.5px solid var(--border);
-    background: var(--cream);
-    flex-shrink: 0;
-  }
-  .app-tab {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--light);
-    padding: 8px 12px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1.5px;
-    transition: color 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
-  .app-tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+  /* Today view */
+  .today-header { padding: 0 16px 12px; }
+  .today-date { font-size: 11px; color: var(--bark-light); font-weight: 500; }
+  .today-name { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--bark); line-height: 1.2; }
+  .goal-tag { display: inline-block; font-size: 10px; font-weight: 600; background: var(--accent-light); color: var(--accent); padding: 2px 8px; border-radius: 10px; margin-top: 2px; }
 
-  /* Tab content */
-  .tab-panel { display: none; flex: 1; overflow-y: auto; padding: 0; flex-direction: column; }
-  .tab-panel.active { display: flex; }
-  .tab-panel::-webkit-scrollbar { width: 0; }
-
-  /* Today tab */
   .macro-ring-row {
-    padding: 14px 16px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
+    padding: 10px 16px 14px;
+    display: flex; gap: 8px; align-items: center;
   }
-  .ring-wrap {
-    position: relative;
-    width: 72px; height: 72px;
-    flex-shrink: 0;
-  }
-  .ring-svg { width: 72px; height: 72px; transform: rotate(-90deg); }
-  .ring-bg { fill: none; stroke: var(--border); stroke-width: 7; }
-  .ring-fill { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 0 200; transition: stroke-dasharray 1s ease; }
+  .ring-wrap { position: relative; width: 68px; height: 68px; flex-shrink: 0; }
+  .ring-wrap svg { transform: rotate(-90deg); }
   .ring-center {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     text-align: center;
   }
-  .ring-cal { font-size: 0.82rem; font-weight: 700; color: var(--charcoal); line-height: 1; }
-  .ring-label { font-size: 0.52rem; color: var(--light); text-transform: uppercase; letter-spacing: 0.05em; }
-  .macro-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-  .macro-row { display: flex; flex-direction: column; gap: 2px; }
-  .macro-label-row { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--mid); font-weight: 600; }
-  .macro-bar-track { background: var(--border); border-radius: 4px; height: 5px; overflow: hidden; }
-  .macro-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
-  .bar-protein { background: #2D7A4F; }
-  .bar-carbs   { background: #D4541A; }
-  .bar-fat     { background: #C4941A; }
+  .ring-cal { font-size: 13px; font-weight: 700; color: var(--bark); line-height: 1; }
+  .ring-label { font-size: 8px; color: var(--bark-light); font-weight: 500; }
+  .macro-pills { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .macro-pill { display: flex; align-items: center; gap: 6px; }
+  .macro-pill-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .macro-pill-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .macro-pill-label { font-size: 9px; font-weight: 600; color: var(--bark-mid); width: 48px; }
+  .macro-pill-val { font-size: 9px; font-weight: 700; color: var(--bark); width: 32px; text-align: right; }
 
-  /* Meals logged */
-  .meals-section-header {
-    padding: 8px 16px 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--light);
-  }
+  .meals-section { padding: 0 12px 12px; }
+  .meals-label { font-size: 10px; font-weight: 700; color: var(--bark-light); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 4px 8px; }
   .meal-card {
-    margin: 4px 10px;
-    background: #fff;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    cursor: pointer;
-    transition: box-shadow 0.15s;
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    padding: 9px 10px; margin-bottom: 6px; cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s; position: relative;
   }
-  .meal-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-  .meal-card-inner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-  }
-  .meal-emoji {
-    font-size: 1.6rem;
-    width: 40px; height: 40px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--accent-light);
-    border-radius: 10px;
-    flex-shrink: 0;
+  .meal-card:hover { box-shadow: 0 2px 12px rgba(46,42,36,0.09); border-color: #ccc; }
+  .meal-thumb {
+    width: 40px; height: 40px; border-radius: 8px; background: var(--sage);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    flex-shrink: 0; overflow: hidden;
   }
   .meal-info { flex: 1; min-width: 0; }
-  .meal-name { font-size: 0.8rem; font-weight: 700; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .meal-time { font-size: 0.65rem; color: var(--light); }
-  .meal-cals { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+  .meal-name { font-size: 11px; font-weight: 700; color: var(--bark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meal-time { font-size: 9px; color: var(--bark-light); margin-top: 1px; }
+  .meal-cals { font-size: 11px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
   .meal-expand {
-    display: none;
-    background: var(--accent-light);
-    padding: 10px 12px;
-    border-top: 1px solid var(--border);
+    display: none; background: var(--cream); border-top: 1px solid var(--border);
+    margin: 4px -10px -9px; padding: 10px 10px 10px; border-radius: 0 0 9px 9px;
   }
   .meal-expand.open { display: block; }
-  .meal-macros-row {
-    display: flex; gap: 8px;
+  .macro-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .macro-chip {
+    font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 8px;
   }
-  .macro-pill {
-    flex: 1;
-    text-align: center;
-    background: #fff;
-    border-radius: 8px;
-    padding: 6px 4px;
-    border: 1px solid var(--border);
-  }
-  .macro-pill-val { font-size: 0.85rem; font-weight: 700; color: var(--charcoal); line-height: 1; }
-  .macro-pill-label { font-size: 0.6rem; color: var(--light); text-transform: uppercase; letter-spacing: 0.04em; }
-  .meal-ai-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.6rem;
-    color: var(--green);
-    background: var(--green-light);
-    padding: 2px 8px;
-    border-radius: 100px;
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
+  .chip-p { background: #EDF4FF; color: #2563EB; }
+  .chip-c { background: #FFF4E0; color: #B45309; }
+  .chip-f { background: #FFF0F6; color: #BE185D; }
+  .chip-cal { background: var(--accent-light); color: var(--accent); }
 
-  .snap-btn-row {
-    padding: 10px 16px 14px;
-    flex-shrink: 0;
+  .add-meal-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1.5px dashed var(--border); border-radius: 10px; padding: 10px;
+    font-size: 11px; font-weight: 600; color: var(--bark-light); cursor: pointer;
+    margin: 4px 0; background: none; width: 100%; font-family: 'Manrope', sans-serif;
+    transition: border-color 0.15s, color 0.15s;
   }
-  .snap-btn {
-    width: 100%;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    padding: 13px;
-    font-family: 'Manrope', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .snap-btn:hover { background: var(--accent-dark); }
+  .add-meal-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* Plan tab */
-  .plan-scroll { padding: 12px 10px; }
-  .week-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--light); margin-bottom: 8px; padding: 0 6px; }
-  .day-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: box-shadow 0.15s;
+  /* Camera view */
+  .camera-view { display: flex; flex-direction: column; height: calc(100% - 46px); }
+  .camera-finder {
+    flex: 1; background: #1A1A1A; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px; padding: 20px;
+    position: relative; overflow: hidden;
   }
-  .day-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.07); }
-  .day-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-  }
-  .day-name { font-size: 0.8rem; font-weight: 700; color: var(--charcoal); }
-  .day-badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 100px; font-weight: 600; }
-  .badge-workout { background: var(--accent-light); color: var(--accent); }
-  .badge-rest { background: var(--green-light); color: var(--green); }
-  .day-cals { font-size: 0.72rem; color: var(--light); }
-  .day-meals-expand {
-    display: none;
-    padding: 0 14px 10px;
-    border-top: 1px solid var(--border);
-  }
-  .day-meals-expand.open { display: block; }
-  .day-meal-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0ece6; }
-  .day-meal-row:last-child { border-bottom: none; }
-  .day-meal-name { font-size: 0.72rem; font-weight: 600; color: var(--charcoal); }
-  .day-meal-sub { font-size: 0.62rem; color: var(--light); }
-  .day-meal-macro { font-size: 0.7rem; color: var(--mid); font-weight: 600; }
-
-  /* Right panel */
-  .demo-right {
-    max-width: 340px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding-top: 24px;
-  }
-  .info-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 22px 24px;
-  }
-  .info-card-title {
-    font-family: 'Fraunces', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--charcoal);
-    margin-bottom: 6px;
-  }
-  .info-card p { font-size: 0.88rem; color: var(--mid); line-height: 1.5; margin-bottom: 14px; }
-  .try-steps { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .try-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 0.85rem;
-    color: var(--mid);
-    line-height: 1.4;
-  }
-  .step-num {
-    width: 22px; height: 22px;
-    background: var(--accent-light);
-    color: var(--accent);
-    border-radius: 50%;
-    font-size: 0.7rem;
-    font-weight: 700;
+  .camera-food-preview {
+    width: 100%; height: 200px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
+    font-size: 72px; background: #2A2A2A;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .scan-overlay {
+    position: absolute; inset: 0; border-radius: 14px;
+    border: 2px solid var(--accent); opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .scan-line {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    top: 0; transition: none;
+  }
+  .camera-hint { font-size: 11px; color: #888; text-align: center; }
+  .camera-result {
+    background: #fff; padding: 14px 16px; margin: 0;
+    display: none;
+  }
+  .camera-result.visible { display: block; }
+  .camera-result-name { font-size: 14px; font-weight: 700; color: var(--bark); margin-bottom: 6px; }
+  .camera-result-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .camera-snap-btn {
+    width: 64px; height: 64px; border-radius: 50%; background: #fff; border: 4px solid #555;
+    cursor: pointer; position: relative; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--bark); transition: transform 0.1s;
+    font-family: 'Manrope', sans-serif;
+  }
+  .camera-snap-btn:hover { transform: scale(1.05); }
+  .camera-snap-btn:active { transform: scale(0.97); }
+  .camera-controls { display: flex; align-items: center; justify-content: center; padding: 14px; background: #1A1A1A; gap: 20px; }
+  .log-it-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 10px 20px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: 'Manrope', sans-serif;
+    transition: background 0.15s;
+    width: 100%;
+  }
+  .log-it-btn:hover { background: var(--accent-hover); }
+
+  /* Plan view */
+  .plan-view { padding: 12px; }
+  .plan-week-label { font-size: 10px; font-weight: 700; color: var(--bark-light); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; padding: 0 4px; }
+  .plan-day {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 6px; overflow: hidden;
+  }
+  .plan-day-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px; cursor: pointer;
+  }
+  .plan-day-name { font-size: 11px; font-weight: 700; color: var(--bark); }
+  .plan-day-tag { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 8px; }
+  .tag-lift { background: #EDF4FF; color: #2563EB; }
+  .tag-cardio { background: var(--green-light); color: var(--green); }
+  .tag-rest { background: var(--sage); color: var(--bark-light); }
+  .tag-active { background: var(--accent-light); color: var(--accent); }
+  .plan-day-chevron { font-size: 10px; color: var(--bark-light); transition: transform 0.2s; }
+  .plan-day.open .plan-day-chevron { transform: rotate(90deg); }
+  .plan-day-body { display: none; padding: 0 12px 10px; }
+  .plan-day.open .plan-day-body { display: block; }
+  .plan-exercise { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--sage); }
+  .plan-exercise:last-child { border-bottom: none; }
+  .plan-ex-name { font-size: 10px; font-weight: 600; color: var(--bark); }
+  .plan-ex-sets { font-size: 9px; color: var(--bark-light); }
+
+  .demo-sidebar {
+    width: 240px;
     flex-shrink: 0;
-    margin-top: 1px;
   }
-  .accuracy-banner {
-    background: #FFFBF0;
-    border: 1px solid #E8D48A;
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 0.8rem;
-    color: #7A6210;
-    line-height: 1.5;
+  .sidebar-card {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 16px;
   }
-  .accuracy-banner strong { display: block; margin-bottom: 2px; }
+  .sidebar-title { font-size: 12px; font-weight: 700; color: var(--bark-mid); margin-bottom: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .sidebar-body { font-size: 13px; color: var(--bark-mid); line-height: 1.55; }
+  .tip-step { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; font-size: 12px; color: var(--bark-mid); }
+  .tip-step:last-child { margin-bottom: 0; }
+  .tip-num { background: var(--accent-light); color: var(--accent); font-weight: 700; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
 
   /* ── HOW IT WORKS ── */
-  #how {
-    background: var(--warm-white);
-    padding: 88px 24px;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 32px;
-    margin-top: 56px;
-  }
-  .step-card {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+  #how { padding: 80px 0; }
+  #how h2 { font-family: 'Fraunces', serif; font-size: clamp(1.6rem, 4vw, 2.1rem); margin-bottom: 48px; text-align: center; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .step { text-align: center; }
   .step-icon {
-    width: 52px; height: 52px;
-  }
-  .step-num-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-  .step-title {
-    font-family: 'Fraunces', serif;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--charcoal);
-    line-height: 1.3;
-  }
-  .step-desc {
-    font-size: 0.9rem;
-    color: var(--mid);
-    line-height: 1.6;
-  }
-
-  /* ── TESTIMONIALS ── */
-  #social {
-    background: var(--cream);
-    padding: 88px 24px;
-  }
-  .mock-label {
-    text-align: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    color: var(--light);
-    background: var(--border);
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 100px;
-    margin-bottom: 12px;
-  }
-  .mock-label-wrap { text-align: center; margin-bottom: 32px; }
-  .quotes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
-    margin-top: 32px;
-  }
-  .quote-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 28px 26px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .quote-stars { color: var(--accent); font-size: 0.9rem; letter-spacing: 2px; }
-  .quote-text {
-    font-size: 0.95rem;
-    color: var(--charcoal);
-    line-height: 1.6;
-    font-style: italic;
-  }
-  .quote-author { display: flex; align-items: center; gap: 10px; }
-  .quote-avatar {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--accent-light);
+    width: 64px; height: 64px; margin: 0 auto 16px;
+    background: var(--accent-light); border-radius: 16px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--accent);
-    flex-shrink: 0;
   }
-  .quote-name { font-size: 0.85rem; font-weight: 700; color: var(--charcoal); line-height: 1.2; }
-  .quote-handle { font-size: 0.75rem; color: var(--light); }
+  .step h3 { font-family: 'Fraunces', serif; font-size: 1.1rem; margin-bottom: 8px; }
+  .step p { font-size: 0.9rem; color: var(--bark-mid); line-height: 1.6; }
+
+  /* ── SOCIAL PROOF ── */
+  #proof { padding: 80px 0; background: var(--sage); }
+  #proof h2 { font-family: 'Fraunces', serif; font-size: clamp(1.4rem, 3.5vw, 1.9rem); margin-bottom: 8px; text-align: center; }
+  .proof-disclaimer { text-align: center; font-size: 12px; color: var(--bark-light); margin-bottom: 40px; font-style: italic; }
+  .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .quote-card {
+    background: #fff; border-radius: 12px; padding: 22px;
+    border: 1px solid var(--border);
+  }
+  .quote-text { font-size: 0.9rem; color: var(--bark); line-height: 1.65; margin-bottom: 14px; }
+  .quote-text::before { content: '\201C'; }
+  .quote-text::after { content: '\201D'; }
+  .quote-author { font-size: 12px; font-weight: 700; color: var(--bark-mid); }
+  .quote-role { font-size: 11px; color: var(--bark-light); }
 
   /* ── FAQ ── */
-  #faq {
-    background: var(--warm-white);
-    padding: 88px 24px;
-    border-top: 1px solid var(--border);
-  }
-  .faq-note {
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--mid);
-    max-width: 500px;
-    margin: 0 auto 48px;
-    line-height: 1.55;
-    font-style: italic;
-  }
-  .faq-list { display: flex; flex-direction: column; gap: 0; max-width: 680px; margin: 0 auto; }
-  .faq-item {
-    border-bottom: 1px solid var(--border);
-  }
-  .faq-item:first-child { border-top: 1px solid var(--border); }
+  #faq { padding: 80px 0; }
+  #faq h2 { font-family: 'Fraunces', serif; font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 10px; text-align: center; }
+  .faq-sub { text-align: center; color: var(--bark-mid); font-size: 0.9rem; margin-bottom: 48px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .faq-list { max-width: 640px; margin: 0 auto; }
+  .faq-item { border-bottom: 1px solid var(--border); }
   .faq-q {
-    width: 100%;
-    background: none;
-    border: none;
-    text-align: left;
-    padding: 22px 0;
-    font-family: 'Manrope', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--charcoal);
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    line-height: 1.4;
+    width: 100%; text-align: left; background: none; border: none;
+    padding: 20px 0; font-size: 1rem; font-weight: 600; color: var(--bark);
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; font-family: 'Manrope', sans-serif; line-height: 1.5;
   }
-  .faq-q:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-  .faq-chevron {
-    width: 20px; height: 20px;
-    flex-shrink: 0;
-    transition: transform 0.2s;
-    color: var(--light);
-  }
-  .faq-item.open .faq-chevron { transform: rotate(180deg); }
-  .faq-a {
-    display: none;
-    padding: 0 0 22px;
-    font-size: 0.95rem;
-    color: var(--mid);
-    line-height: 1.65;
-  }
+  .faq-q:hover { color: var(--accent); }
+  .faq-icon { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sage); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--bark-mid); transition: transform 0.2s, background 0.15s; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--accent-light); color: var(--accent); }
+  .faq-a { display: none; padding: 0 0 20px; font-size: 0.92rem; color: var(--bark-mid); line-height: 1.7; max-width: 580px; }
   .faq-item.open .faq-a { display: block; }
 
   /* ── WAITLIST ── */
-  #waitlist {
-    background: var(--charcoal);
-    padding: 96px 24px;
-  }
-  #waitlist .section-title { color: #fff; }
-  #waitlist .section-sub { color: rgba(255,255,255,0.55); }
+  #waitlist { padding: 80px 0; background: var(--bark); }
+  #waitlist h2 { font-family: 'Fraunces', serif; font-size: clamp(1.6rem, 4vw, 2.2rem); color: #fff; margin-bottom: 10px; text-align: center; }
+  .waitlist-sub { color: #B8B3AD; font-size: 0.95rem; text-align: center; margin-bottom: 40px; }
   .waitlist-form {
-    max-width: 520px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    max-width: 480px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 14px;
   }
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  .form-label { font-size: 12px; font-weight: 600; color: #C8C3BD; display: block; margin-bottom: 5px; }
+  .form-input, .form-textarea {
+    width: 100%; background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 10px; padding: 13px 16px; font-size: 15px; color: #fff;
+    font-family: 'Manrope', sans-serif; outline: none; transition: border-color 0.18s;
   }
-  .form-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: rgba(255,255,255,0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+  .form-input::placeholder, .form-textarea::placeholder { color: #6E6A66; }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .btn-waitlist {
+    background: var(--accent); color: #fff; border: none; border-radius: 10px;
+    padding: 15px 24px; font-size: 15px; font-weight: 700; cursor: pointer;
+    font-family: 'Manrope', sans-serif; transition: background 0.18s, transform 0.12s;
+    width: 100%;
   }
-  .form-input {
-    background: rgba(255,255,255,0.07);
-    border: 1.5px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-family: 'Manrope', sans-serif;
-    font-size: 0.95rem;
-    color: #fff;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .form-input::placeholder { color: rgba(255,255,255,0.3); }
-  .form-input:focus { border-color: var(--accent); }
-  textarea.form-input { resize: vertical; min-height: 90px; }
-  .form-submit {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    padding: 16px 32px;
-    font-family: 'Manrope', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.18s, transform 0.12s;
-    margin-top: 4px;
-  }
-  .form-submit:hover { background: var(--accent-dark); transform: translateY(-1px); }
-  .form-disclaimer {
-    text-align: center;
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.3);
-    line-height: 1.5;
-  }
+  .btn-waitlist:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
   /* ── FOOTER ── */
   footer {
-    background: #141412;
-    padding: 24px;
-    text-align: center;
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.25);
-    line-height: 1.6;
+    background: #1E1B17; padding: 20px 24px; text-align: center;
+    font-size: 12px; color: #5C5751;
   }
-  footer span { color: rgba(255,255,255,0.4); }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 700px) {
-    .demo-right { max-width: 100%; }
-    .phone-frame { width: 290px; }
-    .phone-screen { height: 560px; }
+    .phone-scene { flex-direction: column; align-items: center; }
+    .demo-sidebar { width: 100%; max-width: var(--phone-w); }
+    .steps { grid-template-columns: 1fr; gap: 24px; }
+    .quotes { grid-template-columns: 1fr; }
+    .section { padding: 56px 0; }
+    #hero { padding: 48px 24px 40px; }
   }
-  @media (max-width: 480px) {
-    h1 { font-size: 2rem; }
-    .section { padding: 64px 20px; }
+
+  /* ── FOCUS ── */
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
   }
+
+  /* Scanning animation */
+  @keyframes scan {
+    0% { top: 8%; }
+    100% { top: 88%; }
+  }
+  .scanning .scan-line { animation: scan 1s linear infinite; }
+  .scanning .scan-overlay { opacity: 1; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--bark); color: #fff; padding: 10px 20px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.25s, transform 0.25s;
+    z-index: 200; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="nav-logo">Snap<span>Macro</span></div>
-  <a href="#waitlist" class="nav-cta">Join waitlist</a>
+  <div class="nav-inner">
+    <a class="logo" href="#">Snap<span>Macro</span></a>
+    <a class="nav-cta" href="#waitlist">Get early access</a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow">iOS • Pre-launch</div>
-    <h1>Log your meal in <em>under 30 seconds</em>. Then stop thinking about it.</h1>
-    <p class="hero-tagline">Snap a photo of any meal — home-cooked, restaurant, or packed lunch — and get calories and macros logged automatically, no barcode required.</p>
-    <p class="hero-sub">For adults aged 18–40 who already understand macros, have a specific goal, and have quit MyFitnessPal at least once.</p>
-    <div class="hero-btns">
-      <button class="btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Try the demo</button>
-      <a href="#waitlist" class="btn-ghost">Join the waitlist</a>
+  <div class="wrap">
+    <div class="hero-pill">iOS · Pre-launch</div>
+    <h1>Photo-First Calorie &amp; Macro Tracking</h1>
+    <p class="tagline">Log any meal in under 30 seconds — snap a photo and your macros appear, no database-searching, no barcode-scanning, no quitting by week three.</p>
+    <p class="hero-sub">For gym-going adults 18–40 who've already tried and abandoned MyFitnessPal at least once.</p>
+    <div class="cta-group">
+      <a class="btn-primary" href="#demo">Try the demo</a>
+      <a class="btn-ghost" href="#waitlist">Join waitlist</a>
     </div>
   </div>
 </section>
 
 <!-- DEMO -->
 <section id="demo">
-  <div class="section-inner-wide">
-    <p class="demo-label">Interactive preview</p>
-    <h2 class="section-title">This is what the app actually looks like</h2>
-    <p class="section-sub">Mock data only — tap the meals and day cards to explore the UI. This is a real preview of the experience we're building.</p>
+  <div class="wrap">
+    <div class="demo-header">
+      <span class="section-label">Interactive preview</span>
+      <h2>This is what the app looks like</h2>
+      <p>Tap the tabs and cards below. This is a clickable mock — not the live product yet.</p>
+    </div>
 
-    <div class="phone-wrap">
+    <div class="phone-scene">
       <!-- PHONE -->
       <div class="phone-frame">
-        <div class="phone-notch">
-          <div class="phone-notch-camera"></div>
-        </div>
+        <div class="phone-notch"></div>
         <div class="phone-screen">
-          <div class="phone-status-bar">
-            <span>9:41</span>
-            <div class="status-icons">
-              <svg width="15" height="10" viewBox="0 0 15 10" fill="none"><rect x="0" y="3" width="3" height="7" rx="1" fill="currentColor" opacity="0.4"/><rect x="4" y="2" width="3" height="8" rx="1" fill="currentColor" opacity="0.6"/><rect x="8" y="0" width="3" height="10" rx="1" fill="currentColor"/><rect x="12" y="0" width="3" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1" opacity="0.4"/></svg>
-              <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M8 2C10.5 2 12.7 3.1 14.2 4.8L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.8 4.8C3.3 3.1 5.5 2 8 2Z" fill="currentColor" opacity="0.4"/><path d="M8 5C9.7 5 11.2 5.7 12.3 6.9L13.6 5.6C12.1 4.0 10.2 3 8 3C5.8 3 3.9 4.0 2.4 5.6L3.7 6.9C4.8 5.7 6.3 5 8 5Z" fill="currentColor" opacity="0.6"/><circle cx="8" cy="9" r="1.5" fill="currentColor"/></svg>
-              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 000-4z" fill="currentColor" opacity="0.4"/></svg>
+          <!-- Tabs -->
+          <div class="phone-tabs">
+            <button class="phone-tab active" data-view="today" onclick="switchView('today', this)">
+              <span class="phone-tab-icon">📊</span>Today
+            </button>
+            <button class="phone-tab" data-view="camera" onclick="switchView('camera', this)">
+              <span class="phone-tab-icon">📷</span>Log meal
+            </button>
+            <button class="phone-tab" data-view="plan" onclick="switchView('plan', this)">
+              <span class="phone-tab-icon">📅</span>Plan
+            </button>
+          </div>
+
+          <!-- TODAY VIEW -->
+          <div id="view-today" class="phone-view active">
+            <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+            <div class="today-header">
+              <div class="today-date">Monday, Jan 13</div>
+              <div class="today-name">Hey, Marcus 👋</div>
+              <div class="goal-tag">Goal: Lose 15 lbs in 12 weeks</div>
             </div>
-          </div>
 
-          <div class="app-topbar">
-            <div class="app-greeting">Wednesday, June 11</div>
-            <div class="app-title-row">
-              <div class="app-title">Today</div>
-              <div class="app-avatar">JK</div>
-            </div>
-          </div>
-
-          <div class="app-tabs">
-            <div class="app-tab active" onclick="switchTab('today',this)">Today</div>
-            <div class="app-tab" onclick="switchTab('plan',this)">Meal Plan</div>
-            <div class="app-tab" onclick="switchTab('progress',this)">Progress</div>
-          </div>
-
-          <!-- TODAY TAB -->
-          <div class="tab-panel active" id="tab-today">
+            <!-- Calorie ring -->
             <div class="macro-ring-row">
               <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 72 72">
-                  <circle class="ring-bg" cx="36" cy="36" r="30"/>
-                  <circle class="ring-fill" id="ringFill" cx="36" cy="36" r="30"/>
+                <svg width="68" height="68" viewBox="0 0 68 68">
+                  <circle cx="34" cy="34" r="28" fill="none" stroke="#F0EDE8" stroke-width="8"/>
+                  <circle id="ring-progress" cx="34" cy="34" r="28" fill="none" stroke="#D95F2B" stroke-width="8"
+                    stroke-dasharray="175.93" stroke-dashoffset="70" stroke-linecap="round"/>
                 </svg>
                 <div class="ring-center">
-                  <div class="ring-cal" id="ringCalNum">1,340</div>
-                  <div class="ring-label">/ 2,100</div>
+                  <div class="ring-cal" id="ring-cal-text">1,340</div>
+                  <div class="ring-label">/ 1,840</div>
                 </div>
               </div>
-              <div class="macro-bars">
-                <div class="macro-row">
-                  <div class="macro-label-row"><span>Protein</span><span>112 / 180g</span></div>
-                  <div class="macro-bar-track"><div class="macro-bar-fill bar-protein" id="barProtein" style="width:0%"></div></div>
+              <div class="macro-pills">
+                <div class="macro-pill">
+                  <span class="macro-pill-label" style="font-size:9px;color:#2563EB;font-weight:700;">Protein</span>
+                  <div class="macro-pill-bar-wrap"><div class="macro-pill-bar" id="bar-p" style="width:72%;background:#2563EB;"></div></div>
+                  <span class="macro-pill-val" id="val-p">108g</span>
                 </div>
-                <div class="macro-row">
-                  <div class="macro-label-row"><span>Carbs</span><span>148 / 220g</span></div>
-                  <div class="macro-bar-track"><div class="macro-bar-fill bar-carbs" id="barCarbs" style="width:0%"></div></div>
+                <div class="macro-pill">
+                  <span class="macro-pill-label" style="font-size:9px;color:#B45309;font-weight:700;">Carbs</span>
+                  <div class="macro-pill-bar-wrap"><div class="macro-pill-bar" id="bar-c" style="width:58%;background:#F59E0B;"></div></div>
+                  <span class="macro-pill-val" id="val-c">124g</span>
                 </div>
-                <div class="macro-row">
-                  <div class="macro-label-row"><span>Fat</span><span>42 / 65g</span></div>
-                  <div class="macro-bar-track"><div class="macro-bar-fill bar-fat" id="barFat" style="width:0%"></div></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="meals-section-header">Logged meals — tap to expand</div>
-
-            <div class="meal-card" onclick="toggleMeal('meal1')">
-              <div class="meal-card-inner">
-                <div class="meal-emoji">🥚</div>
-                <div class="meal-info">
-                  <div class="meal-name">3 scrambled eggs + toast</div>
-                  <div class="meal-time">Breakfast · 7:42 AM · Photo logged</div>
-                </div>
-                <div class="meal-cals">480 cal</div>
-              </div>
-              <div class="meal-expand" id="meal1">
-                <div class="meal-ai-badge">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 5l1 1 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  Recognized from photo · 91% confidence
-                </div>
-                <div class="meal-macros-row">
-                  <div class="macro-pill"><div class="macro-pill-val">32g</div><div class="macro-pill-label">Protein</div></div>
-                  <div class="macro-pill"><div class="macro-pill-val">38g</div><div class="macro-pill-label">Carbs</div></div>
-                  <div class="macro-pill"><div class="macro-pill-val">18g</div><div class="macro-pill-label">Fat</div></div>
+                <div class="macro-pill">
+                  <span class="macro-pill-label" style="font-size:9px;color:#BE185D;font-weight:700;">Fat</span>
+                  <div class="macro-pill-bar-wrap"><div class="macro-pill-bar" id="bar-f" style="width:45%;background:#EC4899;"></div></div>
+                  <span class="macro-pill-val" id="val-f">38g</span>
                 </div>
               </div>
             </div>
 
-            <div class="meal-card" onclick="toggleMeal('meal2')">
-              <div class="meal-card-inner">
-                <div class="meal-emoji">🍗</div>
+            <!-- Meal log -->
+            <div class="meals-section">
+              <div class="meals-label">Logged today</div>
+
+              <div class="meal-card" onclick="toggleMeal(this)">
+                <div class="meal-thumb">🥣</div>
                 <div class="meal-info">
-                  <div class="meal-name">Chicken rice bowl</div>
-                  <div class="meal-time">Lunch · 12:15 PM · Photo logged</div>
+                  <div class="meal-name">Greek yogurt + granola</div>
+                  <div class="meal-time">Breakfast · 8:14 AM · photo-logged</div>
+                </div>
+                <div class="meal-cals">420 cal</div>
+                <div class="meal-expand">
+                  <div class="macro-chips">
+                    <span class="macro-chip chip-p">Protein 22g</span>
+                    <span class="macro-chip chip-c">Carbs 51g</span>
+                    <span class="macro-chip chip-f">Fat 11g</span>
+                    <span class="macro-chip chip-cal">420 cal</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="meal-card" onclick="toggleMeal(this)">
+                <div class="meal-thumb">🍗</div>
+                <div class="meal-info">
+                  <div class="meal-name">Grilled chicken &amp; rice bowl</div>
+                  <div class="meal-time">Lunch · 12:42 PM · photo-logged</div>
                 </div>
                 <div class="meal-cals">620 cal</div>
-              </div>
-              <div class="meal-expand" id="meal2">
-                <div class="meal-ai-badge">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 5l1 1 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  Recognized from photo · 87% confidence
-                </div>
-                <div class="meal-macros-row">
-                  <div class="macro-pill"><div class="macro-pill-val">52g</div><div class="macro-pill-label">Protein</div></div>
-                  <div class="macro-pill"><div class="macro-pill-val">70g</div><div class="macro-pill-label">Carbs</div></div>
-                  <div class="macro-pill"><div class="macro-pill-val">12g</div><div class="macro-pill-label">Fat</div></div>
+                <div class="meal-expand">
+                  <div class="macro-chips">
+                    <span class="macro-chip chip-p">Protein 52g</span>
+                    <span class="macro-chip chip-c">Carbs 58g</span>
+                    <span class="macro-chip chip-f">Fat 12g</span>
+                    <span class="macro-chip chip-cal">620 cal</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="meal-card" onclick="toggleMeal('meal3')">
-              <div class="meal-card-inner">
-                <div class="meal-emoji">🍎</div>
+              <div class="meal-card" onclick="toggleMeal(this)">
+                <div class="meal-thumb">🍎</div>
                 <div class="meal-info">
-                  <div class="meal-name">Apple + string cheese</div>
-                  <div class="meal-time">Snack · 3:30 PM · Photo logged</div>
+                  <div class="meal-name">Apple + almond butter</div>
+                  <div class="meal-time">Snack · 3:30 PM · photo-logged</div>
                 </div>
-                <div class="meal-cals">240 cal</div>
-              </div>
-              <div class="meal-expand" id="meal3">
-                <div class="meal-ai-badge">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 5l1 1 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  Recognized from photo · 94% confidence
-                </div>
-                <div class="meal-macros-row">
-                  <div class="macro-pill"><div class="macro-pill-val">8g</div><div class="macro-pill-label">Protein</div></div>
-                  <div class="macro-pill"><div class="macro-pill-val">28g</div><div class="macro-pill-label">Carbs</div></div>
-                  <div class="macro-pill"><div class="macro-pill-val">7g</div><div class="macro-pill-label">Fat</div></div>
+                <div class="meal-cals">300 cal</div>
+                <div class="meal-expand">
+                  <div class="macro-chips">
+                    <span class="macro-chip chip-p">Protein 7g</span>
+                    <span class="macro-chip chip-c">Carbs 34g</span>
+                    <span class="macro-chip chip-f">Fat 14g</span>
+                    <span class="macro-chip chip-cal">300 cal</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="snap-btn-row">
-              <button class="snap-btn" onclick="showSnapDemo()">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2.5" stroke="white" stroke-width="1.5"/><circle cx="9" cy="10" r="2.5" stroke="white" stroke-width="1.5"/><path d="M6.5 5l1-2h3l1 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Snap a meal
+              <button class="add-meal-btn" onclick="switchView('camera', document.querySelector('[data-view=camera]'))">
+                + Log another meal
               </button>
             </div>
           </div>
 
-          <!-- PLAN TAB -->
-          <div class="tab-panel" id="tab-plan">
-            <div class="plan-scroll">
-              <div class="week-label">This week · Goal: Lose 15 lbs in 12 weeks</div>
+          <!-- CAMERA VIEW -->
+          <div id="view-camera" class="phone-view" style="flex-direction:column;">
+            <div class="camera-finder">
+              <div id="camera-food-preview" class="camera-food-preview">
+                <span id="food-emoji">🍽️</span>
+                <div class="scan-overlay" id="scan-overlay"></div>
+                <div class="scan-line" id="scan-line"></div>
+              </div>
+              <div class="camera-hint" id="camera-hint">Tap the shutter to snap a meal photo</div>
+            </div>
+            <div class="camera-result" id="camera-result">
+              <div class="camera-result-name" id="result-name">—</div>
+              <div class="camera-result-chips" id="result-chips"></div>
+              <button class="log-it-btn" id="log-it-btn" onclick="logCurrentMeal()">Log this meal →</button>
+            </div>
+            <div class="camera-controls">
+              <button class="camera-snap-btn" id="snap-btn" onclick="snapPhoto()">📷<br>Snap</button>
+            </div>
+          </div>
 
-              <div class="day-card" onclick="toggleDay('day1')">
-                <div class="day-card-header">
-                  <div>
-                    <div class="day-name">Monday</div>
-                    <div class="day-cals">2,100 cal · High protein</div>
-                  </div>
-                  <div class="day-badge badge-workout">Lift: Push</div>
+          <!-- PLAN VIEW -->
+          <div id="view-plan" class="phone-view">
+            <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+            <div class="plan-view">
+              <div class="plan-week-label">This week · Week 3 of 12</div>
+
+              <div class="plan-day" id="plan-mon">
+                <div class="plan-day-header" onclick="togglePlanDay('plan-mon')">
+                  <span class="plan-day-name">Monday</span>
+                  <span class="plan-day-tag tag-lift">Upper Push</span>
+                  <span class="plan-day-chevron">›</span>
                 </div>
-                <div class="day-meals-expand" id="day1">
-                  <div class="day-meal-row">
-                    <div><div class="day-meal-name">Greek yogurt + berries</div><div class="day-meal-sub">Breakfast · 380 cal</div></div>
-                    <div class="day-meal-macro">32P · 40C · 6F</div>
-                  </div>
-                  <div class="day-meal-row">
-                    <div><div class="day-meal-name">Tuna & avocado wrap</div><div class="day-meal-sub">Lunch · 540 cal</div></div>
-                    <div class="day-meal-macro">45P · 48C · 18F</div>
-                  </div>
-                  <div class="day-meal-row">
-                    <div><div class="day-meal-name">Protein shake</div><div class="day-meal-sub">Pre-workout · 220 cal</div></div>
-                    <div class="day-meal-macro">30P · 22C · 4F</div>
-                  </div>
-                  <div class="day-meal-row">
-                    <div><div class="day-meal-name">Salmon + sweet potato</div><div class="day-meal-sub">Dinner · 680 cal</div></div>
-                    <div class="day-meal-macro">52P · 70C · 14F</div>
-                  </div>
+                <div class="plan-day-body">
+                  <div class="plan-exercise"><span class="plan-ex-name">Bench Press</span><span class="plan-ex-sets">4 × 8 @ 70%</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Overhead Press</span><span class="plan-ex-sets">3 × 10</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Incline DB Fly</span><span class="plan-ex-sets">3 × 12</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Tricep Pushdown</span><span class="plan-ex-sets">3 × 15</span></div>
                 </div>
               </div>
 
-              <div class="day-card" onclick="toggleDay('day2')">
-                <div class="day-card-header">
-                  <div>
-                    <div class="day-name">Tuesday</div>
-                    <div class="day-cals">1,
+              <div class="plan-day" id="plan-tue">
+                <div class="plan-day-header" onclick="togglePlanDay('plan-tue')">
+                  <span class="plan-day-name">Tuesday</span>
+                  <span class="plan-day-tag tag-rest">Rest</span>
+                  <span class="plan-day-chevron">›</span>
+                </div>
+                <div class="plan-day-body">
+                  <div class="plan-exercise"><span class="plan-ex-name">Light walk 20 min</span><span class="plan-ex-sets">Optional</span></div>
+                </div>
+              </div>
+
+              <div class="plan-day" id="plan-wed">
+                <div class="plan-day-header" onclick="togglePlanDay('plan-wed')">
+                  <span class="plan-day-name">Wednesday</span>
+                  <span class="plan-day-tag tag-lift">Lower Push</span>
+                  <span class="plan-day-chevron">›</span>
+                </div>
+                <div class="plan-day-body">
+                  <div class="plan-exercise"><span class="plan-ex-name">Squat</span><span class="plan-ex-sets">4 × 6 @ 75%</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Leg Press</span><span class="plan-ex-sets">3 × 12</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Walking Lunges</span><span class="plan-ex-sets">3 × 10 each</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Calf Raise</span><span class="plan-ex-sets">4 × 15</span></div>
+                </div>
+              </div>
+
+              <div class="plan-day" id="plan-thu">
+                <div class="plan-day-header" onclick="togglePlanDay('plan-thu')">
+                  <span class="plan-day-name">Thursday</span>
+                  <span class="plan-day-tag tag-active">Upper Pull</span>
+                  <span class="plan-day-chevron">›</span>
+                </div>
+                <div class="plan-day-body">
+                  <div class="plan-exercise"><span class="plan-ex-name">Pull-ups</span><span class="plan-ex-sets">4 × max</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Seated Cable Row</span><span class="plan-ex-sets">3 × 10</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Face Pull</span><span class="plan-ex-sets">3 × 15</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Barbell Curl</span><span class="plan-ex-sets">3 × 12</span></div>
+                </div>
+              </div>
+
+              <div class="plan-day" id="plan-fri">
+                <div class="plan-day-header" onclick="togglePlanDay('plan-fri')">
+                  <span class="plan-day-name">Fri–Sun</span>
+                  <span class="plan-day-tag tag-rest">Rest / Active</span>
+                  <span class="plan-day-chevron">›</span>
+                </div>
+                <div class="plan-day-body">
+                  <div class="plan-exercise"><span class="plan-ex-name">Full-body stretch</span><span class="plan-ex-sets">15 min</span></div>
+                  <div class="plan-exercise"><span class="plan-ex-name">Hike or swim</span><span class="plan-ex-sets">Optional</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="demo-sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">How to interact</div>
+          <div class="tip-step"><div class="tip-num">1</div><span>Tap a meal card on <strong>Today</strong> to expand its macros.</span></div>
+          <div class="tip-step"><div class="tip-num">2</div><span>Go to <strong>Log meal</strong> and tap the 📷 button to simulate a photo scan.</span></div>
+          <div class="tip-step"><div class="tip-num">3</div><span>On <strong>Plan</strong>, tap any workout day to expand the exercise list.</span></div>
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-title">Sample goal</div>
+          <div class="sidebar-body">
+            <strong>Marcus, 28</strong><br>Goal: Lose 15 lbs in 12 weeks<br>
+            Daily target: 1,840 cal · 150g protein<br>
+            Adherence this week: <span style="color:var(--green);font-weight:700;">4 / 4 meals logged</span>
+          </div>
+        </div>
+        <div class="sidebar-card" style="background:var(--accent-light);border-color:#F5C8B0;">
+          <div class="sidebar-title" style="color:var(--accent);">This is a preview</div>
+          <div class="sidebar-body" style="font-size:12px;">
+            All data above is sample data. The live app is in development. Join the waitlist below to test it when ready.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section">
+  <div class="wrap">
+    <span class="section-label">The flow</span>
+    <h2>Three steps, no spreadsheets</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="6" y="4" width="20" height="24" rx="4" fill="#FBEDE5"/>
+            <rect x="10" y="9" width="12" height="2" rx="1" fill="#D95F2B"/>
+            <rect x="10" y="14" width="8" height="2" rx="1" fill="#D95F2B" opacity="0.5"/>
+            <circle cx="22" cy="22" r="6" fill="#D95F2B"/>
+            <rect x="21" y="19" width="2" height="6" rx="1" fill="#fff"/>
+            <rect x="19" y="21" width="6" height="2" rx="1" fill="#fff"/>
+          </svg>
+        </div>
+        <h3>Set your goal</h3>
+        <p>Enter a specific target — lose 15 lbs, gain 10 lbs muscle — and a deadline. The app calculates your daily calorie and macro targets from that number, not from generic TDEE tables.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="6" width="24" height="18" rx="4" fill="#FBEDE5"/>
+            <circle cx="16" cy="15" r="5" fill="#D95F2B" opacity="0.15"/>
+            <circle cx="16" cy="15" r="3" fill="#D95F2B"/>
+            <path d="M14 6 Q16 4 18 6" stroke="#D95F2B" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <rect x="12" y="24" width="8" height="2" rx="1" fill="#D95F2B" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3>Snap any meal</h3>
+        <p>Point your camera at a plate, bowl, or restaurant dish. The app identifies the food, estimates portion size, and logs calories + macros in under 30 seconds — no searching, no barcodes.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M6 24 L12 16 L17 20 L22 10 L27 14" stroke="#D95F2B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="27" cy="14" r="2.5" fill="#D95F2B"/>
+            <rect x="6" y="25" width="21" height="1.5" rx="0.75" fill="#D95F2B" opacity="0.2"/>
+          </svg>
+        </div>
+        <h3>Get an adapting plan</h3>
+        <p>Your weekly meal plan and 4-day workout split update each week based on what you actually logged, not what you planned to log. Miss two dinners? Next week's plan adjusts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section id="proof" class="section">
+  <div class="wrap">
+    <span class="section-label">What we expect users to say</span>
+    <h2>Reactions we're building toward</h2>
+    <p class="proof-disclaimer">[Sample testimonials — pre-launch. No real users yet.]</p>
+    <div class="quotes">
+      <div class="quote-card">
+        <p class="quote-text">I quit MFP twice because logging a home-cooked meal took forever. If snapping a photo actually works for my stir-fries, I'd use this every day.</p>
+        <div class="quote-author">Jordan M.</div>
+        <div class="quote-role">29, gym 4× / week, lost &amp; regained 12 lbs twice</div>
+      </div>
+      <div class="quote-card">
+        <p class="quote-text">The part I always skipped was restaurants. I never knew the portions. A photo-based estimate — even if it's 10% off — is way better than nothing.</p>
+        <div class="quote-author">Priya K.</div>
+        <div class="quote-role">34, on a 12-week cut, current MFP user</div>
+      </div>
+      <div class="quote-card">
+        <p class="quote-text">I don't need another tracker that shows me charts. I need one that tells me what to eat Wednesday given that I crushed my protein Monday and skipped Tuesday entirely.</p>
+        <div class="quote-author">Derek S.</div>
+        <div class="quote-role">26, bulking, abandoned Cronometer after 3 weeks</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section">
+  <div class="wrap">
+    <span class="section-label">Honest answers</span>
+    <h2>Things you should know before signing up</h2>
+    <p class="faq-sub">These questions come from the hardest criticism of the idea. We'd rather answer them now than after you've wasted a week.</p>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Lose It! and MyFitnessPal already have photo logging. Why is this different?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          That's the right question to ask, and we don't have a fully satisfying answer yet. The real competition is not "photo vs. manual entry" — it's this app's recognition accuracy versus Lose It!'s. If we're at the same accuracy, there's no meaningful wedge. Our hypothesis is that being built entirely around the photo flow (rather than having it bolted onto a database search app) lets us tune the model faster and design the correction UX better. But we'd be lying if we said that's proven. That's exactly what the beta is for.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How accurate is the food recognition, really — especially for home-cooked meals?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Honestly: the field is currently at 60–75% accuracy for unstructured home-cooked meals, and we think you need ~85%+ before it feels trustworthy enough to stop second-guessing every log. We don't know yet whether we can clear that bar at launch — it may be a 12-month R&D problem, not a day-1 feature. If beta accuracy stays below 80%, we will say so publicly and hold the app back rather than ship something that erodes trust. The kill criteria in our plan are explicit on this point.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          I've quit calorie tracking apps before. Why won't I quit this one by week four?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          We can't promise you won't. The research is clear: ~90% of people quit calorie trackers within 2–4 weeks, and most of those apps — including ones with photo logging — don't solve that. Faster logging removes one friction point, but it doesn't fix the motivational and behavioral reasons people stop. The adapting meal + workout plan is our attempt at a second retention mechanism: if the plan changes week-to-week based on what you actually did, there's a reason to come back that isn't just accountability. Whether that's enough is something we have to test — our beta keeps anyone who can't log on 5+ consecutive days in week one off the "success" list. We're not claiming we've solved this; we're testing whether we can.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section id="waitlist">
+  <div class="wrap">
+    <span class="section-label" style="color:#6E6A66;">Early access</span>
+    <h2>Get on the list</h2>
+    <p class="waitlist-sub">We're testing with a small group first — people who have a specific goal and have already quit a tracker before. If that's you, we want your honest feedback.</p>
+    <form class="waitlist-form" action="https://sieve-srini.fly.dev/waitlist" method="POST">
+      <input type="hidden" name="idea_id" value="idea_a9af257e91c3">
+      <div>
+        <label class="form-label" for="email">Email address *</label>
+        <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required>
+      </div>
+      <div>
+        <label class="form-label" for="feedback">What would make you actually stick with a tracker past week four? (optional)</label>
+        <textarea class="form-textarea" id="feedback" name="feedback" placeholder="Be blunt — this is research, not a survey box we ignore."></textarea>
+      </div>
+      <button type="submit" class="btn-waitlist">Join the beta waitlist</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>idea_a9af257e91c3 · Built with <strong>Sieve</strong> · Pre-launch demo, not a live product</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── VIEW SWITCHER ──
+  function switchView(viewName, tabEl) {
+    document.querySelectorAll('.phone-view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.phone-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('view-' + viewName).classList.add('active');
+    if (tabEl) tabEl.classList.add('active');
+    else {
+      var tabs = document.querySelectorAll('.phone-tab');
+      tabs.forEach(t => { if (t.dataset.view === viewName) t.classList.add('active'); });
+    }
+  }
+
+  // ── MEAL CARD EXPAND ──
+  function toggleMeal(card) {
+    var expand = card.querySelector('.meal-expand');
+    var wasOpen = expand.classList.contains('open');
+    document.querySelectorAll('.meal-expand').forEach(e => e.classList.remove('open'));
+    if (!wasOpen) expand.classList.add('open');
+  }
+
+  // ── PLAN DAY EXPAND ──
+  function togglePlanDay(id) {
+    var day = document.getElementById(id);
+    day.classList.toggle('open');
+  }
+
+  // ── FAQ ──
+  function toggleFaq(btn) {
+    var item = btn.closest('.faq-item');
+    var wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // ── CAMERA SIMULATION ──
+  var meals = [
+    { emoji: '🍝', name: 'Spaghetti bolognese', cal: 680, p: '38g', c: '72g', f: '22g' },
+    { emoji: '🥗', name: 'Caesar salad with chicken', cal: 490, p: '41g', c: '22g', f: '26g' },
+    { emoji: '🌮', name: 'Two chicken tacos', cal: 540, p: '34g', c: '54g', f: '18g' },
+    { emoji: '🍳', name: 'Scrambled eggs & toast', cal: 410, p: '24g', c: '32g', f: '19g' },
+    { emoji: '🍜', name: 'Thai basil fried rice', cal: 620, p: '28g', c: '88g', f: '16g' },
+  ];
+  var mealIndex = 0;
+  var scanning = false;
+  var currentMeal = null;
+
+  function snapPhoto() {
+    if (scanning) return;
+    var meal = meals[mealIndex % meals.length];
+    mealIndex++;
+    currentMeal = meal;
+    scanning = true;
+
+    var preview = document.getElementById('camera-food-preview');
+    var overlay = document.getElementById('scan-overlay');
+    var hint = document.getElementById('camera-hint');
+    var result = document.getElementById('camera-result');
+    var emoji = document.getElementById('food-emoji');
+
+    result.classList.remove('visible');
+    hint.textContent = 'Analysing photo…';
+    emoji.textContent = meal.emoji;
+    preview.style.background = '#2F2F2F';
+
+    overlay.parentElement.classList.add('scanning');
+
+    setTimeout(function() {
+      overlay.parentElement.classList.remove('scanning');
+      hint.textContent = 'Food identified ✓';
+
+      document.getElementById('result-name').textContent = meal.name;
+      var chips = document.getElementById('result-chips');
+      chips.innerHTML =
+        '<span class="macro-chip chip-cal">' + meal.cal + ' cal</span>' +
+        '<span class="macro-chip chip-p">Protein ' + meal.p + '</span>' +
+        '<span class="macro-chip chip-c">Carbs ' + meal.c + '</span>' +
+        '<span class="macro-chip chip-f">Fat ' + meal.f + '</span>';
+      result.classList.add('visible');
+      scanning = false;
+    }, 1400);
+  }
+
+  function logCurrentMeal() {
+    if (!currentMeal) return;
+
+    var newCal = parseInt(document.getElementById('ring-cal-text').textContent.replace(',', '')) + currentMeal.cal;
+    document.getElementById('ring-cal-text').textContent = newCal.toLocaleString();
+
+    var newP = parseInt(document.getElementById('val-p').textContent) + parseInt(currentMeal.p);
+    var newC = parseInt(document.getElementById('val-c').textContent) + parseInt(currentMeal.c);
+    var newF = parseInt(document.getElementById('val-f').textContent) + parseInt(currentMeal.f);
+
+    document.getElementById('val-p').textContent = newP + 'g';
+    document.getElementById('val-c').textContent = newC + 'g';
+    document.getElementById('val-f').textContent = newF + 'g';
+
+    document.getElementById('bar-p').style.width = Math.min(100, Math.round(newP / 1.5)) + '%';
+    document.getElementById('bar-c').style.width = Math.min(100, Math.round(newC / 2.1)) + '%';
+    document.getElementById('bar-f').style.width = Math.min(100, Math.round(newF / 0.83)) + '%';
+
+    // Update ring
+    var pct = Math.min(1, newCal / 1840);
+    var circ = 175.93;
+    document.getElementById('ring-progress').setAttribute('stroke-dashoffset', circ * (1 - pct));
+
+    showToast(currentMeal.name + ' logged ✓');
+
+    // Add to today's meal list
+    var mealList = document.querySelector('#view-today .meals-section');
+    var addBtn = mealList.querySelector('.add-meal-btn');
+    var card = document.createElement('div');
+    card.className = 'meal-card';
+    card.setAttribute('onclick', 'toggleMeal(this)');
+    card.innerHTML =
+      '<div class="meal-thumb">' + currentMeal.emoji + '</div>' +
+      '<div class="meal-info"><div class="meal-name">' + currentMeal.name + '</div>' +
+      '<div class="meal-time">Just now · photo-logged</div></div>' +
+      '<div class="meal-cals">' + currentMeal.cal + ' cal</div>' +
+      '<div class="meal-expand"><div class="macro-chips">' +
+      '<span class="macro-chip chip-p">Protein ' + currentMeal.p + '</span>' +
+      '<span class="macro-chip chip-c">Carbs ' + currentMeal.c + '</span>' +
+      '<span class="macro-chip chip-f">Fat ' + currentMeal.f + '</span>' +
+      '<span class="macro-chip chip-cal">' + currentMeal.cal + ' cal</span>' +
+      '</div></div>';
+    mealList.insertBefore(card, addBtn);
+
+    // Reset camera
+    document.getElementById('camera-result').classList.remove('visible');
+    document.getElementById('camera-hint').textContent = 'Tap the shutter to snap another meal';
+    document.getElementById('food-emoji').textContent = '🍽️';
+    document.getElementById('camera-food-preview').style.background = '#2A2A2A';
+    currentMeal = null;
+
+    // Switch back to today
+    setTimeout(function() {
+      switchView('today', null);
+    }, 600);
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2400);
+  }
+
+  // Open Monday plan by default
+  document.getElementById('plan-mon').classList.add('open');
+</script>
+</body>
+</html>

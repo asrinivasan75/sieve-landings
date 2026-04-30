@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="NJ plaintiff PI attorneys spend 3–5 paralegal hours per demand letter. Get a jurisdiction-calibrated draft with correct PIP offset language in under 10 minutes.">
+<meta property="og:title" content="NJ PI Demand Letter Automation for Small Firms">
+<meta property="og:description" content="Ingest police reports and medical bills. Generate a review-ready NJ demand letter with correct PIP offset language in under 10 minutes.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NJ PI Demand Letter Automation for Small Firms">
+<meta name="twitter:description" content="Ingest police reports and medical bills. Generate a review-ready NJ demand letter with correct PIP offset language in under 10 minutes.">
+<title>NJ PI Demand Letter Automation — Casefile</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNCIgZmlsbD0iI0Q0QTg1MyIvPjx0ZXh0IHg9IjE2IiB5PSIyMiIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXdlaWdodD0iNzAwIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMEYxMTE3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5OSjwvdGV4dD48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Onest:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0F1117;--text:#C8CDD8;--heading:#F0F2F7;--accent:#D4A853;--accent-hover:#E8BC6A;
+  --muted:#6B7280;--surface:#171B26;--border:#252A38;--warm:#1C1408;
+  --display:'Cormorant',Georgia,serif;--body:'Onest',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+  --max:1200px;--trans:0.35s;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{color:var(--heading);font-family:var(--display)}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 32px}
+.mono{font-family:var(--mono);font-size:0.78rem}
+.gold{color:var(--accent)}
+.muted{color:var(--muted)}
+.rule-gold{border:none;border-top:1px solid var(--accent);margin:0}
+
+/* Fade-up */
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity var(--trans) ease,transform var(--trans) ease}
+.fade-up.visible{opacity:1;transform:none}
+
+/* ─── HERO ─── */
+.hero{padding:80px 0 60px;background:var(--bg);position:relative;overflow:hidden}
+.hero-inner{max-width:var(--max);margin:0 auto;padding:0 32px}
+.masthead-date{font-family:var(--mono);font-size:0.72rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:24px}
+.masthead-hl{font-family:var(--display);font-weight:700;font-size:clamp(3rem,6vw,5.2rem);line-height:1.04;color:var(--heading);max-width:100%}
+.masthead-hl em{font-style:italic;color:var(--accent)}
+hr.hero-rule{border:none;border-top:2px solid var(--accent);margin:28px 0}
+.hero-bottom{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end}
+.hero-sub{font-family:var(--mono);font-size:0.82rem;line-height:1.7;color:var(--text);max-width:480px}
+.hero-cta-block{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.pill{display:inline-block;font-family:var(--mono);font-size:0.72rem;color:var(--accent);border:1px solid var(--accent);border-radius:20px;padding:3px 12px;margin-bottom:6px}
+.btn-primary{display:inline-block;background:var(--accent);color:#0F1117;font-family:var(--body);font-weight:600;font-size:0.9rem;padding:13px 28px;border:none;cursor:pointer;text-decoration:none;transition:background var(--trans);letter-spacing:0.02em}
+.btn-primary:hover{background:var(--accent-hover)}
+.hero-sub-note{font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-align:right}
+
+/* ─── PAIN LEDGER ─── */
+.pain{padding:60px 0;background:var(--surface)}
+.section-label{font-family:var(--mono);font-size:0.68rem;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:24px}
+.ledger-title{font-family:var(--display);font-size:2rem;font-weight:600;margin-bottom:32px;color:var(--heading)}
+table.invoice{width:100%;border-collapse:collapse}
+table.invoice th{font-family:var(--mono);font-size:0.68rem;color:var(--muted);text-align:left;padding:6px 12px;border-bottom:1px solid var(--border);letter-spacing:0.1em;text-transform:uppercase}
+table.invoice td{font-family:var(--mono);font-size:0.82rem;color:var(--text);padding:10px 12px;border-bottom:1px solid var(--border)}
+table.invoice td.num{text-align:right}
+table.invoice tr.total td{color:#e05252;font-weight:500;border-top:2px solid #e05252;border-bottom:none;padding-top:14px}
+table.invoice tr:hover td{background:rgba(212,168,83,0.04)}
+
+/* ─── DEMO ─── */
+.demo-sec{padding:80px 0;background:var(--bg)}
+.demo-title{font-family:var(--display);font-size:2.2rem;font-weight:600;margin-bottom:8px}
+.demo-sub{font-family:var(--mono);font-size:0.78rem;color:var(--muted);margin-bottom:36px}
+.demo-frame{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--accent);background:var(--surface);min-height:480px}
+.demo-panel{display:flex;flex-direction:column}
+.demo-panel-head{display:flex;gap:0;border-bottom:1px solid var(--border)}
+.doc-tab{font-family:var(--mono);font-size:0.68rem;padding:8px 14px;cursor:pointer;color:var(--muted);border-right:1px solid var(--border);transition:color var(--trans),background var(--trans)}
+.doc-tab.active{color:var(--accent);background:rgba(212,168,83,0.08)}
+.demo-panel-body{flex:1;padding:16px;overflow:hidden;position:relative}
+.demo-panel-body.right-panel{border-left:1px solid var(--border)}
+.doc-content{display:none;font-family:var(--mono);font-size:0.72rem;line-height:1.8;color:var(--text)}
+.doc-content.active{display:block}
+.doc-field{display:inline;border-radius:2px;transition:background 0.3s,color 0.3s}
+.doc-field.lit{background:rgba(212,168,83,0.25);color:var(--accent)}
+.demand-output{font-size:0.8rem;line-height:1.75;color:var(--text);min-height:300px}
+.demand-output p{margin-bottom:14px;position:relative}
+.demand-val{color:var(--accent);transition:color 1s}
+.demand-val.settled{color:var(--heading)}
+.pip-block{font-family:var(--mono);font-size:0.72rem;background:rgba(255,255,255,0.04);border-left:2px solid var(--accent);padding:10px 12px;margin:10px 0;line-height:1.9}
+.cursor{display:inline-block;width:7px;height:1em;background:var(--accent);vertical-align:text-bottom;animation:blink 0.9s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.demo-generate-row{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.btn-generate{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:0.78rem;padding:8px 20px;cursor:pointer;transition:background var(--trans),color var(--trans)}
+.btn-generate:hover{background:var(--accent);color:#0F1117}
+.btn-generate:disabled{opacity:0.4;cursor:default}
+.demo-status{font-family:var(--mono);font-size:0.7rem;color:var(--muted)}
+.provenance-tip{position:absolute;bottom:calc(100% + 4px);left:0;background:#252A38;border:1px solid var(--accent);font-family:var(--mono);font-size:0.68rem;color:var(--accent);padding:4px 10px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:10}
+.demand-val[data-src]:hover .provenance-tip{opacity:1}
+span.has-tip{position:relative;cursor:help}
+span.has-tip:hover .provenance-tip{opacity:1}
+
+/* ─── HOW IT WORKS ─── */
+.how{padding:60px 0;background:var(--surface)}
+.how-title{font-family:var(--display);font-size:2rem;font-weight:600;margin-bottom:40px}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-left:1px solid var(--border)}
+.act{padding:32px 28px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.act-num{font-family:var(--display);font-style:italic;font-size:5rem;font-weight:300;color:var(--border);line-height:1;margin-bottom:12px}
+.act-title{font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--heading);margin-bottom:10px}
+.act-note{font-family:var(--mono);font-size:0.72rem;color:var(--muted);line-height:1.7}
+
+/* ─── JURISDICTION ─── */
+.jurisdiction{padding:80px 0;background:var(--warm);text-align:center}
+.juris-inner{max-width:760px;margin:0 auto;padding:0 32px}
+.juris-rule{border:none;border-top:1px solid var(--accent);margin:0 0 40px}
+.juris-quote{font-family:var(--display);font-style:italic;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:400;color:var(--heading);line-height:1.4;margin-bottom:32px}
+.juris-citations{font-family:var(--mono);font-size:0.68rem;color:var(--muted);line-height:2;margin-bottom:40px}
+.juris-rule-bottom{border:none;border-top:1px solid var(--accent);margin:0}
+
+/* ─── PRICING ─── */
+.pricing-sec{padding:60px 0;background:var(--bg)}
+.pricing-title{font-family:var(--display);font-size:2rem;font-weight:600;margin-bottom:32px}
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--accent)}
+.price-card{background:var(--surface);padding:36px 32px}
+.price-card+.price-card{border-left:1px solid var(--accent)}
+.price-card-label{font-family:var(--mono);font-size:0.68rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px}
+.price-amount{font-family:var(--display);font-size:3rem;font-weight:700;color:var(--heading);line-height:1}
+.price-unit{font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-top:4px;margin-bottom:24px}
+.price-lines{border-top:1px solid var(--border);padding-top:16px}
+.price-line{display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.75rem;color:var(--text);padding:6px 0;border-bottom:1px solid var(--border)}
+.price-line:last-child{color:var(--accent);border-bottom:none}
+.price-line span:last-child{color:var(--muted)}
+
+/* ─── SOCIAL PROOF ─── */
+.social{padding:40px 0;background:var(--surface);overflow:hidden}
+.ticker-wrap{overflow:hidden}
+.ticker{display:flex;gap:0;animation:ticker 30s linear infinite;width:max-content}
+.ticker:hover{animation-play-state:paused}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{flex:none;padding:20px 40px;border-right:1px solid var(--border);max-width:400px}
+.ticker-quote{font-family:var(--display);font-size:1.05rem;font-style:italic;color:var(--heading);line-height:1.5;margin-bottom:8px}
+.ticker-attr{font-family:var(--mono);font-size:0.68rem;color:var(--muted)}
+.ticker-note{font-family:var(--mono);font-size:0.62rem;color:var(--border);margin-top:3px}
+
+/* ─── FAQ / DEPOSITION ─── */
+.faq{padding:80px 0;background:var(--bg)}
+.faq-title{font-family:var(--display);font-size:2rem;font-weight:600;margin-bottom:40px}
+.dep-exchange{border-top:1px solid var(--border);padding:24px 0}
+.dep-q{font-family:var(--mono);font-size:0.78rem;color:var(--muted);margin-bottom:12px}
+.dep-q::before{content:"Q. ";color:var(--accent)}
+.dep-a{font-size:0.9rem;line-height:1.7;color:var(--text)}
+.dep-a::before{content:"A. ";color:var(--accent);font-family:var(--mono);font-size:0.78rem}
+
+/* ─── WAITLIST ─── */
+.waitlist{padding:100px 0;background:var(--warm)}
+.caption-block{max-width:640px;margin:0 auto;text-align:center}
+.caption-rule{font-family:var(--mono);font-size:0.68rem;color:var(--muted);letter-spacing:0.12em;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:16px}
+.caption-title{font-family:var(--display);font-size:2.6rem;font-weight:700;color:var(--heading);margin-bottom:4px}
+.caption-sub{font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-bottom:36px}
+.waitlist form{display:flex;flex-direction:column;gap:14px;text-align:left}
+.waitlist label{font-family:var(--mono);font-size:0.68rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+.waitlist input[type="email"],
+.waitlist textarea,
+.waitlist select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--heading);font-family:var(--body);font-size:0.88rem;padding:11px 14px;outline:none;transition:border-color var(--trans)}
+.waitlist input[type="email"]:focus,
+.waitlist textarea:focus,
+.waitlist select:focus{border-color:var(--accent)}
+.waitlist textarea{resize:vertical;min-height:80px}
+.waitlist select option{background:var(--surface)}
+.btn-file{width:100%;background:var(--accent);color:#0F1117;font-family:var(--body);font-weight:600;font-size:0.95rem;padding:14px;border:none;cursor:pointer;transition:background var(--trans);letter-spacing:0.03em;margin-top:4px}
+.btn-file:hover{background:var(--accent-hover)}
+.form-note{font-family:var(--mono);font-size:0.7rem;color:var(--muted);text-align:center;margin-top:10px}
+
+/* ─── FOOTER ─── */
+footer{padding:40px 0;background:var(--bg);border-top:1px solid var(--accent)}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;gap:24px}
+.footer-brand{font-family:var(--display);font-variant:small-caps;font-size:1.1rem;font-weight:600;color:var(--heading);letter-spacing:0.08em}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-decoration:none;transition:color var(--trans)}
+.footer-links a:hover{color:var(--accent)}
+.footer-meta{font-family:var(--mono);font-size:0.65rem;color:var(--border);margin-top:12px;text-align:center}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  .hero-bottom{grid-template-columns:1fr;gap:24px}
+  .hero-cta-block{align-items:flex-start}
+  .hero-sub-note{text-align:left}
+  .acts{grid-template-columns:1fr}
+  .demo-frame{grid-template-columns:1fr}
+  .demo-panel-body.right-panel{border-left:none;border-top:1px solid var(--border)}
+  .pricing-grid{grid-template-columns:1fr}
+  .price-card+.price-card{border-left:none;border-top:1px solid var(--accent)}
+  .footer-inner{flex-direction:column;text-align:center}
+  .masthead-hl{font-size:2.4rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="masthead-date fade-up">Casefile &mdash; New Jersey Practice Edition &mdash; Demand Letter Generation</div>
+    <h1 class="masthead-hl fade-up">
+      Three to five paralegal hours,<br>
+      <em>reduced to ten minutes.</em>
+    </h1>
+    <hr class="hero-rule fade-up">
+    <div class="hero-bottom fade-up">
+      <p class="hero-sub">
+        The product ingests your OCR'd NJ MV-104, structured medical billing,<br>
+        and PIP worksheet. It returns a review-ready demand letter with<br>
+        jurisdiction-calibrated PIP offset language — correct under N.J.S.A. 39:6A-12<br>
+        — without any retraining of support staff.
+      </p>
+      <div class="hero-cta-block">
+        <span class="pill">&lt; 10 min draft</span>
+        <a href="#waitlist" class="btn-primary">File for Early Access</a>
+        <p class="hero-sub-note muted">$49/letter &middot; no subscription required to start</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN LEDGER -->
+<section class="pain">
+  <div class="wrap fade-up">
+    <p class="section-label">The cost per letter, stated plainly</p>
+    <p class="ledger-title">What the current process actually bills to overhead</p>
+    <table class="invoice">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Hours</th>
+          <th>Paralegal Rate</th>
+          <th class="num">Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Review MV-104 police report, extract fault notation and conditions</td>
+          <td>0.5 hr</td>
+          <td>$35–55/hr</td>
+          <td class="num">$17 – $27</td>
+        </tr>
+        <tr>
+          <td>Reconcile medical bills line by line; verify provider and date sequence</td>
+          <td>0.75 hr</td>
+          <td>$35–55/hr</td>
+          <td class="num">$26 – $41</td>
+        </tr>
+        <tr>
+          <td>Calculate NJ PIP offset; confirm N.J.S.A. 39:6A-12 language is current</td>
+          <td>0.5 hr</td>
+          <td>$35–55/hr</td>
+          <td class="num">$17 – $27</td>
+        </tr>
+        <tr>
+          <td>Draft liability narrative from attorney dictation or notes</td>
+          <td>1.0 hr</td>
+          <td>$35–55/hr</td>
+          <td class="num">$35 – $55</td>
+        </tr>
+        <tr>
+          <td>Format, proofread, assemble final letter with damages schedule</td>
+          <td>0.5 hr</td>
+          <td>$35–55/hr</td>
+          <td class="num">$17 – $27</td>
+        </tr>
+        <tr>
+          <td>Attorney review and corrections (unbilled but real)</td>
+          <td>0.75 hr</td>
+          <td>Partner time</td>
+          <td class="num">—</td>
+        </tr>
+        <tr class="total">
+          <td colspan="3"><strong>Total direct labor cost per demand letter</strong></td>
+          <td class="num"><strong>$112 – $177</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo-sec">
+  <div class="wrap">
+    <h2 class="demo-title fade-up">Watch it assemble a letter</h2>
+    <p class="demo-sub fade-up">Sample case: rear-end collision, Route 9, Freehold, NJ — $18,400 in medical bills — NJ Manufacturers PIP $6,200</p>
+    <div class="demo-generate-row fade-up">
+      <button class="btn-generate" id="genBtn">▶ Generate</button>
+      <span class="demo-status" id="demoStatus">Ready. Click Generate to begin.</span>
+    </div>
+    <div class="demo-frame fade-up">
+      <div class="demo-panel">
+        <div class="demo-panel-head">
+          <div class="doc-tab active" data-tab="police">MV-104 Police Report</div>
+          <div class="doc-tab" data-tab="bills">Medical Bills</div>
+          <div class="doc-tab" data-tab="pip">PIP Worksheet</div>
+        </div>
+        <div class="demo-panel-body">
+          <div class="doc-content active" id="tab-police">
+            <strong class="gold" style="font-size:0.7rem">STATE OF NEW JERSEY — MV-104A</strong><br><br>
+            Date of crash: <span class="doc-field" id="f-date">10/14/2024</span><br>
+            Time: 14:32<br>
+            Location: <span class="doc-field" id="f-loc">Route 9 NB, Freehold Twp, Monmouth Co.</span><br>
+            Weather: <span class="doc-field" id="f-weather">Clear, dry pavement</span><br>
+            <br>
+            Unit 1 (Defendant): <span class="doc-field" id="f-def">Marcus T. Renard, 2019 Kia Forte</span><br>
+            Unit 2 (Plaintiff): Sandra K. Morrow, 2017 Honda CRV<br>
+            <br>
+            Officer narrative:<br>
+            Unit 1 struck Unit 2 in rear while Unit 2 was stopped at red light. Unit 1 operator stated he was &quot;looking at phone.&quot; Officer noted <span class="doc-field" id="f-fault">Unit 1 at fault; issued summons NJSA 39:4-88(b).</span><br>
+            <br>
+            Injuries reported: cervical pain, lower back pain. EMS called.<br>
+          </div>
+          <div class="doc-content" id="tab-bills">
+            <strong class="gold" style="font-size:0.7rem">MEDICAL BILLING SUMMARY</strong><br><br>
+            <span class="doc-field" id="f-hosp">Jersey Shore University Medical Center</span><br>
+            10/14/2024 — Emergency Dept &amp; imaging: <span class="doc-field" id="f-b1">$4,200.00</span><br>
+            <br>
+            Freehold Orthopedic Assoc. — <span class="doc-field" id="f-dx">Cervical strain; L4-L5 herniation (MRI confirmed)</span><br>
+            10/22/2024 – 03/15/2025: <span class="doc-field" id="f-b2">$9,850.00</span><br>
+            <br>
+            Atlantic Physical Therapy LLC<br>
+            10/28/2024 – 04/01/2025: $3,200.00<br>
+            Rx &amp; ancillary: $1,150.00<br>
+            <br>
+            <strong>Total billed: <span class="doc-field" id="f-total">$18,400.00</span></strong>
+          </div>
+          <div class="doc-content" id="tab-pip">
+            <strong class="gold" style="font-size:0.7rem">PIP OFFSET WORKSHEET</strong><br><br>
+            Carrier: <span class="doc-field" id="f-carrier">NJ Manufacturers Insurance Co.</span><br>
+            PIP benefits paid: <span class="doc-field" id="f-pip">$6,200.00</span><br>
+            PIP limit: $15,000<br>
+            Exhausted: No<br>
+            <br>
+            Applicable statute:<br>
+            N.J.S.A. 39:6A-12 — PIP benefits not<br>
+            admissible to reduce tort recovery but<br>
+            must be disclosed per offset protocol.<br>
+            <br>
+            Net special damages (pre-offset):<br>
+            <span class="doc-field" id="f-net">$18,400.00</span><br>
+            Offset acknowledged: <span class="doc-field" id="f-offset">$6,200.00</span>
+          </div>
+        </div>
+      </div>
+      <div class="demo-panel">
+        <div class="demo-panel-head" style="justify-content:flex-start;padding:8px 14px;border-bottom:1px solid var(--border)">
+          <span style="font-family:var(--mono);font-size:0.68rem;color:var(--muted)">DEMAND LETTER — DRAFT OUTPUT</span>
+        </div>
+        <div class="demo-panel-body right-panel">
+          <div class="demand-output" id="demandOutput">
+            <span class="muted mono" style="font-size:0.72rem">Awaiting generation...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="wrap">
+    <h2 class="how-title fade-up">Three steps. One review session.</h2>
+    <div class="acts">
+      <div class="act fade-up">
+        <div class="act-num">I</div>
+        <div class="act-title">Upload your source documents</div>
+        <p class="act-note">Drop the OCR'd MV-104, your medical billing summary, and the PIP worksheet. If you use Clio, MyCase, SmartAdvocate, or Filevine, we pull directly from the matter file — no re-upload required.</p>
+      </div>
+      <div class="act fade-up">
+        <div class="act-num">II</div>
+        <div class="act-title">Confirm the extracted fields</div>
+        <p class="act-note">The system highlights every extracted value — crash date, fault notation, provider totals, PIP carrier and amount — so you review facts, not formatting. One screen, under two minutes.</p>
+      </div>
+      <div class="act fade-up">
+        <div class="act-num">III</div>
+        <div class="act-title">Receive a review-ready draft</div>
+        <p class="act-note">The letter arrives with NJ PIP offset language, a liability narrative drawn from officer notes, and an itemized damages schedule. Your paralegal handles revisions — not first draft assembly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JURISDICTION CALLOUT -->
+<section class="jurisdiction">
+  <div class="juris-inner">
+    <hr class="juris-rule fade-up">
+    <blockquote class="juris-quote fade-up">
+      "Every NJ demand letter that omits a precisely calculated PIP offset is a negotiating concession the attorney didn't intend to make."
+    </blockquote>
+    <div class="juris-citations fade-up mono">
+      N.J.S.A. 39:6A-12 &mdash; Inadmissibility of PIP benefits; offset disclosure obligations<br>
+      N.J.S.A. 39:6A-8 &mdash; Limitation on lawsuit threshold; verbal threshold provisions<br>
+      N.J.A.C. 11:3-4.7 &mdash; PIP benefit coordination; insurer reimbursement protocols<br>
+      Roig v. Kelsey, 135 N.J. 500 (1994) &mdash; Standard for adequate PIP disclosure in demand context
+    </div>
+    <hr class="juris-rule-bottom fade-up">
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-sec">
+  <div class="wrap">
+    <h2 class="pricing-title fade-up">Two arrangements. No sales call required.</h2>
+    <div class="pricing-grid fade-up">
+      <div class="price-card">
+        <div class="price-card-label">Per-Letter &mdash; Single Transaction</div>
+        <div class="price-amount gold">$49</div>
+        <div class="price-unit mono">/letter generated</div>
+        <div class="price-lines">
+          <div class="price-line"><span>Draft generation</span><span>included</span></div>
+          <div class="price-line"><span>NJ PIP offset calculation</span><span>included</span></div>
+          <div class="price-line"><span>Source field provenance log</span><span>included</span></div>
+          <div class="price-line"><span>Editable DOCX export</span><span>included</span></div>
+          <div class="price-line"><span>vs. $150–300 paralegal labor</span><span class="gold">save $100–250/letter</span></div>
+        </div>
+      </div>
+      <div class="price-card">
+        <div class="price-card-label">Retainer &mdash; Unlimited Volume</div>
+        <div class="price-amount gold">$299</div>
+        <div class="price-unit mono">/month &mdash; all letters included</div>
+        <div class="price-lines">
+          <div class="price-line"><span>Unlimited letter generation</span><span>included</span></div>
+          <div class="price-line"><span>Case management sync (Clio, MyCase, SmartAdvocate, Filevine)</span><span>included</span></div>
+          <div class="price-line"><span>Custom firm letterhead template</span><span>included</span></div>
+          <div class="price-line"><span>Priority field mapping updates</span><span>included</span></div>
+          <div class="price-line"><span>Appropriate for 7+ cases/month</span><span class="gold">$42/letter at 7 cases</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="social">
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <div class="ticker-item">
+        <div class="ticker-quote">"The PIP offset language alone is worth it. We were inconsistent across associates — now the letter is the same every time."</div>
+        <div class="ticker-attr mono">NJ PI Firm, 3 attorneys, 45 cases/month</div>
+        <div class="ticker-note mono">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="ticker-item">
+        <div class="ticker-quote">"I reviewed the first draft expecting to rewrite it. I changed two sentences. That hasn't happened with any other tool I've tried."</div>
+        <div class="ticker-attr mono">NJ PI Firm, 2 attorneys, 22 cases/month</div>
+        <div class="ticker-note mono">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="ticker-item">
+        <div class="ticker-quote">"Our paralegal used to spend a full afternoon on each demand. Now she reviews the output and handles correspondence instead."</div>
+        <div class="ticker-attr mono">NJ PI Firm, 5 attorneys, 70 cases/month</div>
+        <div class="ticker-note mono">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="ticker-item">
+        <div class="ticker-quote">"The PIP offset language alone is worth it. We were inconsistent across associates — now the letter is the same every time."</div>
+        <div class="ticker-attr mono">NJ PI Firm, 3 attorneys, 45 cases/month</div>
+        <div class="ticker-note mono">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="ticker-item">
+        <div class="ticker-quote">"I reviewed the first draft expecting to rewrite it. I changed two sentences. That hasn't happened with any other tool I've tried."</div>
+        <div class="ticker-attr mono">NJ PI Firm, 2 attorneys, 22 cases/month</div>
+        <div class="ticker-note mono">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="ticker-item">
+        <div class="ticker-quote">"Our paralegal used to spend a full afternoon on each demand. Now she reviews the output and handles correspondence instead."</div>
+        <div class="ticker-attr mono">NJ PI Firm, 5 attorneys, 70 cases/month</div>
+        <div class="ticker-note mono">[Sample testimonial — pre-launch]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ / DEPOSITION -->
+<section class="faq">
+  <div class="wrap" style="max-width:760px">
+    <h2 class="faq-title fade-up">Questions put directly</h2>
+
+    <div class="dep-exchange fade-up">
+      <p class="dep-q">A funded competitor like EvenUp already does PI demand letters. What prevents them from adding NJ PIP offset logic next quarter?</p>
+      <p class="dep-a">Nothing technical prevents it. EvenUp has the runway to ship NJ calibration once they see traction here, and we expect they will. The relevant question is whether jurisdiction configuration is sufficient to compete — or whether the distribution relationship matters more. We already operate Casefile inside the NJ PI firms we're targeting, which means the first hundred users come from an installed base that already trusts the pipeline, not from cold acquisition. That relationship doesn't transfer when a competitor ships a checkbox. The window is measured in quarters; the kill criteria reflect that honestly.</p>
+    </div>
+
+    <div class="dep-exchange fade-up">
+      <p class="dep-q">If the generated letter contains an incorrect PIP offset figure and my client accepts an undervalued settlement, who is liable?</p>
+      <p class="dep-a">The attorney of record remains responsible for every figure in a letter that goes out under their signature — that is the correct answer and we will not obscure it. The product generates a review-ready draft, not a letter you send without reading. The provenance log attached to every output shows exactly which source document each figure was drawn from, making the attorney's review faster and more auditable than the current manual process. We are in active discussion with counsel regarding E&amp;O coverage and indemnification scope, and we will not recommend the unlimited retainer tier to firms whose professional liability carriers have blanket AI-tool exclusions. That question should be answered before you sign up, not after.</p>
+    </div>
+
+    <div class="dep-exchange fade-up">
+      <p class="dep-q">What if the draft quality requires substantial rewriting — paragraphs, not just names? Doesn't that make this an expensive starting point rather than a time-saver?</p>
+      <p class="dep-a">Yes. If an attorney rewrites more than half the substantive paragraphs, the product has not delivered its value proposition and the economics invert. That is not a rhetorical concern — it is the third item on our internal kill criteria. The mitigation is the 50-field document graph: the letter is constructed from structured, verified fields, not prompted from a paragraph summary, which substantially reduces narrative hallucination. We are offering early access to existing Casefile users first precisely because their feedback on draft quality will determine whether we scale or rebuild before we reach cold outreach channels.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST CTA -->
+<section class="waitlist" id="waitlist">
+  <div class="wrap">
+    <div class="caption-block">
+      <p class="caption-rule mono fade-up">In the Matter of Early Access — Docket No. CSLF-2025</p>
+      <h2 class="caption-title fade-up">Casefile<br><em style="font-style:italic;font-size:0.6em;font-weight:400;color:var(--muted)">Demand Letter Generation</em></h2>
+      <p class="caption-sub fade-up">Plaintiff's Counsel of Record — Request for Admission to Early Access Program</p>
+
+      <form action="http://127.0.0.1:8787/waitlist" method="POST" class="fade-up">
+        <div>
+          <label for="email">Counsel of Record — Email</label>
+          <input type="email" name="email" id="email" required placeholder="your@email.com">
+        </div>
+        <div>
+          <label for="feedback">What problem are you trying to solve right now?</label>
+          <textarea name="feedback" id="feedback" required rows="3" placeholder="What problem are you trying to solve right now?"></textarea>
+        </div>
+        <input type="hidden" name="idea_id" value="idea_08a2032af4cb">
+        <button type="submit" class="btn-file">File for Early Access</button>
+      </form>
+      <p class="form-note muted">We read every reply.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">Casefile</div>
+      <div class="footer-links">
+        <a href="#waitlist">Early Access</a>
+        <a href="#waitlist">Contact</a>
+      </div>
+    </div>
+    <p class="footer-meta mono">idea_08a2032af4cb &mdash; Built with Sieve</p>
+  </div>
+</footer>
+
+<script>
+// Scroll fade
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, {threshold: 0.12});
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// Doc tabs
+document.querySelectorAll('.doc-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.doc-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    const id = 'tab-' + tab.dataset.tab;
+    const el = document.getElementById(id);
+    if(el) el.classList.add('active');
+  });
+});
+
+// Demo generation
+const genBtn = document.getElementById('genBtn');
+const demoStatus = document.getElementById('demoStatus');
+const demandOutput = document.getElementById('demandOutput');
+
+const paragraphs = [
+  {
+    text: `<p>Re: Personal Injury Claim of Sandra K. Morrow<br>
+    Date of Loss: <span class="has-tip demand-val" data-src="MV-104 Police Report">October 14, 2024<span class="provenance-tip">Source: MV-104 &mdash; Date of crash field</span></span><br>
+    Our Client: Sandra K. Morrow v. <span class="has-tip demand-val" data-src="MV-104">Marcus T. Renard<span class="provenance-tip">Source: MV-104 &mdash; Unit 1 operator</span></span><br>
+    Incident Location: <span class="has-tip demand-val" data-src="MV-104">Route 9 Northbound, Freehold Township, Monmouth County, NJ<span class="provenance-tip">Source: MV-104 &mdash; Location field</span></span></p>`,
+    fields: ['f-date', 'f-loc'],
+    tab: 'police',
+    delay: 800
+  },
+  {
+    text: `<p>On the above date, your insured, <span class="has-tip demand-val">Marcus T. Renard<span class="provenance-tip">Source: MV-104 &mdash; Unit 1 operator</span></span>, operating a 2019 Kia Forte, struck the vehicle of our client in the rear while our client was stopped at a red light on Route 9 Northbound. Responding Officer noted <span class="has-tip demand-val">Unit 1 at fault and issued a summons under N.J.S.A. 39:4-88(b)<span class="provenance-tip">Source: MV-104 &mdash; Officer fault notation</span></span>. Weather conditions were <span class="has-tip demand-val">clear, pavement dry<span class="provenance-tip">Source: MV-104 &mdash; Weather field</span></span>. Your insured's own statement to police acknowledged distracted operation.</p>`,
+    fields: ['f-fault', 'f-weather'],
+    tab: 'police',
+    delay: 1600
+  },
+  {
+    text: `<p>As a direct and proximate result of your insured's negligence, our client sustained <span class="has-tip demand-val">cervical strain and a confirmed L4-L5 herniation<span class="provenance-tip">Source: Medical Bills &mdash; Freehold Orthopedic diagnosis</span></span>, requiring emergency evaluation at <span class="has-tip demand-val">Jersey Shore University Medical Center<span class="provenance-tip">Source: Medical Bills &mdash; Provider field</span></span> and ongoing treatment through April 2025. Total medical expenses incurred are as follows:</p>`,
+    fields: ['f-hosp', 'f-dx'],
+    tab: 'bills',
+    delay: 1600
+  },
+  {
+    text: `<p>Total special damages (medical bills): <span class="has-tip demand-val">$18,400.00<span class="provenance-tip">Source: Medical Bills &mdash; Total billed</span></span></p>`,
+    fields: ['f-total'],
+    tab: 'bills',
+    delay: 800
+  },
+  {
+    text: `<div class="pip-block">PIP OFFSET DISCLOSURE — N.J.S.A. 39:6A-12<br>
+    Carrier: <span class="has-tip demand-val">NJ Manufacturers Insurance Co.<span class="provenance-tip">Source: PIP Worksheet &mdash; Carrier field</span></span><br>
+    PIP benefits paid to date: <span class="has-tip demand-val">$6,200.00<span class="provenance-tip">Source: PIP Worksheet &mdash; Benefits paid</span></span><br>
+    Per N.J.S.A. 39:6A-12, PIP benefits are not admissible to reduce the tort recovery herein; this disclosure is made pursuant to applicable offset protocol only. Net special damages for demand purposes: <span class="has-tip demand-val">$18,400.00<span class="provenance-tip">Source: PIP Worksheet &mdash; Net special damages</span></span></div>`,
+    fields: ['f-carrier', 'f-pip', 'f-offset'],
+    tab: 'pip',
+    delay: 2000
+  },
+  {
+    text: `<p>In addition to special damages of <span class="has-tip demand-val">$18,400.00<span class="provenance-tip">Source: Medical Bills &mdash; Total billed</span></span>, our client has experienced significant pain, suffering, and loss of enjoyment of life arising from a confirmed disc herniation in a 34-year-old active professional. Applying a conservative multiplier, general damages are valued at $76,100. <strong style="color:var(--heading)">Total demand: $94,500.</strong> This demand remains open for 30 days.</p>`,
+    fields: [],
+    tab: null,
+    delay: 1200
+  }
+];
+
+let running = false;
+
+genBtn.addEventListener('click', async () => {
+  if(running) return;
+  running = true;
+  genBtn.disabled = true;
+  demandOutput.innerHTML = '';
+  demoStatus.textContent = 'Reading source documents…';
+
+  // Reset all field highlights
+  document.querySelectorAll('.doc-field').forEach(f => f.classList.remove('lit'));
+
+  let totalDelay = 0;
+
+  for(let i = 0; i < paragraphs.length; i++){
+    const p = paragraphs[i];
+    totalDelay += p.delay;
+
+    await new Promise(resolve => setTimeout(resolve, p.delay));
+
+    // Switch tab
+    if(p.tab){
+      document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.doc-content').forEach(c => c.classList.remove('active'));
+      const targetTab = document.querySelector(`[data-tab="${p.tab}"]`);
+      if(targetTab) targetTab.classList.add('active');
+      const targetContent = document.getElementById('tab-' + p.tab);
+      if(targetContent) targetContent.classList.add('active');
+    }
+
+    // Highlight fields
+    p.fields.forEach(fid => {
+      const fel = document.getElementById(fid);
+      if(fel){ fel.classList.add('lit'); }
+    });
+
+    // Append paragraph with cursor
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = p.text;
+    // Make demand-val elements flash gold then settle
+    wrapper.querySelectorAll('.demand-val').forEach(v => {
+      v.style.color = 'var(--accent)';
+      setTimeout(() => { v.style.color = ''; v.classList.add('settled'); }, 1800);
+    });
+    demandOutput.appendChild(wrapper);
+
+    const progress = Math.round(((i+1)/paragraphs.length)*100);
+    demoStatus.textContent = `Composing… ${progress}%`;
+
+    // Un-highlight fields after a moment
+    setTimeout(() => {
+      p.fields.forEach(fid => {
+        const fel = document.getElementById(fid);
+        if(fel) fel.classList.remove('lit');
+      });
+    }, 1400);
+  }
+
+  demoStatus.textContent = 'Draft complete. Hover highlighted values to see source.';
+  genBtn.disabled = false;
+  genBtn.textContent = '↺ Generate Again';
+  running = false;
+});
+</script>
+</body>
+</html>

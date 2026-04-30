@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Convert LaTeX and PDF documents into realistic handwritten-style PDFs — with equations, matrices, and structure preserved. No copy-pasting. No formatting loss.">
+<meta property="og:title" content="∂h — LaTeX to Handwritten PDF Converter">
+<meta property="og:description" content="The only converter that preserves mathematical notation through the LaTeX-to-handwriting pipeline. Drop in a .tex file. Get a handwritten-style PDF back.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="∂h — LaTeX to Handwritten PDF Converter">
+<meta name="twitter:description" content="The only converter that preserves mathematical notation through the LaTeX-to-handwriting pipeline. Drop in a .tex file. Get a handwritten-style PDF back.">
+<title>∂h — LaTeX to Handwritten PDF</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMEYwRTBEIi8+PHRleHQgeD0iNSIgeT0iMjMiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iI0M4RjA0QiI+4oiCaDwvdGV4dD48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Onest:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0F0E0D;
+  --text: #D4CFCA;
+  --heading: #F0ECE6;
+  --accent: #C8F04B;
+  --accent-hover: #A8D030;
+  --muted: #7A7470;
+  --surface: #1C1A18;
+  --border: #2E2B27;
+  --max: 1280px;
+  --dur: 0.35s;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Onest', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.container { max-width: var(--max); margin: 0 auto; padding: 0 40px; }
+
+/* FADE UP */
+.fade-up { opacity: 0; transform: translateY(22px); transition: opacity var(--dur) ease, transform var(--dur) ease; }
+.fade-up.visible { opacity: 1; transform: none; }
+
+/* HERO */
+.hero {
+  padding: 80px 0 60px;
+  background: var(--bg);
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
+  align-items: center;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.hero-left h1 {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(3.2rem, 6vw, 5.5rem);
+  color: var(--heading);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  writing-mode: horizontal-tb;
+}
+.hero-left h1 span.accent-word { color: var(--accent); }
+.hero-sub {
+  margin-top: 28px;
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 320px;
+}
+.hero-cta {
+  margin-top: 36px;
+  display: inline-block;
+  background: var(--accent);
+  color: #0F0E0D;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 12px 28px;
+  text-decoration: none;
+  transition: background var(--dur) ease;
+}
+.hero-cta:hover { background: var(--accent-hover); }
+
+.hero-right { position: relative; }
+.hero-split {
+  display: grid;
+  grid-template-columns: 1fr 4px 1fr;
+  height: 340px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.hero-split-divider { background: var(--accent); }
+.hero-pane {
+  padding: 20px;
+  overflow: hidden;
+}
+.hero-pane.source {
+  background: #141311;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: #8fa882;
+  line-height: 1.8;
+}
+.hero-pane.source .kw { color: #c8a85a; }
+.hero-pane.source .cmd { color: var(--accent); }
+.hero-pane.output {
+  background: #f5f0e8;
+  position: relative;
+}
+.hero-pane-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hero-pane.output .hero-pane-label { color: #8a857a; }
+.handwritten-preview {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #2a2018;
+  line-height: 2.1;
+  position: relative;
+}
+.hw-line {
+  display: block;
+  border-bottom: 1px solid rgba(120,100,70,0.18);
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  transform: rotate(-0.3deg);
+}
+.hw-line:nth-child(even) { transform: rotate(0.2deg); }
+
+/* BEFORE-AFTER STRIP */
+.strip {
+  padding: 40px 0;
+  background: var(--surface);
+  overflow: hidden;
+}
+.strip-inner { display: flex; gap: 24px; padding: 0 40px; overflow-x: auto; scrollbar-width: none; }
+.strip-inner::-webkit-scrollbar { display: none; }
+.strip-card {
+  flex: 0 0 auto;
+  width: 360px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.strip-card-pane {
+  padding: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  line-height: 1.9;
+  color: #7a9e7e;
+  background: #141311;
+}
+.strip-card-pane .kw { color: #c8a85a; }
+.strip-card-pane .cmd { color: var(--accent); }
+.strip-card-out {
+  padding: 18px;
+  background: #f4efe6;
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #2a2018;
+  line-height: 2;
+}
+.strip-card-out span { display: block; border-bottom: 1px solid rgba(120,100,70,0.15); }
+
+/* DEMO */
+.demo-section {
+  padding: 100px 0 80px;
+  background: var(--bg);
+}
+.demo-header { text-align: center; margin-bottom: 48px; }
+.demo-header h2 {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--heading);
+  font-weight: 600;
+}
+.demo-header p { color: var(--muted); font-size: 0.95rem; margin-top: 10px; }
+
+.demo-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.toggle-label { color: var(--accent); }
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  cursor: pointer;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 11px;
+  transition: background var(--dur);
+}
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: transform var(--dur), background var(--dur);
+}
+.toggle-switch input:checked ~ .toggle-track { background: var(--accent); }
+.toggle-switch input:checked ~ .toggle-thumb { transform: translateX(18px); background: #0F0E0D; }
+
+.demo-panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 400px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.demo-input-pane {
+  border-left: 3px solid var(--accent);
+  background: #111009;
+  display: flex;
+  flex-direction: column;
+}
+.demo-pane-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+}
+.demo-pane-header .dot { color: var(--accent); }
+#latex-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.9;
+  color: #8fa882;
+  resize: none;
+  width: 100%;
+}
+#latex-input::selection { background: rgba(200,240,75,0.15); }
+.demo-output-pane {
+  background: #f5f0e6;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.demo-output-pane .demo-pane-header { color: #8a857a; border-color: rgba(120,100,70,0.2); background: #ede8de; }
+.demo-output-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: #2a2018;
+  line-height: 2.1;
+  cursor: pointer;
+}
+.output-line {
+  display: block;
+  border-bottom: 1px solid rgba(120,100,70,0.15);
+  min-height: 2.1em;
+  padding-bottom: 1px;
+  transform: rotate(-0.2deg);
+  transition: transform 0.2s;
+}
+.output-line:nth-child(odd) { transform: rotate(0.15deg); }
+.output-line.zoomed { transform: scale(1.5) translateX(20px); transform-origin: left center; z-index: 2; position: relative; background: rgba(245,240,230,0.9); }
+.output-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: #4a3828;
+  vertical-align: text-bottom;
+  animation: blink 0.8s step-end infinite;
+  margin-left: 2px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.demo-note { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--muted); text-align: center; margin-top: 12px; letter-spacing: 0.06em; }
+
+/* MANIFESTO */
+.manifesto {
+  padding: 120px 0;
+  background: #161412;
+}
+.manifesto-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.manifesto p {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  color: var(--heading);
+  line-height: 1.75;
+  margin-bottom: 2em;
+}
+.manifesto p:first-child::first-letter {
+  font-size: 4em;
+  float: left;
+  line-height: 0.75;
+  margin-right: 0.1em;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* HOW IT WORKS */
+.how {
+  padding: 80px 0 60px;
+  background: var(--surface);
+}
+.how h2 {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--heading);
+  margin-bottom: 60px;
+  font-weight: 600;
+}
+.how-steps { display: flex; flex-direction: column; gap: 0; }
+.how-step {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: baseline;
+  border-top: 1px solid var(--border);
+  padding: 36px 0;
+}
+.how-step:last-child { border-bottom: 1px solid var(--border); }
+.step-num {
+  font-family: 'Cormorant', serif;
+  font-size: 5rem;
+  font-weight: 600;
+  color: var(--border);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.step-body h3 {
+  font-family: 'Onest', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--heading);
+  margin-bottom: 6px;
+}
+.step-body p { font-size: 0.9rem; color: var(--muted); font-weight: 300; }
+
+/* SOCIAL PROOF */
+.social {
+  padding: 60px 0;
+  background: var(--bg);
+}
+.social h2 {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  color: var(--heading);
+  margin-bottom: 40px;
+  font-weight: 600;
+}
+.quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.quote-block {
+  background: #0a0908;
+  border: 1px solid var(--border);
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.75;
+}
+.quote-meta { color: var(--accent); margin-bottom: 10px; font-size: 0.65rem; }
+.quote-text { color: var(--text); }
+.quote-label { color: var(--muted); font-size: 0.6rem; margin-top: 12px; font-family: 'Onest', sans-serif; font-style: italic; }
+
+/* FAQ */
+.faq {
+  padding: 80px 0;
+  background: var(--surface);
+}
+.faq h2 {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--heading);
+  margin-bottom: 48px;
+  font-weight: 600;
+}
+.faq-item { border-top: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  cursor: pointer;
+  text-align: left;
+  gap: 20px;
+}
+.faq-q span {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--heading);
+  font-weight: 600;
+}
+.faq-q .faq-icon {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: transform var(--dur);
+}
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--dur) ease;
+}
+.faq-a p {
+  padding: 0 0 24px;
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 300;
+  line-height: 1.75;
+  max-width: 640px;
+}
+
+/* WAITLIST */
+.waitlist {
+  padding: 140px 0;
+  background: var(--bg);
+  text-align: center;
+}
+.waitlist h2 {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--heading);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.waitlist-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 56px; }
+.waitlist-form { max-width: 540px; margin: 0 auto; text-align: left; }
+.prompt-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--accent);
+  background: #0a0908;
+  margin-bottom: 16px;
+}
+.prompt-char {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  color: var(--accent);
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+.prompt-wrap input[type="email"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--heading);
+  padding: 14px 12px 14px 0;
+  caret-color: var(--accent);
+}
+.prompt-wrap input::placeholder { color: var(--muted); }
+.waitlist-form textarea {
+  width: 100%;
+  background: #0a0908;
+  border: 1px solid var(--border);
+  outline: none;
+  font-family: 'Onest', sans-serif;
+  font-size: 0.88rem;
+  color: var(--text);
+  padding: 14px 16px;
+  resize: none;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  caret-color: var(--accent);
+  transition: border-color var(--dur);
+}
+.waitlist-form textarea:focus { border-color: var(--accent); }
+.waitlist-form textarea::placeholder { color: var(--muted); }
+.submit-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #0F0E0D;
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 15px;
+  cursor: pointer;
+  transition: background var(--dur);
+  text-transform: uppercase;
+}
+.submit-btn:hover { background: var(--accent-hover); }
+.form-note { margin-top: 14px; color: var(--muted); font-size: 0.8rem; text-align: center; font-style: italic; }
+.terminal-confirm {
+  display: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  background: #0a0908;
+  padding: 24px;
+  line-height: 2;
+  text-align: left;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* FOOTER */
+footer {
+  padding: 40px 0;
+  background: var(--bg);
+  border-top: 1px solid var(--accent);
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+.footer-brand {
+  font-family: 'Cormorant', serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: var(--heading);
+  font-weight: 600;
+}
+.footer-tagline { font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-weight: 300; }
+.footer-links { display: flex; gap: 24px; align-items: center; }
+.footer-links a {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: 'Onest', sans-serif;
+  transition: color var(--dur);
+}
+.footer-links a:hover { color: var(--text); }
+.footer-id { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--border); margin-top: 4px; }
+
+@media (max-width: 768px) {
+  .container, .hero-inner, .manifesto-inner { padding: 0 20px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-split { height: 260px; }
+  .demo-panes { grid-template-columns: 1fr; height: auto; }
+  #latex-input { height: 180px; }
+  .demo-output-content { height: 240px; }
+  .quotes { grid-template-columns: 1fr; }
+  .how-step { grid-template-columns: 80px 1fr; }
+  .step-num { font-size: 3.5rem; }
+  .footer-inner { flex-direction: column; gap: 24px; }
+  .strip-card { width: 280px; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left fade-up">
+      <h1>
+        LaTeX<br>
+        to<br>
+        <span class="accent-word">Hand-</span><br>
+        written
+      </h1>
+      <p class="hero-sub">Drop in a .tex file or compiled PDF. Receive a multi-page handwritten-style PDF with inline math intact — equations, matrices, and all.</p>
+      <a href="#waitlist" class="hero-cta">→ get early access</a>
+    </div>
+    <div class="hero-right fade-up">
+      <div class="hero-split">
+        <div class="hero-pane source">
+          <div class="hero-pane-label">.tex source</div>
+          <span class="kw">\documentclass</span>{article}<br>
+          <span class="kw">\begin</span>{document}<br>
+          <br>
+          <span class="cmd">\section*</span>{Problem 1}<br>
+          The Lagrangian:<br>
+          <span class="cmd">\[</span><br>
+          &nbsp;&nbsp;<span class="kw">\mathcal</span>{L} =<br>
+          &nbsp;&nbsp;<span class="cmd">\frac</span>{1}{2}m<span class="cmd">\dot</span>{q}^2<br>
+          &nbsp;&nbsp;- V(q)<br>
+          <span class="cmd">\]</span><br>
+          <span class="kw">\end</span>{document}
+        </div>
+        <div class="hero-split-divider"></div>
+        <div class="hero-pane output">
+          <div class="hero-pane-label">handwritten output</div>
+          <div class="handwritten-preview">
+            <span class="hw-line">Problem 1</span>
+            <span class="hw-line">The Lagrangian:</span>
+            <span class="hw-line">ℒ = ½mq̇² − V(q)</span>
+            <span class="hw-line">where q is generalised</span>
+            <span class="hw-line">coordinate...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="strip">
+  <div class="strip-inner">
+    <div class="strip-card fade-up">
+      <div class="strip-card-pane">
+        <span class="cmd">\frac</span>{d}{dt}<br>
+        <span class="cmd">\left</span>(<br>
+        &nbsp;<span class="cmd">\frac</span>{\partial L}<br>
+        &nbsp;{\partial <span class="kw">\dot</span>{q}}<br>
+        <span class="cmd">\right</span>) =<br>
+        <span class="cmd">\frac</span>{\partial L}<br>
+        {\partial q}
+      </div>
+      <div class="strip-card-out">
+        <span>d/dt (∂L/∂q̇)</span>
+        <span>&nbsp;= ∂L/∂q</span>
+        <span>&nbsp;</span>
+        <span>Euler–Lagrange</span>
+        <span>equation of motion</span>
+      </div>
+    </div>
+    <div class="strip-card fade-up">
+      <div class="strip-card-pane">
+        <span class="cmd">\sum</span>_{n=0}^{<span class="kw">\infty</span>}<br>
+        <span class="cmd">\frac</span>{f^{(n)}(a)}<br>
+        {n!}(x-a)^n<br>
+        <br>
+        <span class="kw">% Taylor series</span>
+      </div>
+      <div class="strip-card-out">
+        <span>Σ f⁽ⁿ⁾(a)(x−a)ⁿ</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n!</span>
+        <span>&nbsp;</span>
+        <span>n = 0 → ∞</span>
+      </div>
+    </div>
+    <div class="strip-card fade-up">
+      <div class="strip-card-pane">
+        <span class="cmd">\begin</span>{pmatrix}<br>
+        &nbsp;&nbsp;a &amp; b <span class="cmd">\\</span><br>
+        &nbsp;&nbsp;c &amp; d<br>
+        <span class="cmd">\end</span>{pmatrix}<br>
+        <span class="cmd">\mathbf</span>{x} = <span class="cmd">\lambda</span><br>
+        <span class="cmd">\mathbf</span>{x}
+      </div>
+      <div class="strip-card-out">
+        <span>⎡ a  b ⎤</span>
+        <span>⎣ c  d ⎦ x = λx</span>
+        <span>&nbsp;</span>
+        <span>eigenvalue eqn.</span>
+      </div>
+    </div>
+    <div class="strip-card fade-up">
+      <div class="strip-card-pane">
+        <span class="cmd">\int</span>_{-<span class="kw">\infty</span>}^{<span class="kw">\infty</span>}<br>
+        e^{-x^2} \, dx<br>
+        = <span class="cmd">\sqrt</span>{<span class="kw">\pi</span>}<br>
+        <br>
+        <span class="kw">% Gaussian integral</span>
+      </div>
+      <div class="strip-card-out">
+        <span>∫₋∞^∞ e^(−x²) dx</span>
+        <span>&nbsp;= √π</span>
+        <span>&nbsp;</span>
+        <span>Gaussian integral</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="demo-section">
+  <div class="container">
+    <div class="demo-header fade-up">
+      <h2>Try it now</h2>
+      <p>Edit the LaTeX below. Toggle Math Mode off to see what other tools give you.</p>
+    </div>
+    <div class="fade-up">
+      <div class="demo-toggle-row">
+        <span>Math Mode:</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="math-toggle" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+        <span class="toggle-label" id="toggle-label">ON</span>
+      </div>
+      <div class="demo-panes">
+        <div class="demo-input-pane">
+          <div class="demo-pane-header">
+            <span>input.tex</span>
+            <span class="dot">●</span>
+          </div>
+          <textarea id="latex-input" spellcheck="false">\section*{Problem Set 3 — Classical Mechanics}
+
+\subsection*{1. Lagrangian of a Double Pendulum}
+
+The equations of motion follow from:
+\[
+  \frac{d}{dt}\left(\frac{\partial \mathcal{L}}{\partial \dot{\theta}_i}\right) 
+  - \frac{\partial \mathcal{L}}{\partial \theta_i} = 0
+\]
+
+\subsection*{2. Inertia Tensor}
+
+For a rigid body:
+\[
+  I_{jk} = \int \rho(\mathbf{r})\,
+  (\delta_{jk}r^2 - r_j r_k)\, dV
+\]
+
+\subsection*{3. Boundary Conditions}
+
+\begin{enumerate}
+  \item \theta_1(0) = \pi/6, \quad \dot{\theta}_1(0) = 0
+  \item \theta_2(0) = 0, \quad \dot{\theta}_2(0) = \omega_0
+  \item Energy conserved: E = T + V = \text{const}
+\end{enumerate}</textarea>
+        </div>
+        <div class="demo-output-pane">
+          <div class="demo-pane-header">
+            <span>output — handwritten.pdf</span>
+            <span style="font-size:0.55rem">click line to zoom</span>
+          </div>
+          <div class="demo-output-content" id="demo-output"></div>
+        </div>
+      </div>
+      <p class="demo-note">// sample render — pre-launch preview. actual output quality may vary.</p>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="manifesto-inner fade-up">
+    <p>The hand that holds the pen has always been a proxy for the mind behind it. We built this because mathematical notation is not decoration — it is content, and any tool that strips it away in transit has failed the document.</p>
+    <p>The legitimate uses are numerous and underserved: a professor who wants study guides that feel approachable rather than typeset, a graduate student whose institution requires handwritten submissions for an exam practice ritual, a researcher archiving personal working notes in a consistent format they can annotate by hand later.</p>
+    <p>Academic integrity is a real concern, and we address it directly: this tool does not submit anything on your behalf. What you do with output is your responsibility, the same as it is with a word processor, a calculator, or a photocopier. We are a converter, not a proxy.</p>
+  </div>
+</section>
+
+<section class="how">
+  <div class="container">
+    <h2 class="fade-up">How it works</h2>
+    <div class="how-steps">
+      <div class="how-step fade-up">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h3>Upload .tex or PDF</h3>
+          <p>Paste a .tex source file, drop in a compiled PDF, or type directly. The parser preserves document structure: sections, environments, inline and display math.</p>
+        </div>
+      </div>
+      <div class="how-step fade-up">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h3>Choose handwriting style + paper</h3>
+          <p>Select from several handwriting profiles — varying in slant, spacing, and ink weight. Choose ruled, graph, or plain paper. Equations render in a matching handwritten math style, not degraded to ASCII.</p>
+        </div>
+      </div>
+      <div class="how-step fade-up">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h3>Download multi-page handwritten PDF</h3>
+          <p>Receive a paginated PDF with correct line breaks, margins, and figure placeholders. Math notation is preserved as written characters, not image embeds.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="social">
+  <div class="container">
+    <h2 class="fade-up">What we expect users to say</h2>
+    <div class="quotes">
+      <div class="quote-block fade-up">
+        <div class="quote-meta">u/ml_grad_student · r/GradSchool</div>
+        <div class="quote-text">"Finally something that doesn't turn my \frac into literal backslash-frac. The matrix output actually looks like I wrote it."</div>
+        <div class="quote-label">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="quote-block fade-up">
+        <div class="quote-meta">u/physprof_anon · r/LaTeX</div>
+        <div class="quote-text">"I use this to produce readable study sheets for undergrads. Typeset lecture notes intimidate students. Handwritten ones somehow don't."</div>
+        <div class="quote-label">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="quote-block fade-up">
+        <div class="quote-meta">u/engr_notes · r/learnmath</div>
+        <div class="quote-text">"Dropped in a 12-page problem set. The Lagrangian terms came through clean. Everything else I've tried just skips the math entirely."</div>
+        <div class="quote-label">[Sample testimonial — pre-launch]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="container">
+    <h2 class="fade-up">Questions worth asking</h2>
+    <div class="faq-list">
+
+      <div class="faq-item fade-up">
+        <button class="faq-q">
+          <span>Is this for cheating on assignments?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <p>That's the obvious concern and it deserves a direct answer: yes, someone could use this to produce a fake handwritten submission, in the same way someone could use Google Docs to plagiarize an essay. The tool does not submit anything, does not know what your institution requires, and does not make decisions about academic integrity for you. We're a file converter. The legitimate use cases — accessible study materials, stylized lecture notes, personal archive formats — are real and we're building for those. If your institution has an honor code, you are bound by it regardless of what tools you use.</p>
+        </div>
+      </div>
+
+      <div class="faq-item fade-up">
+        <button class="faq-q">
+          <span>How realistic is the handwriting output, actually?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <p>We're pre-launch and won't overstate it. Current handwriting synthesis models produce output that reads as handwritten but does not fool close inspection — letter consistency, baseline drift, and ink variation are approximate. The math rendering is the harder part: translating \frac and matrix environments into written-looking characters requires a dedicated rendering pass, which is what distinguishes this from tools that drop math entirely. We're building toward a target of "convincing at reading distance" and will publish sample output before launch so you can judge for yourself.</p>
+        </div>
+      </div>
+
+      <div class="faq-item fade-up">
+        <button class="faq-q">
+          <span>Will this work on app stores, or will it get pulled?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <p>This is a web application, not a native app, so App Store policies aren't the primary constraint. There is a real risk that platforms (Reddit, Product Hunt) or institutions treat this as an academic integrity product and restrict it. We're aware of that risk — it's one reason we're building in public and addressing the question head-on rather than burying it in fine print. If the primary demonstrated use case turns out to be fraud rather than the legitimate workflows we're targeting, we'll revisit whether to continue. That's not a comfortable answer, but it's an honest one.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="waitlist" id="waitlist">
+  <div class="container">
+    <h2 class="fade-up">Get early access.<br>Bring your equations.</h2>
+    <p class="waitlist-sub fade-up">We're onboarding researchers, students, and educators in small batches.</p>
+    <div class="fade-up" id="form-wrap">
+      <form class="waitlist-form" action="http://0.0.0.0:8080/waitlist" method="POST" id="waitlist-form">
+        <div class="prompt-wrap">
+          <span class="prompt-char">→</span>
+          <input type="email" name="email" required placeholder="your@email.com">
+        </div>
+        <textarea name="feedback" required rows="3" placeholder="What problem are you trying to solve right now?"></textarea>
+        <input type="hidden" name="idea_id" value="idea_f7e35e98dc4a">
+        <button type="submit" class="submit-btn">submit — request access</button>
+      </form>
+      <p class="form-note">We read every reply.</p>
+    </div>
+    <div class="terminal-confirm" id="term-confirm">
+      <span style="color:var(--muted)">$ </span>submit --to waitlist<br>
+      <span style="color:var(--muted)">connecting...</span><br>
+      <span style="color:var(--accent)">✓ request received</span><br>
+      <span style="color:var(--muted)">we'll be in touch. keep your .tex files handy.</span><br>
+      <span style="color:var(--border)">────────────────────────────────</span><br>
+      <span style="color:var(--muted)">ref: idea_f7e35e98dc4a</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">∂h</div>
+        <div class="footer-tagline">A LaTeX-to-handwriting converter for people who take their equations seriously.</div>
+        <div class="footer-id">idea_f7e35e98dc4a · Built with Sieve</div>
+      </div>
+      <div>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">GitHub</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll fade
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const ans = item.querySelector('.faq-a');
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = '0';
+    });
+    if (!open) {
+      item.classList.add('open');
+      ans.style.maxHeight = ans.scrollHeight + 'px';
+    }
+  });
+});
+
+// Demo renderer
+const mathLines = [
+  "Problem Set 3 — Classical Mechanics",
+  "",
+  "1. Lagrangian of a Double Pendulum",
+  "",
+  "The equations of motion follow from:",
+  "d/dt(∂ℒ/∂θ̇ᵢ) − ∂ℒ/∂θᵢ = 0",
+  "",
+  "2. Inertia Tensor",
+  "",
+  "For a rigid body:",
+  "Ijk = ∫ ρ(r)(δjk r² − rj rk) dV",
+  "",
+  "3. Boundary Conditions",
+  "",
+  "① θ₁(0) = π/6,  θ̇₁(0) = 0",
+  "② θ₂(0) = 0,   θ̇₂(0) = ω₀",
+  "③ Energy conserved: E = T + V = const"
+];
+
+const degradedLines = [
+  "Problem Set 3 — Classical Mechanics",
+  "",
+  "1. Lagrangian of a Double Pendulum",
+  "",
+  "The equations of motion follow from:",
+  "\\frac{d}{dt}\\left(\\frac{\\partial \\mathcal{L}}{\\partial \\dot{\\theta}_i}\\right) - \\...",
+  "",
+  "2. Inertia Tensor",
+  "",
+  "For a rigid body:",
+  "I_{jk} = \\int \\rho(\\mathbf{r})\\, (\\delta_{jk}r^2 - ...",
+  "",
+  "3. Boundary Conditions",
+  "",
+  "\\theta_1(0) = \\pi/6, ... [LaTeX error]",
+  "\\theta_2(0) = 0, ... [parse failed]",
+  "[equation environment not supported]"
+];
+
+let mathMode = true;
+let renderTimeout = null;
+const output = document.getElementById('demo-output');
+
+function renderLines(lines) {
+  output.innerHTML = '';
+  let i = 0;
+  function next() {
+    if (i >= lines.length) return;
+    const span = document.createElement('span');
+    span.className = 'output-line';
+    span.textContent = lines[i] || '\u00a0';
+    if (i === lines.length - 1) {
+      const cursor = document.createElement('span');
+      cursor.className = 'output-cursor';
+      span.appendChild(cursor);
+    }
+    output.appendChild(span);
+    i++;
+    renderTimeout = setTimeout(next, 60);
+  }
+  next();
+}
+
+document.getElementById('math-toggle').addEventListener('change', function() {
+  mathMode = this.checked;
+  document.getElementById('toggle-label').textContent = mathMode ? 'ON' : 'OFF';
+  document.getElementById('toggle-label').style.color = mathMode ? 'var(--accent)' : 'var(--muted)';
+  clearTimeout(renderTimeout);
+  renderLines(mathMode ? mathLines : degradedLines);
+});
+
+output.addEventListener('click', e => {
+  const line = e.target.closest('.output-line');
+  if (!line) return;
+  const wasZoomed = line.classList.contains('zoomed');
+  document.querySelectorAll('.output-line').forEach(l => l.classList.remove('zoomed'));
+  if (!wasZoomed) line.classList.add('zoomed');
+});
+
+// Initial render
+renderLines(mathLines);
+
+// Waitlist form
+document.getElementById('waitlist-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const data = new FormData(this);
+  fetch(this.action, { method: 'POST', body: data })
+    .catch(() => {})
+    .finally(() => {
+      document.getElementById('form-wrap').style.display = 'none';
+      document.getElementById('term-confirm').style.display = 'block';
+    });
+});
+</script>
+</body>
+</html>

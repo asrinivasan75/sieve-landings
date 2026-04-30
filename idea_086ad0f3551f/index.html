@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stubbed Idea</title>
+    <meta name="description" content="w" />
+    <meta property="og:title" content="Stubbed Idea" />
+    <meta property="og:description" content="w" />
+    <meta property="og:type" content="website" />
+
+    <!-- TODO(integration): Plausible analytics. Replace YOUR_DOMAIN below. -->
+    <!-- <script defer data-domain="YOUR_DOMAIN" src="https://plausible.io/js/script.js"></script> -->
+
+    <!-- TODO(integration): GA4. Replace G-XXXXXXX. -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script> -->
+    <!-- <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-XXXXXXX');</script> -->
+
+    <style>
+        :root {
+            --bg: #FAFAFA;
+            --fg: #1a1a1a;
+            --accent: #2E7D5B;
+            --muted: #6b6b6b;
+            --card: #ffffff;
+            --border: rgba(26, 26, 26, 0.08);
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+            line-height: 1.55;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 56px 24px 88px;
+        }
+        header.hero { margin-bottom: 40px; }
+        h1 {
+            font-size: clamp(36px, 5vw, 56px);
+            line-height: 1.1;
+            margin: 0 0 16px;
+            letter-spacing: -0.02em;
+        }
+        .tagline {
+            font-size: clamp(18px, 2.2vw, 22px);
+            color: var(--muted);
+            margin: 0 0 32px;
+        }
+
+        section.problem {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            margin: 28px 0;
+        }
+        section.problem h2 {
+            margin: 0 0 12px;
+            font-size: 20px;
+            letter-spacing: -0.01em;
+            font-weight: 600;
+        }
+        section.problem p { margin: 0 0 12px; }
+        section.problem p:last-child { margin-bottom: 0; }
+
+        .author {
+            display: flex; align-items: center; gap: 14px;
+            margin: 36px 0 28px;
+        }
+        .author svg {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+        .author .meta { font-size: 14px; color: var(--muted); }
+        .author .meta strong { color: var(--fg); display: block; font-weight: 600; }
+
+        form.waitlist {
+            display: flex; flex-wrap: wrap; gap: 10px;
+            margin: 32px 0 16px;
+        }
+        form.waitlist input[type="email"] {
+            flex: 1 1 280px;
+            font-family: inherit;
+            font-size: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--fg);
+        }
+        form.waitlist input[type="email"]:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        form.waitlist button {
+            font-family: inherit;
+            font-size: 16px;
+            padding: 14px 22px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+        form.waitlist button:hover { filter: brightness(0.92); }
+        .waitlist-note { font-size: 13px; color: var(--muted); }
+
+        .kill-criteria {
+            margin-top: 56px;
+            font-size: 13px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+        .kill-criteria details { cursor: pointer; }
+        .kill-criteria summary { color: var(--muted); font-weight: 500; }
+        .kill-criteria pre {
+            white-space: pre-wrap;
+            background: rgba(0,0,0,0.03);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--fg);
+            margin-top: 12px;
+        }
+        footer { margin-top: 72px; font-size: 12px; color: var(--muted); text-align: center; }
+
+        @media (prefers-color-scheme: dark) {
+            :root { --bg: #1a1a1a; --fg: #f3f3f3; --card: #232323; --border: rgba(255,255,255,0.06); --muted: #9b9b9b; }
+            form.waitlist input[type="email"] { background: #2a2a2a; color: var(--fg); }
+            .kill-criteria pre { background: rgba(255,255,255,0.04); color: var(--fg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <h1>Stubbed Idea</h1>
+            <p class="tagline">w</p>
+        </header>
+
+        <section class="problem">
+            <h2>The problem</h2>
+            <p>p</p>
+            <h2 style="margin-top:18px">What we're building</h2>
+            <p>w</p>
+        </section>
+
+        <div class="author">
+            <!-- TODO(swap): replace this placeholder with your real photo. -->
+            <svg viewBox="0 0 100 100" aria-label="Founder photo placeholder">
+                <circle cx="50" cy="50" r="50" fill="#2E7D5B" />
+                <circle cx="50" cy="40" r="16" fill="rgba(255,255,255,0.85)" />
+                <path d="M 18 92 C 18 70, 82 70, 82 92 Z" fill="rgba(255,255,255,0.85)" />
+            </svg>
+            <div class="meta">
+                <strong>[Your name]</strong>
+                <span>Building this in public — joining the list gets you early access and a 1-on-1 onboarding call.</span>
+            </div>
+        </div>
+
+        <form class="waitlist" method="POST" action="https://sieve-srini.fly.dev/waitlist">
+            <input type="hidden" name="idea_id" value="idea_086ad0f3551f" />
+            <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+            <button type="submit">Join the waitlist</button>
+        </form>
+        <p class="waitlist-note">No spam. We'll only email you when there's something concrete to show.</p>
+
+        <div class="kill-criteria">
+            <details>
+                <summary>Founder's kill criteria for this idea (transparency)</summary>
+                <pre>- <10 signups</pre>
+            </details>
+        </div>
+
+        <footer>
+            <p>idea_086ad0f3551f · generated by Sieve</p>
+        </footer>
+    </div>
+
+    <!-- TODO(integration): Click-tracking pixel for paid channels (e.g., Reddit/Twitter). -->
+    <!-- <img src="" alt="" width="1" height="1" style="position:absolute;visibility:hidden" /> -->
+</body>
+</html>

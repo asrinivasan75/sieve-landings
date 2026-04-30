@@ -1,0 +1,1163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMCDraft — Auto-Assembly of FDA Pre-IND CMC Packages</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F4F2EE;
+    --bg-2: #EDEAE4;
+    --surface: #FFFFFF;
+    --border: #D6D1C8;
+    --text: #1A1816;
+    --text-muted: #6B6459;
+    --accent: #B84A00;
+    --accent-hover: #8F3900;
+    --accent-light: #FDF0E8;
+    --mono: 'Courier New', monospace;
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'Inter', system-ui, sans-serif;
+    --max: 860px;
+    --max-wide: 1080px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ---- UTILITY ---- */
+  .container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+  .container--wide { max-width: var(--max-wide); margin: 0 auto; padding: 0 24px; }
+
+  /* ---- NAV ---- */
+  nav {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+    position: sticky; top: 0; z-index: 100;
+  }
+  nav .inner {
+    max-width: var(--max-wide);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .nav-cta:hover { background: var(--accent-hover); }
+
+  /* ---- HERO ---- */
+  .hero {
+    padding: 80px 0 72px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid #E8C4A8;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4.5vw, 3.1rem);
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+    max-width: 700px;
+    margin-bottom: 20px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-tagline {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 13px 26px;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .hero-for {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    border-left: 2px solid var(--border);
+    padding-left: 12px;
+  }
+
+  /* ---- DEMO SECTION ---- */
+  .demo-section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .section-sub {
+    color: var(--text-muted);
+    font-size: 0.97rem;
+    margin-bottom: 36px;
+    max-width: 520px;
+  }
+
+  /* browser frame */
+  .browser-frame {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.09);
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .browser-chrome {
+    background: #EDEAE4;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .browser-dots { display: flex; gap: 6px; }
+  .browser-dots span {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--border);
+  }
+  .browser-dots span:nth-child(1) { background: #E87272; }
+  .browser-dots span:nth-child(2) { background: #E8C872; }
+  .browser-dots span:nth-child(3) { background: #72C872; }
+  .browser-url {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  /* app layout inside frame */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 540px;
+  }
+  .app-sidebar {
+    background: #F8F6F2;
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+  }
+  .sidebar-proj {
+    padding: 10px 16px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .sidebar-item {
+    padding: 8px 16px;
+    font-size: 0.86rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 3px solid transparent;
+    transition: background 0.12s;
+    color: var(--text);
+  }
+  .sidebar-item:hover { background: var(--bg-2); }
+  .sidebar-item.active {
+    background: var(--accent-light);
+    border-left-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .sidebar-item .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    margin-left: auto; flex-shrink: 0;
+  }
+  .dot-ok { background: #4CAF7D; }
+  .dot-warn { background: #E8A000; }
+  .dot-miss { background: #E05252; }
+
+  .app-main { padding: 20px 24px; overflow: hidden; }
+
+  .app-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .app-topbar h2 {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .chip {
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .chip-ok { background: #DFF4EB; color: #1A7A47; }
+  .chip-warn { background: #FFF3D4; color: #8A5A00; }
+  .chip-miss { background: #FFE9E9; color: #9A1A1A; }
+
+  .progress-bar-wrap {
+    background: var(--bg-2);
+    border-radius: 3px;
+    height: 6px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+  .progress-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  /* section cards */
+  .section-cards { display: flex; flex-direction: column; gap: 10px; }
+  .sec-card {
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .sec-card:hover { border-color: #B0A898; }
+  .sec-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    background: var(--surface);
+    user-select: none;
+  }
+  .sec-card-head:hover { background: #FAFAF8; }
+  .sec-num {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    width: 28px;
+    flex-shrink: 0;
+  }
+  .sec-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    flex: 1;
+  }
+  .sec-card-body {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+    background: #FEFEFE;
+  }
+  .sec-card-body.open { display: block; }
+  .draft-text {
+    font-size: 0.83rem;
+    line-height: 1.65;
+    color: var(--text);
+    background: #F9F8F5;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    font-family: var(--sans);
+    white-space: pre-wrap;
+  }
+  .draft-text .highlight {
+    background: #FFF3C4;
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+  .source-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .source-pill {
+    font-size: 0.74rem;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 2px 8px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+  .missing-box {
+    background: #FFF4F4;
+    border: 1px dashed #E09090;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-top: 12px;
+    font-size: 0.83rem;
+    color: #8A2A2A;
+  }
+  .missing-box strong { display: block; margin-bottom: 3px; }
+
+  .action-row {
+    display: flex; gap: 8px; margin-top: 10px;
+  }
+  .btn-sm {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .btn-sm:hover { background: var(--bg-2); }
+  .btn-sm-accent {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-sm-accent:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+  /* demo hint */
+  .demo-hint {
+    text-align: center;
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    margin-top: 14px;
+  }
+  .demo-hint span { background: var(--bg-2); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; font-family: var(--mono); font-size: 0.78rem; }
+
+  /* ---- HOW IT WORKS ---- */
+  .how-section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 36px;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .step-icon {
+    width: 48px; height: 48px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+    letter-spacing: 0.06em;
+  }
+  .step h3 {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .step p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* ---- TESTIMONIALS ---- */
+  .social-section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .mock-label {
+    display: inline-block;
+    background: #F0EDE8;
+    border: 1px solid var(--border);
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    padding: 3px 9px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .testimonial {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 22px;
+  }
+  .testimonial blockquote {
+    font-family: var(--serif);
+    font-size: 0.97rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .testimonial-author {
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .testimonial-role {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* ---- FAQ ---- */
+  .faq-section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-list { margin-top: 36px; display: flex; flex-direction: column; gap: 0; }
+  .faq-item {
+    border-top: 1px solid var(--border);
+  }
+  .faq-item:last-child { border-bottom: 1px solid var(--border); }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 18px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .faq-q-text {
+    font-family: var(--serif);
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .faq-chevron {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+  }
+  .faq-item.open .faq-chevron { transform: rotate(180deg); }
+  .faq-a {
+    display: none;
+    padding: 0 0 18px;
+    font-size: 0.93rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 680px;
+  }
+  .faq-item.open .faq-a { display: block; }
+
+  /* ---- WAITLIST ---- */
+  .waitlist-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .waitlist-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 48px 48px;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .waitlist-card h2 {
+    font-family: var(--serif);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    line-height: 1.25;
+  }
+  .waitlist-card .subtext {
+    color: var(--text-muted);
+    font-size: 0.93rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+  .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .form-field label { font-size: 0.86rem; font-weight: 600; color: var(--text); }
+  .form-field input,
+  .form-field textarea {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 13px;
+    font-family: var(--sans);
+    font-size: 0.93rem;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.15s;
+    outline: none;
+    width: 100%;
+    resize: vertical;
+  }
+  .form-field input:focus,
+  .form-field textarea:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+  .form-field textarea { min-height: 90px; }
+  .btn-submit {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 0.97rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 6px;
+  }
+  .btn-submit:hover { background: var(--accent-hover); }
+  .form-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    padding: 24px;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--text-muted); text-decoration: underline; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 700px) {
+    .app-layout { grid-template-columns: 1fr; }
+    .app-sidebar { display: none; }
+    .steps-grid { grid-template-columns: 1fr; gap: 24px; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .waitlist-card { padding: 28px 20px; }
+    .hero { padding: 48px 0 44px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a class="nav-logo" href="#"><span>CMC</span>Draft</a>
+    <a class="nav-cta" href="#waitlist">Request pilot access</a>
+  </div>
+</nav>
+
+<!-- =================== HERO =================== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">Pre-IND · Pre-launch pilot</div>
+    <h1>Turn raw lab notebooks into an <em>FDA-ready</em> CMC briefing package</h1>
+    <p class="hero-tagline">
+      Upload your ELN exports and batch records; get a structured Module&nbsp;3 first draft with every missing section flagged — so your consultant edits in 20&nbsp;hours instead of drafting for&nbsp;80.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#demo">See the demo</a>
+      <span class="hero-for">For early-stage biotech founders and their CMC regulatory consultants, pre-Series&nbsp;A.</span>
+    </div>
+  </div>
+</section>
+
+<!-- =================== DEMO =================== -->
+<section class="demo-section" id="demo">
+  <div class="container--wide">
+    <p class="section-label">Interactive preview</p>
+    <h2 class="section-title">Click any CMC section to expand its draft</h2>
+    <p class="section-sub">This is sample data for a fictional small-molecule pre-IND package. Click a section in the sidebar or a row below to see the auto-generated narrative and source mapping.</p>
+
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="browser-url">app.cmcdraft.io / projects / NVX-104 / pre-ind-package</div>
+      </div>
+
+      <div class="app-layout">
+        <!-- Sidebar -->
+        <div class="app-sidebar">
+          <div class="sidebar-proj">NVX-104 · Small Molecule</div>
+          <div class="sidebar-item active" data-section="ds-synthesis" onclick="selectSection(this,'ds-synthesis')">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="2" stroke="#B84A00" stroke-width="1.5"/><path d="M4 6.5h5M6.5 4v5" stroke="#B84A00" stroke-width="1.5" stroke-linecap="round"/></svg>
+            3.2.S.2 Synthesis
+            <span class="status-dot dot-ok"></span>
+          </div>
+          <div class="sidebar-item" data-section="ds-char" onclick="selectSection(this,'ds-char')">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="2" stroke="#6B6459" stroke-width="1.5"/><path d="M3.5 9l2-3 2 2 1.5-4" stroke="#6B6459" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            3.2.S.3 Characterisation
+            <span class="status-dot dot-ok"></span>
+          </div>
+          <div class="sidebar-item" data-section="dp-form" onclick="selectSection(this,'dp-form')">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="2" stroke="#6B6459" stroke-width="1.5"/><circle cx="6.5" cy="6.5" r="2.5" stroke="#6B6459" stroke-width="1.4"/></svg>
+            3.2.P.2 Formulation
+            <span class="status-dot dot-warn"></span>
+          </div>
+          <div class="sidebar-item" data-section="analytical" onclick="selectSection(this,'analytical')">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="2" stroke="#6B6459" stroke-width="1.5"/><path d="M3 9.5V5m3 4.5V3m3 6.5V7" stroke="#6B6459" stroke-width="1.4" stroke-linecap="round"/></svg>
+            3.2.S.4 Analytical
+            <span class="status-dot dot-ok"></span>
+          </div>
+          <div class="sidebar-item" data-section="specs" onclick="selectSection(this,'specs')">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="2" stroke="#6B6459" stroke-width="1.5"/><path d="M3.5 4.5h6M3.5 6.5h6M3.5 8.5h4" stroke="#6B6459" stroke-width="1.4" stroke-linecap="round"/></svg>
+            3.2.S.4.1 Specs
+            <span class="status-dot dot-miss"></span>
+          </div>
+          <div class="sidebar-item" data-section="stability" onclick="selectSection(this,'stability')">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="11" rx="2" stroke="#6B6459" stroke-width="1.5"/><path d="M3 8c1-2 2-4 3.5-4S8.5 6 10 6" stroke="#6B6459" stroke-width="1.4" stroke-linecap="round"/></svg>
+            3.2.S.7 Stability
+            <span class="status-dot dot-miss"></span>
+          </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="app-main">
+          <div class="app-topbar">
+            <h2 id="main-section-title">3.2.S.2 — Drug Substance: Manufacture &amp; Synthesis</h2>
+            <span class="chip chip-ok" id="main-section-chip">Draft ready</span>
+          </div>
+
+          <div class="progress-label" id="pkg-progress-label">Package completion: 4 of 6 sections drafted</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pkg-progress-bar" style="width:67%"></div></div>
+
+          <div id="section-content">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="demo-hint">← Click a section in the sidebar &nbsp;·&nbsp; expand rows below &nbsp;·&nbsp; <span>sample data only</span></p>
+  </div>
+</section>
+
+<!-- =================== HOW IT WORKS =================== -->
+<section class="how-section" id="how">
+  <div class="container">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Three steps from lab notebooks to briefing package</h2>
+    <p class="section-sub">The flow is designed around how CMC consultants already work — not a new process on top of theirs.</p>
+
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="13" height="16" rx="2" stroke="#B84A00" stroke-width="1.6"/>
+            <path d="M7 9h6M7 12h6M7 15h4" stroke="#B84A00" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M16 8l4 4-4 4" stroke="#B84A00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="step-num">STEP 01</div>
+          <h3>Ingest your raw source files</h3>
+          <p>Upload ELN exports (Benchling, LabArchives), PDF batch records, Excel analytical data, and synthesis protocols. Files stay in your encrypted workspace; nothing is used to train models.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="14" rx="2" stroke="#B84A00" stroke-width="1.6"/>
+            <path d="M7 8h4M7 11h6" stroke="#B84A00" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M14 7l4 4-4 4" stroke="#B84A00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="6" cy="20" r="1.5" fill="#B84A00"/>
+            <circle cx="12" cy="20" r="1.5" fill="#B84A00"/>
+            <circle cx="18" cy="20" r="1.5" fill="#B84A00"/>
+          </svg>
+        </div>
+        <div>
+          <div class="step-num">STEP 02</div>
+          <h3>Auto-map to CMC pre-IND structure</h3>
+          <p>The system maps extracted content to the FDA-expected pre-IND briefing structure — drug substance synthesis, formulation, analytical methods, proposed specs — flagging every missing section with a specific ask.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 3l2.5 5.5L21 9.5l-4.5 4.5 1 6.5L12 17l-5.5 3.5 1-6.5L3 9.5l6.5-1z" stroke="#B84A00" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="step-num">STEP 03</div>
+          <h3>Consultant reviews, not rewrites</h3>
+          <p>Your CMC consultant receives a first-draft narrative for each section with source citations. They spend their expertise on scientific judgment and FDA strategy — not reformatting batch records into prose.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SOCIAL PROOF =================== -->
+<section class="social-section" id="testimonials">
+  <div class="container">
+    <div>
+      <div class="mock-label">Sample testimonials — pre-launch. What we expect users to say.</div>
+      <p class="section-label" style="margin-top:8px;">Early signal</p>
+      <h2 class="section-title">From the people who live inside pre-IND prep</h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <blockquote>"I've started four pre-INDs from scratch. Every time I open a blank Word doc and stare at the Module 3 outline, I think — this part shouldn't take a PhD. If the first draft is there and I just have to make it right, that changes the economics of a solo consulting practice."</blockquote>
+        <span class="testimonial-author">Dr. M. Kapoor</span>
+        <span class="testimonial-role">Independent CMC Regulatory Consultant, 12 yrs ex-Novartis</span>
+      </div>
+
+      <div class="testimonial">
+        <blockquote>"We're a 6-person biotech. The CMC consultant bill for pre-IND was almost as large as our last equipment purchase. Anything that cuts honest hours off that engagement — not just compresses their billing — is something our board would want us to use."</blockquote>
+        <span class="testimonial-author">J. Reinholt</span>
+        <span class="testimonial-role">Co-founder &amp; CSO, early-stage small molecule oncology startup</span>
+      </div>
+
+      <div class="testimonial">
+        <blockquote>"The part that kills time isn't knowing what to write — it's hunting down which notebook page has the GC purity run, then putting it into sentences FDA expects. If that retrieval and formatting is handled, I can actually add value on every hour I bill."</blockquote>
+        <span class="testimonial-author">R. Osei-Bonsu</span>
+        <span class="testimonial-role">CMC Consultant, former FDA reviewer (CDER, 8 yrs)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FAQ =================== -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <p class="section-label">Honest answers</p>
+    <h2 class="section-title">Questions worth asking before you share your data</h2>
+    <p class="section-sub">These come directly from the risks we've thought hardest about. We'd rather you read them than discover them later.</p>
+
+    <div class="faq-list">
+
+      <div class="faq-item" id="faq1">
+        <button class="faq-q" onclick="toggleFaq('faq1')" aria-expanded="false">
+          <span class="faq-q-text">If this works, what stops an established CMC consultancy — Alacrita, Halloran — from building the same thing internally and cutting you out?</span>
+          <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a">
+          Honestly, that's a real risk — and we're not pretending it isn't. A large consultancy with 40 active engagements a year would have strong incentive to build this internally once they see it work. Our bet is that the FDA section-mapping templates, ELN integration work, and especially the feedback loops from real FDA pre-IND responses accumulate into a durable data asset that takes longer to replicate than it looks. But the truthful answer is: we need to get deep enough into active engagements — and accumulate enough actual FDA feedback — before that window closes. That's why we're moving to pilot immediately with teams we already know, rather than spending months on infrastructure.
+        </div>
+      </div>
+
+      <div class="faq-item" id="faq2">
+        <button class="faq-q" onclick="toggleFaq('faq2')" aria-expanded="false">
+          <span class="faq-q-text">My synthesis route is our core IP. Why would I upload raw lab notebooks to a third-party service, even under NDA?</span>
+          <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a">
+          This is the sharpest risk in the entire thesis, and we treat it as a first-order gate — not something to paper over with an NDA clause. What we're doing in pilots: (1) offering a customer-managed deployment option where data never leaves your infrastructure; (2) working through the CMC consultant as the trusted intermediary who already holds your data under their own NDA; (3) being explicit that your files are not used to train or improve any shared model. We won't know if data-sharing fear is a structural blocker until we ask the 12 teams we already know. If 3 of them decline even under those terms, we'll treat that as a kill signal, not a sales problem.
+        </div>
+      </div>
+
+      <div class="faq-item" id="faq3">
+        <button class="faq-q" onclick="toggleFaq('faq3')" aria-expanded="false">
+          <span class="faq-q-text">My CMC consultant bills by the hour. Won't they quietly kill adoption if this tool cuts their billable hours in half?</span>
+          <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a">
+          For a solo consultant with one pre-IND at a time, a 60% hour reduction looks like $30K of lost revenue — not margin expansion. The "more clients, same rate" logic only holds if they actually have more clients waiting. We've had this conversation directly with consultants in our network, and the split is real: some see it as a margin protector (they're capacity-constrained and turn down work), others see it as a threat to their model. Our honest answer is that the tool is more likely to be adopted first by consultancies running 5+ concurrent engagements, and by sponsors who are the economic buyer. We will not pretend this tension doesn't exist in the pricing motion section of our conversations.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =================== WAITLIST =================== -->
+<section class="waitlist-section" id="waitlist">
+  <div class="container">
+    <div class="waitlist-card">
+      <h2>Join the pilot cohort</h2>
+      <p class="subtext">We're working directly with a small number of active pre-IND teams in the Bay Area, Boston, and San Diego. If you're preparing a pre-IND meeting in the next 6 months, we want to hear what you're working on — not to sell you something, but to understand whether this saves you real time on your actual package.</p>
+
+      <form action="http://127.0.0.1:8787/waitlist" method="POST">
+        <input type="hidden" name="idea_id" value="idea_36d49952e2d2">
+
+        <div class="form-field">
+          <label for="email">Work email</label>
+          <input type="email" id="email" name="email" placeholder="you@yourbiotech.com" required autocomplete="email">
+        </div>
+
+        <div class="form-field">
+          <label for="role">Your role</label>
+          <input type="text" id="role" name="role" placeholder="e.g. CMC consultant, CSO, VP Regulatory" autocomplete="off">
+        </div>
+
+        <div class="form-field">
+          <label for="problem">
+            What part of pre-IND CMC prep is eating the most time right now?
+            <span style="font-weight:400;color:var(--text-muted);"> (one sentence is fine — this tells us what to build first)</span>
+          </label>
+          <textarea id="problem" name="problem" required placeholder="e.g. Getting the analytical method narratives out of raw HPLC reports, or finding the right batch record when a consultant needs the DS purity data…"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Request pilot access</button>
+        <p class="form-note">We read every reply. No automated drip. A human — the founder — will respond within 48 hours.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer>
+  <p>CMCDraft · <code>idea_36d49952e2d2</code> · Built with <a href="#">Sieve</a> · Pre-launch pilot, not an FDA-cleared product — all outputs require expert CMC review before submission.</p>
+</footer>
+
+<!-- =================== JS =================== -->
+<script>
+  // ---- Section data ----
+  var sections = {
+    'ds-synthesis': {
+      title: '3.2.S.2 — Drug Substance: Manufacture & Synthesis',
+      chip: 'Draft ready',
+      chipClass: 'chip-ok',
+      content: `
+        <div class="section-cards">
+          <div class="sec-card" id="card-s21">
+            <div class="sec-card-head" onclick="toggleCard('card-s21')">
+              <span class="sec-num">S.2.1</span>
+              <span class="sec-name">Manufacturer(s)</span>
+              <span class="chip chip-ok" style="font-size:0.72rem;padding:2px 7px;">Complete</span>
+            </div>
+            <div class="sec-card-body" id="body-s21">
+              <div class="source-pills">
+                <span class="source-pill">ELN-2024-NVX104-Batch-003.pdf</span>
+                <span class="source-pill">MFG_SOP_v4.xlsx</span>
+              </div>
+              <div class="draft-text">Drug substance NVX-104 (free base, anhydrous) is manufactured at <span class="highlight">Lonza AG, Visp, Switzerland</span> under a contracted development and manufacturing agreement. The manufacturing site holds a current GMP certificate (EudraGMDP ref: CH-MIA-2023-0047). All synthesis operations referenced in this package were conducted at this facility using equipment qualified per ICH Q7 requirements. The contracted manufacturer has been involved since the <span class="highlight">second kilogram-scale campaign (Batch NVX-B003, May 2024)</span>.</div>
+              <div class="action-row">
+                <button class="btn-sm btn-sm-accent">Accept draft</button>
+                <button class="btn-sm">Edit in doc</button>
+                <button class="btn-sm">Flag for review</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec-card" id="card-s22">
+            <div class="sec-card-head" onclick="toggleCard('card-s22')">
+              <span class="sec-num">S.2.2</span>
+              <span class="sec-name">Description of Manufacturing Process</span>
+              <span class="chip chip-ok" style="font-size:0.72rem;padding:2px 7px;">Complete</span>
+            </div>
+            <div class="sec-card-body" id="body-s22">
+              <div class="source-pills">
+                <span class="source-pill">Synthesis_Route_Rev3.pdf</span>
+                <span class="source-pill">ELN-NVX104-SynthOpt-Jan2024.pdf</span>
+              </div>
+              <div class="draft-text">NVX-104 is synthesised via a <span class="highlight">4-step linear route</span> commencing from commercially available starting material <span class="highlight">4-chloro-2-fluorobenzaldehyde (SM-01)</span>. The route proceeds through: (1) reductive amination to afford secondary amine intermediate INT-01; (2) Boc-protection; (3) nucleophilic aromatic substitution with piperazine; (4) global deprotection and free base crystallisation. Critical quality attributes controlled at the final step include chiral purity (>99.5% ee, established by SFC), residual solvents (ICH Q3C Class 2), and polymorphic form (Form I, confirmed by PXRD).</div>
+              <div class="action-row">
+                <button class="btn-sm btn-sm-accent">Accept draft</button>
+                <button class="btn-sm">Edit in doc</button>
+                <button class="btn-sm">Flag for review</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec-card" id="card-s23">
+            <div class="sec-card-head" onclick="toggleCard('card-s23')">
+              <span class="sec-num">S.2.3</span>
+              <span class="sec-name">Control of Materials</span>
+              <span class="chip chip-warn" style="font-size:0.72rem;padding:2px 7px;">Needs review</span>
+            </div>
+            <div class="sec-card-body" id="body-s23">
+              <div class="source-pills">
+                <span class="source-pill">RM_CoA_SM01_Lot4432.pdf</span>
+              </div>
+              <div class="draft-text">Starting material SM-01 is sourced from <span class="highlight">Sigma-Aldrich (catalog #[REDACTED in source])</span> with a current CoA on file. <span class="highlight">⚠ Note for reviewer: CoA lot number not found in uploaded notebooks — please confirm Lot 4432 is the correct batch used in Batch NVX-B003. Reagent CoA for coupling agent HATU (Step 3) was not found in ingested files.</span></div>
+              <div class="action-row">
+                <button class="btn-sm btn-sm-accent">Accept draft</button>
+                <button class="btn-sm">Edit in doc</button>
+                <button class="btn-sm">Flag for review</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    'ds-char': {
+      title: '3.2.S.3 — Drug Substance: Characterisation',
+      chip: 'Draft ready',
+      chipClass: 'chip-ok',
+      content: `
+        <div class="section-cards">
+          <div class="sec-card" id="card-c1">
+            <div class="sec-card-head" onclick="toggleCard('card-c1')">
+              <span class="sec-num">S.3.1</span>
+              <span class="sec-name">Elucidation of Structure</span>
+              <span class="chip chip-ok" style="font-size:0.72rem;padding:2px 7px;">Complete</span>
+            </div>
+            <div class="sec-card-body" id="body-c1">
+              <div class="source-pills">
+                <span class="source-pill">NVX104_NMR_report_Dec2023.pdf</span>
+                <span class="source-pill">NVX104_HRMS_data.xlsx</span>
+              </div>
+              <div class="draft-text">The structure of NVX-104 (MW 387.4 g/mol, molecular formula C₁₉H₂₂ClFN₃O₂) was confirmed by a combination of ¹H NMR, ¹³C NMR, and HRMS. ¹H NMR (400 MHz, DMSO-d₆) is consistent with the proposed structure, with all expected aromatic, aliphatic, and NH resonances assigned. HRMS (ESI+) found m/z 388.1384 [M+H]⁺, calcd 388.1390. Absolute configuration at C-3 was assigned as <span class="highlight">(R)</span> by X-ray crystallography (CCDC ref: pending — structure solved December 2023).</div>
+              <div class="action-row">
+                <button class="btn-sm btn-sm-accent">Accept draft</button>
+                <button class="btn-sm">Edit in doc</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    'dp-form': {
+      title: '3.2.P.2 — Drug Product: Pharmaceutical Development',
+      chip: 'Gaps flagged',
+      chipClass: 'chip-warn',
+      content: `
+        <div class="section-cards">
+          <div class="sec-card" id="card-p1">
+            <div class="sec-card-head" onclick="toggleCard('card-p1')">
+              <span class="sec-num">P.2.1</span>
+              <span class="sec-name">Components of Drug Product</span>
+              <span class="chip chip-ok" style="font-size:0.72rem;padding:2px 7px;">Draft ready</span>
+            </div>
+            <div class="sec-card-body" id="body-p1">
+              <div class="source-pills">
+                <span class="source-pill">Formulation_Dev_Bench_v2.pdf</span>
+              </div>
+              <div class="draft-text">The proposed Phase 1 formulation is an immediate-release hard gelatin capsule containing <span class="highlight">NVX-104 free base (50 mg per unit)</span> with microcrystalline cellulose (Avicel PH-102), croscarmellose sodium, and magnesium stearate. Excipient grades and suppliers are listed in Table P.2.1-1. All excipients are compendial (USP/NF or Ph.Eur.) and have established safety profiles at the proposed concentrations per FDA's IID database.</div>
+              <div class="action-row">
+                <button class="btn-sm btn-sm-accent">Accept draft</button>
+                <button class="btn-sm">Edit in doc</button>
+              </div>
+            </div>
+          </div>
+          <div class="sec-card" id="card-p2">
+            <div class="sec-card-head" onclick="toggleCard('card-p2')">
+              <span class="sec-num">P.2.3</span>
+              <span class="sec-name">Manufacturing Process Development</span>
+              <span class="chip chip-warn" style="font-size:0.72rem;padding:2px 7px;">Incomplete source</span>
+            </div>
+            <div class="sec-card-body" id="body-p2">
+              <div class="missing-box">
+                <strong>📋 Missing data — action required before this section can be drafted:</strong>
+                No encapsulation process development records found in uploaded files. Expected: blend uniformity data, capsule fill weight range study, or equivalent process characterisation report. Please upload the DP manufacturing development report or Benchling entry for capsule campaign DP-B001.
+              </div>
+              <div class="action-row">
+                <button class="btn-sm">Upload missing file</button>
+                <button class="btn-sm">Write manually</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    'analytical': {
+      title: '3.2.S.4 — Analytical Methods',
+      chip: 'Draft ready',
+      chipClass: 'chip-ok',
+      content: `
+        <div class="section-cards">
+          <div class="sec-card" id="card-a1">
+            <div class="sec-card-head" onclick="toggleCard('card-a1')">
+              <span class="sec-num">S.4.2</span>
+              <span class="sec-name">Analytical Procedures — Identity &amp; Purity</span>
+              <span class="chip chip-ok" style="font-size:0.72rem;padding:2px 7px;">Complete</span>
+            </div>
+            <div class="sec-card-body" id="body-a1">
+              <div class="source-pills">
+                <span class="source-pill">HPLC_Method_NVX104_v3.pdf</span>
+                <span class="source-pill">Validation_Summary_Feb2024.xlsx</span>
+              </div>
+              <div class="draft-text">Identity is confirmed by HPLC retention time comparison against a characterised reference standard (lot NVX-RS-002). Purity is assessed by a validated reversed-phase HPLC method: <span class="highlight">C18 column (150×4.6mm, 3.5µm), mobile phase A 0.1% TFA in water, mobile phase B acetonitrile, gradient 10–90% B over 20 min, UV detection at 254 nm</span>. The method was validated per ICH Q2(R1) for specificity, linearity (0.05–0.5 mg/mL, R²>0.9999), accuracy (98.2–101.4% recovery), and precision (RSD &lt;0.8%, n=6). Limit of detection: 0.03% (area). Limit of quantitation: 0.05% (area).</div>
+              <div class="action-row">
+                <button class="btn-sm btn-sm-accent">Accept draft</button>
+                <button class="btn-sm">Edit in doc</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    'specs': {
+      title: '3.2.S.4.1 — Specification (Drug Substance)',
+      chip: 'Section missing',
+      chipClass: 'chip-miss',
+      content: `
+        <div class="section-cards">
+          <div class="sec-card" id="card-sp1">
+            <div class="sec-card-head" onclick="toggleCard('card-sp1')">
+              <span class="sec-num">S.4.1</span>
+              <span class="sec-name">Specification Table</span>
+              <span class="chip chip-miss" style="font-size:0.72rem;padding:2px 7px;">No source found</span>
+            </div>
+            <div class="sec-card-body" id="body-sp1">
+              <div class="missing-box">
+                <strong>📋 No specification document found in uploaded files.</strong>
+                A pre-IND CMC package requires a proposed drug substance specification table including: appearance, identity (HPLC, IR), assay limits, known impurities with individual limits, total impurities, residual solvents, water content (KF), and microbiological attributes if applicable. Upload your drafted spec table (Word or Excel) or QC release sheet from the most recent batch.
+              </div>
+              <p style="font-size:0.83rem;color:var(--text-muted);margin-top:12px;line-height:1.6;">Once uploaded, we'll auto-populate the narrative cross-referencing your analytical methods in S.4.2.</p>
+              <div class="action-row">
+                <button class="btn-sm">Upload spec document</button>
+                <button class="btn-sm">Use template</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    'stability': {
+      title: '3.2.S.7 — Stability',
+      chip: 'Section missing',
+      chipClass: 'chip-miss',
+      content: `
+        <div class="section-cards">
+          <div class="sec-card" id="card-st1">
+            <div class="sec-card-head" onclick="toggleCard('card-st1')">
+              <span class="sec-num">S.7.1</span>
+              <span class="sec-name">Stability Summary &amp; Proposed Protocol</span>
+              <span class="chip chip-warn" style="font-size:0.72rem;padding:2px 7px;">Partial data</span>
+            </div>
+            <div class="sec-card-body" id="body-st1">
+              <div class="source-pills">
+                <span class="source-pill">Stability_T0_T3mo_NVX104.xlsx</span>
+              </div>
+              <div class="draft-text">Preliminary stability data are available for NVX-104 drug substance stored at <span class="highlight">25°C/60% RH (accelerated) and −20°C (long-term)</span> through 3 months (T=0, T=1M, T=3M). No significant change in assay, purity, or polymorphic form (Form I confirmed by PXRD at T=3M) was observed under either condition. A formal ICH Q1A(R2)-compliant stability protocol has been initiated; <span class="highlight">12-month long-term data are not yet available and will be submitted as a supplement prior to IND filing.</span></div>
+              <div class="action-row">
+                <button class="btn-sm btn-sm-accent">Accept draft</button>
+                <button class="btn-sm">Edit in doc</button>
+                <button class="btn-sm">Flag — data pending</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    }
+  };
+
+  // ---- Section switching ----
+  function selectSection(el, key) {
+    document.querySelectorAll('.sidebar-item').forEach(function(i){ i.classList.remove('active'); });
+    el.classList.add('active');
+    renderSection(key);
+  }
+
+  function renderSection(key) {
+    var s = sections[key];
+    document.getElementById('main-section-title').innerHTML = s.title;
+    var chip = document.getElementById('main-section-chip');
+    chip.textContent = s.chip;
+    chip.className = 'chip ' + s.chipClass;
+    document.getElementById('section-content').innerHTML = s.content;
+  }
+
+  // ---- Card expand/collapse ----
+  function toggleCard(cardId) {
+    var body = document.getElementById('body-' + cardId.replace('card-',''));
+    if (!body) return;
+    body.classList.toggle('open');
+  }
+
+  // ---- FAQ toggle ----
+  function toggleFaq(id) {
+    var item = document.getElementById(id);
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded','false'); });
+    if (!isOpen) {
+      item.classList.add('open');
+      item.querySelector('.faq-q').setAttribute('aria-expanded','true');
+    }
+  }
+
+  // ---- Init: render default section and open first card ----
+  window.addEventListener('DOMContentLoaded', function(){
+    renderSection('ds-synthesis');
+    // auto-open the first card to show interactivity
+    setTimeout(function(){
+      var firstBody = document.getElementById('body-s21');
+      if (firstBody) firstBody.classList.add('open');
+    }, 200);
+  });
+</script>
+
+</body>
+</html>

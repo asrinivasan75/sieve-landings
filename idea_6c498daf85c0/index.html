@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Executives fly blind between annual reviews. Blind Spot delivers private weekly digests of real behavioral patterns — sourced from your team, inside Slack, with enforced anonymity.">
+<meta property="og:title" content="Blind Spot — Anonymous Real-Time Peer Feedback for Executives">
+<meta property="og:description" content="Candid language from your team, in your workflow, without HR. A private weekly digest that tells you how your leadership actually lands.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blind Spot — Anonymous Real-Time Peer Feedback for Executives">
+<meta name="twitter:description" content="Candid language from your team, in your workflow, without HR. A private weekly digest that tells you how your leadership actually lands.">
+<title>Blind Spot — Anonymous Real-Time Peer Feedback for Executives</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iI0U4NjI0QSIvPjx0ZXh0IHg9IjE2IiB5PSIyMiIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMEUwRTBFIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CUzwvdGV4dD48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Onest:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0E0E0E;--text:#D4CFC8;--heading:#F0EBE3;--accent:#E8624A;--accent-hover:#D44E37;
+  --muted:#7A7470;--surface:#1A1918;--border:#2E2B28;--max:1180px;--dur:0.35s;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Onest',sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:var(--max);margin:0 auto;padding:0 40px}
+h1,h2,h3{font-family:'Cormorant',serif;color:var(--heading);line-height:1.15}
+
+/* FADE UP */
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity var(--dur) ease,transform var(--dur) ease}
+.fade-up.visible{opacity:1;transform:none}
+
+/* ── HERO ── */
+.hero{padding:120px 0 80px;background:var(--bg);overflow:hidden}
+.hero-inner{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 60px;align-items:center}
+.hero-rule{background:var(--border);align-self:stretch}
+.hero-left h1{font-family:'Cormorant',serif;font-size:clamp(52px,7vw,88px);font-style:italic;font-weight:600;color:var(--heading);line-height:1.05;margin-bottom:28px}
+.hero-left h1 em{color:var(--accent);font-style:italic}
+.hero-sub{font-size:17px;color:var(--text);line-height:1.65;max-width:420px;margin-bottom:36px}
+.hero-cta{display:inline-block;background:var(--accent);color:#0E0E0E;font-family:'Onest',sans-serif;font-weight:600;font-size:15px;padding:14px 32px;text-decoration:none;letter-spacing:0.03em;transition:background var(--dur),transform var(--dur)}
+.hero-cta:hover{background:var(--accent-hover);transform:translateY(-2px)}
+
+/* digest card mockup */
+.digest-mockup{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--accent);padding:32px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.6)}
+.digest-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.digest-title{font-family:'Cormorant',serif;font-size:18px;color:var(--heading);font-weight:600}
+.digest-week{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted)}
+.mock-pattern{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.mock-pattern:last-child{border-bottom:none}
+.mock-label{font-size:13px;color:var(--text);font-weight:500}
+.mock-bar{height:4px;background:var(--border);border-radius:2px;width:80px;position:relative;overflow:hidden}
+.mock-bar-fill{height:100%;background:var(--accent);border-radius:2px}
+.mock-redact{display:inline-block;background:var(--muted);height:10px;border-radius:1px;vertical-align:middle}
+.mock-line{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+/* ── TENSION ── */
+.tension{padding:80px 0;background:var(--bg);text-align:center}
+.tension-inner{max-width:720px;margin:0 auto}
+.tension-rule{height:1px;background:var(--border);margin-bottom:48px}
+.tension-rule-b{height:1px;background:var(--border);margin-top:48px}
+.tension blockquote{font-family:'Cormorant',serif;font-style:italic;font-size:clamp(28px,4vw,46px);color:var(--heading);line-height:1.25;font-weight:400}
+
+/* ── DEMO ── */
+.demo-section{padding:60px 0 100px;background:var(--surface)}
+.demo-label{font-family:'Fira Code',monospace;font-size:12px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px}
+.demo-heading{font-family:'Cormorant',serif;font-size:clamp(28px,3.5vw,40px);color:var(--heading);margin-bottom:48px;font-weight:600}
+.demo-stack{position:relative;max-width:680px;margin:0 auto}
+.ghost-card{position:absolute;top:14px;left:14px;right:-14px;bottom:-14px;background:var(--bg);border:1px solid var(--border);border-top:2px solid rgba(232,98,74,0.3);z-index:0;border-radius:2px}
+.digest-card{position:relative;z-index:1;background:#1E1C1A;border:1px solid var(--border);border-top:2px solid var(--accent);padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.dc-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.dc-title{font-family:'Cormorant',serif;font-size:22px;font-weight:600;color:var(--heading)}
+.dc-meta{font-family:'Fira Code',monospace;font-size:11px;color:var(--muted)}
+.pattern-tile{border:1px solid var(--border);margin-bottom:10px;cursor:pointer;transition:border-color var(--dur),background var(--dur)}
+.pattern-tile:hover{border-color:var(--accent);background:rgba(232,98,74,0.04)}
+.tile-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px}
+.tile-name{font-size:14px;font-weight:600;color:var(--heading);letter-spacing:0.02em}
+.tile-signal{display:flex;align-items:center;gap:10px}
+.signal-dots{display:flex;gap:4px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.dot.active{background:var(--accent)}
+.tile-chevron{font-size:12px;color:var(--muted);transition:transform var(--dur)}
+.tile-chevron.open{transform:rotate(180deg)}
+.tile-body{padding:0 20px 18px;display:none;border-top:1px solid var(--border)}
+.tile-body.open{display:block}
+.fragment{padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text);line-height:1.6}
+.fragment:last-child{border-bottom:none;padding-bottom:0}
+.redact{display:inline-block;background:var(--accent);opacity:0.7;height:13px;border-radius:1px;vertical-align:middle;width:90px}
+.redact.sm{width:60px}
+.dc-footer{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-family:'Fira Code',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+
+/* ── HOW IT WORKS ── */
+.how{padding:100px 0;background:var(--bg)}
+.how-heading{font-family:'Cormorant',serif;font-size:clamp(28px,3vw,38px);color:var(--heading);margin-bottom:64px;font-weight:600}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
+.step{position:relative}
+.step-num{font-family:'Cormorant',serif;font-size:96px;font-weight:700;color:var(--border);line-height:1;margin-bottom:-20px;display:block;user-select:none}
+.step-label{font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.step-title{font-size:18px;font-weight:600;color:var(--heading);margin-bottom:10px;font-family:'Cormorant',serif}
+.step-desc{font-size:15px;color:var(--text);line-height:1.65}
+.step-icon{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);margin-top:16px;padding:8px 12px;border:1px solid var(--border);display:inline-block}
+
+/* ── ANONYMITY ── */
+.anon{padding:80px 0;background:var(--surface)}
+.anon-heading{font-family:'Cormorant',serif;font-size:clamp(28px,3vw,40px);color:var(--heading);text-align:center;margin-bottom:56px;font-weight:600}
+.anon-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.anon-list{list-style:none}
+.anon-list li{font-family:'Fira Code',monospace;font-size:13px;color:var(--text);padding:14px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.anon-list li:first-child{border-top:1px solid var(--border)}
+.anon-list li::before{content:'→ ';color:var(--accent)}
+.rater-flow{background:var(--bg);border:1px solid var(--border);padding:28px}
+.rater-label{font-family:'Fira Code',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;margin-bottom:20px;text-transform:uppercase}
+.slack-msg{background:var(--surface);border-left:3px solid var(--accent);padding:16px;margin-bottom:12px;font-size:14px;color:var(--text);line-height:1.6}
+.slack-meta{font-size:11px;color:var(--muted);margin-bottom:6px;font-family:'Fira Code',monospace}
+.slack-confirm{font-size:12px;color:var(--muted);font-style:italic;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* ── COMPARISON ── */
+.compare{padding:60px 0 80px;background:var(--bg)}
+.compare-grid{display:grid;grid-template-columns:1fr 2px 1fr;gap:0 60px;align-items:start}
+.compare-rule-col{background:var(--accent);align-self:stretch}
+.compare-col h3{font-family:'Cormorant',serif;font-size:22px;font-weight:600;color:var(--heading);margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.compare-col p{font-size:15px;color:var(--text);line-height:1.75;margin-bottom:20px}
+.compare-col p strong{color:var(--heading);font-weight:500}
+
+/* ── SOCIAL PROOF ── */
+.proof{padding:80px 0;background:var(--surface)}
+.proof-label{font-family:'Fira Code',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:48px}
+.proof-grid{display:grid;grid-template-columns:3fr 2fr;gap:40px;align-items:start}
+.quote-card{border:1px solid var(--border);padding:40px;transition:transform var(--dur),box-shadow var(--dur)}
+.quote-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.quote-card blockquote{font-family:'Cormorant',serif;font-style:italic;font-size:clamp(20px,2.5vw,26px);color:var(--heading);line-height:1.4;margin-bottom:24px}
+.quote-attr{font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+.quote-note{font-size:11px;color:var(--border);margin-top:8px}
+
+/* ── CTA / WAITLIST ── */
+.waitlist{padding:120px 0;background:var(--accent);text-align:center}
+.waitlist h2{font-family:'Cormorant',serif;font-style:italic;font-size:clamp(44px,7vw,80px);color:#0E0E0E;font-weight:600;margin-bottom:48px;line-height:1.05}
+.wl-form{max-width:520px;margin:0 auto}
+.wl-form input[type="email"]{width:100%;padding:16px 20px;background:#0E0E0E;border:1px solid rgba(14,14,14,0.3);color:var(--heading);font-family:'Onest',sans-serif;font-size:16px;margin-bottom:12px;outline:none;transition:border-color var(--dur)}
+.wl-form input[type="email"]::placeholder{color:#5a5550}
+.wl-form input[type="email"]:focus{border-color:var(--heading)}
+.wl-form textarea{width:100%;padding:16px 20px;background:#0E0E0E;border:1px solid rgba(14,14,14,0.3);color:var(--heading);font-family:'Onest',sans-serif;font-size:15px;resize:vertical;outline:none;margin-bottom:12px;transition:border-color var(--dur);line-height:1.5}
+.wl-form textarea::placeholder{color:#5a5550}
+.wl-form textarea:focus{border-color:var(--heading)}
+.wl-form button{width:100%;padding:18px;background:#0E0E0E;color:var(--accent);font-family:'Onest',sans-serif;font-weight:600;font-size:15px;border:none;letter-spacing:0.05em;cursor:pointer;transition:background var(--dur),color var(--dur)}
+.wl-form button:hover{background:#1A1918;color:var(--heading)}
+.form-note{font-size:13px;color:rgba(14,14,14,0.55);margin-top:14px}
+.wl-terms{font-size:13px;color:rgba(14,14,14,0.6);margin-top:12px}
+
+/* FAQ */
+.faq{padding:80px 0;background:var(--bg)}
+.faq-heading{font-family:'Cormorant',serif;font-size:clamp(26px,3vw,36px);color:var(--heading);margin-bottom:48px;font-weight:600}
+.faq-item{border-top:1px solid var(--border);padding:28px 0}
+.faq-item:last-child{border-bottom:1px solid var(--border)}
+.faq-q{font-size:16px;font-weight:600;color:var(--heading);margin-bottom:12px;cursor:pointer}
+.faq-a{font-size:15px;color:var(--text);line-height:1.7}
+
+/* FOOTER */
+footer{padding:40px 0;background:var(--bg);border-top:1px solid var(--border)}
+.footer-inner{display:flex;justify-content:space-between;align-items:center}
+.footer-brand{font-family:'Cormorant',serif;font-style:italic;font-size:20px;color:var(--heading)}
+.footer-tagline{font-size:13px;color:var(--muted);margin-top:4px}
+.footer-links{display:flex;gap:28px}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color var(--dur)}
+.footer-links a:hover{color:var(--heading)}
+.footer-ref{font-size:11px;color:var(--border);margin-top:6px;text-align:right}
+
+@media(max-width:768px){
+  .container{padding:0 24px}
+  .hero-inner{grid-template-columns:1fr;gap:48px}
+  .hero-rule{display:none}
+  .hero-right{display:none}
+  .steps{grid-template-columns:1fr}
+  .anon-grid{grid-template-columns:1fr}
+  .compare-grid{grid-template-columns:1fr;gap:40px}
+  .compare-rule-col{display:none}
+  .proof-grid{grid-template-columns:1fr}
+  .footer-inner{flex-direction:column;gap:24px;text-align:center}
+  .footer-ref{text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-left fade-up">
+        <h1>You're the last one<br>to know about<br><em>yourself.</em></h1>
+        <p class="hero-sub">Blind Spot delivers a private weekly digest of real behavioral patterns — collected from your team inside Slack, synthesized by AI, seen by no one but you. No HR. No annual cycle. No ratings.</p>
+        <a href="#waitlist" class="hero-cta">Request early access</a>
+      </div>
+      <div class="hero-rule"></div>
+      <div class="hero-right fade-up" style="transition-delay:0.1s">
+        <div class="digest-mockup">
+          <div class="digest-header">
+            <span class="digest-title">Weekly Digest</span>
+            <span class="digest-week">Week 14 / Private</span>
+          </div>
+          <div class="mock-pattern">
+            <div>
+              <div class="mock-label">Decision Velocity</div>
+              <div class="mock-line">Made the call before <span class="mock-redact" style="width:70px"></span> — saved two weeks</div>
+            </div>
+            <div class="mock-bar"><div class="mock-bar-fill" style="width:82%"></div></div>
+          </div>
+          <div class="mock-pattern">
+            <div>
+              <div class="mock-label">Credit Attribution</div>
+              <div class="mock-line"><span class="mock-redact" style="width:50px"></span> noticed the pattern in all-hands</div>
+            </div>
+            <div class="mock-bar"><div class="mock-bar-fill" style="width:38%"></div></div>
+          </div>
+          <div class="mock-pattern">
+            <div>
+              <div class="mock-label">Meeting Presence</div>
+              <div class="mock-line">ICs felt the pivot wasn't explained to <span class="mock-redact" style="width:40px"></span></div>
+            </div>
+            <div class="mock-bar"><div class="mock-bar-fill" style="width:61%"></div></div>
+          </div>
+          <div class="mock-pattern" style="border-bottom:none">
+            <div>
+              <div class="mock-label">Escalation Style</div>
+              <div class="mock-line">Finally pushed back — <span class="mock-redact" style="width:55px"></span> needed that</div>
+            </div>
+            <div class="mock-bar"><div class="mock-bar-fill" style="width:74%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TENSION -->
+<section class="tension">
+  <div class="container">
+    <div class="tension-inner fade-up">
+      <div class="tension-rule"></div>
+      <blockquote>"360 reviews happen twice a year. Your blind spots compound daily."</blockquote>
+      <div class="tension-rule-b"></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="demo-label">Live preview</div>
+      <div class="demo-heading">What your digest looks like</div>
+    </div>
+    <div class="demo-stack fade-up" style="transition-delay:0.1s">
+      <div class="ghost-card"></div>
+      <div class="digest-card">
+        <div class="dc-header">
+          <div class="dc-title">Blind Spot — Week 14 Digest</div>
+          <div class="dc-meta">Confidential · 7 observations this week</div>
+        </div>
+
+        <div class="pattern-tile" data-tile="0">
+          <div class="tile-header">
+            <span class="tile-name">Decision Velocity</span>
+            <div class="tile-signal">
+              <div class="signal-dots">
+                <div class="dot active"></div><div class="dot active"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+              </div>
+              <span class="tile-chevron">▼</span>
+            </div>
+          </div>
+          <div class="tile-body">
+            <div class="fragment">"Made the call before the data was in — saved us two weeks." <span class="redact"></span></div>
+            <div class="fragment">"Sometimes the speed is the point. This was one of those times." <span class="redact sm"></span></div>
+            <div class="fragment">"Wish we'd had 48 more hours but the outcome was right." <span class="redact"></span></div>
+          </div>
+        </div>
+
+        <div class="pattern-tile" data-tile="1">
+          <div class="tile-header">
+            <span class="tile-name">Credit Attribution</span>
+            <div class="tile-signal">
+              <div class="signal-dots">
+                <div class="dot active"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              </div>
+              <span class="tile-chevron">▼</span>
+            </div>
+          </div>
+          <div class="tile-body">
+            <div class="fragment">"Took the credit in the all-hands when the win was the team's." <span class="redact"></span></div>
+            <div class="fragment">"<span class="redact sm"></span> did the work. The slide had one name on it."</div>
+          </div>
+        </div>
+
+        <div class="pattern-tile" data-tile="2">
+          <div class="tile-header">
+            <span class="tile-name">Meeting Presence</span>
+            <div class="tile-signal">
+              <div class="signal-dots">
+                <div class="dot active"></div><div class="dot active"></div><div class="dot active"></div><div class="dot active"></div><div class="dot"></div>
+              </div>
+              <span class="tile-chevron">▼</span>
+            </div>
+          </div>
+          <div class="tile-body">
+            <div class="fragment">"<span class="redact"></span> felt the roadmap pivot wasn't explained clearly to ICs."</div>
+            <div class="fragment">"Questions in the Q&A were shut down before they finished." <span class="redact sm"></span></div>
+            <div class="fragment">"The Thursday review — the right call, but the room felt unheard." <span class="redact"></span></div>
+          </div>
+        </div>
+
+        <div class="pattern-tile" data-tile="3">
+          <div class="tile-header">
+            <span class="tile-name">Escalation Style</span>
+            <div class="tile-signal">
+              <div class="signal-dots">
+                <div class="dot active"></div><div class="dot active"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+              </div>
+              <span class="tile-chevron">▼</span>
+            </div>
+          </div>
+          <div class="tile-body">
+            <div class="fragment">"Finally pushed back on <span class="redact sm"></span> — the room needed that."</div>
+            <div class="fragment">"First time in six months I've seen a disagreement surface before it became a crisis." <span class="redact"></span></div>
+          </div>
+        </div>
+
+        <div class="pattern-tile" data-tile="4">
+          <div class="tile-header">
+            <span class="tile-name">Follow-through</span>
+            <div class="tile-signal">
+              <div class="signal-dots">
+                <div class="dot active"></div><div class="dot active"></div><div class="dot active"></div><div class="dot active"></div><div class="dot active"></div>
+              </div>
+              <span class="tile-chevron">▼</span>
+            </div>
+          </div>
+          <div class="tile-body">
+            <div class="fragment">"Said it would be done by Friday. It was done by Wednesday." <span class="redact sm"></span></div>
+            <div class="fragment">"The thing from two months ago actually shipped. Nobody expected that." <span class="redact"></span></div>
+          </div>
+        </div>
+
+        <div class="dc-footer">
+          <span>Next digest: Monday 07:00 local</span>
+          <span>idea_6c498daf85c0 · encrypted at rest</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="container">
+    <div class="how-heading fade-up">How the signal travels</div>
+    <div class="steps">
+      <div class="step fade-up">
+        <span class="step-num">01</span>
+        <div class="step-label">Collect</div>
+        <div class="step-title">Your team submits observations via Slack</div>
+        <p class="step-desc">A lightweight Slack app surfaces a private prompt to peers and direct reports once a week. Free text only — no rating scales, no structured templates. They write one sentence or ten.</p>
+        <div class="step-icon">/ blindspot submit</div>
+      </div>
+      <div class="step fade-up" style="transition-delay:0.1s">
+        <span class="step-num">02</span>
+        <div class="step-label">Synthesize</div>
+        <div class="step-title">AI surfaces patterns, not quotes</div>
+        <p class="step-desc">Observations are grouped by behavioral pattern and stripped of identifying language. The digest shows you where signal clusters — not who said what.</p>
+        <div class="step-icon">k-anon threshold enforced</div>
+      </div>
+      <div class="step fade-up" style="transition-delay:0.2s">
+        <span class="step-num">03</span>
+        <div class="step-label">Deliver</div>
+        <div class="step-title">Monday morning. You. No one else.</div>
+        <p class="step-desc">The digest arrives in your DM. HR never sees it. Your manager never sees it. It lives and dies with you — or you act on it, on your own terms.</p>
+        <div class="step-icon">sealed · private · yours</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANONYMITY -->
+<section class="anon">
+  <div class="container">
+    <div class="anon-heading fade-up">What anonymity actually means here</div>
+    <div class="anon-grid fade-up">
+      <div>
+        <ul class="anon-list">
+          <li>k-anonymity threshold: digest withheld if fewer than 3 observations submitted</li>
+          <li>No IP address or device fingerprint logged from submitters</li>
+          <li>Slack user IDs are hashed before storage; mapping table is never retained</li>
+          <li>AI synthesis layer sees only stripped text — no metadata, no user context</li>
+          <li>Executive account cannot issue decryption request for individual observations</li>
+          <li>Observation fragments in digest are paraphrased, not verbatim, when n &lt; 5</li>
+          <li>Small-team mode (&lt;8 raters): categorical patterns only, no fragments shown</li>
+        </ul>
+      </div>
+      <div>
+        <div class="rater-flow">
+          <div class="rater-label">What your rater sees</div>
+          <div class="slack-msg">
+            <div class="slack-meta">Blind Spot App · DM · private</div>
+            Hi — this is your weekly prompt for <strong>Alex's</strong> digest. One observation, in your own words. No structure required. We won't share what you write. Alex will see a pattern, not your name.
+          </div>
+          <div class="slack-msg" style="border-left-color:var(--muted)">
+            <div class="slack-meta">You → Blind Spot App</div>
+            The Thursday review felt rushed. Good call in the end but the team didn't have space to push back on the framing.
+          </div>
+          <div class="slack-confirm">✓ Received. Your submission is anonymized and will be included only if the threshold is met. You'll never be identified.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="compare">
+  <div class="container">
+    <div class="compare-grid fade-up">
+      <div class="compare-col">
+        <h3>What you have now</h3>
+        <p>A Lattice survey goes out in November. You get a PDF in January. It shows you scored 3.8 out of 5 on "inspires confidence" — <strong>averaged across twelve people who rated you six weeks ago.</strong></p>
+        <p>Your executive coach meets you every two weeks. She's good. But she's working from what you tell her, and you don't know what you don't know.</p>
+        <p>The real observations — the ones your direct reports shared in a 1:1 debrief after the reorg — <strong>evaporated by Thursday.</strong> Nobody wrote them down. Nobody was going to.</p>
+      </div>
+      <div class="compare-rule-col"></div>
+      <div class="compare-col">
+        <h3>What Monday morning looks like with Blind Spot</h3>
+        <p>Seven observations came in this week. Three cluster around decision speed — <strong>your team thinks you're moving faster than the data warrants.</strong> That's the pattern. It's been two weeks running.</p>
+        <p>You don't know who said it. You know it's real because three people said some version of it independently, in their own language, unprompted.</p>
+        <p>You have thirty minutes before your staff meeting. You know exactly which question to ask yourself before you walk in. <strong>That's the whole product.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof">
+  <div class="container">
+    <div class="proof-label fade-up">What we expect users to say</div>
+    <div class="proof-grid fade-up">
+      <div class="quote-card">
+        <blockquote>"I've done three 360s. Every one told me I was 'sometimes hard to read in ambiguity.' This told me I interrupted people in technical reviews — and gave me the specific meeting type where it happened. That's a different level of useful."</blockquote>
+        <div class="quote-attr">VP Engineering · 340-person SaaS company</div>
+        <div class="quote-note">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="quote-card">
+        <blockquote>"The week I got the credit attribution pattern, I changed how I ran the all-hands. I didn't tell anyone I'd seen it. Two people mentioned the change unprompted in their next 1:1."</blockquote>
+        <div class="quote-attr">Chief Product Officer · Series B startup</div>
+        <div class="quote-note">[Sample testimonial — pre-launch]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <div class="faq-heading fade-up">Honest answers to hard questions</div>
+    <div class="faq-item fade-up">
+      <div class="faq-q">Will my team actually submit anything? Why would they criticize their own boss?</div>
+      <div class="faq-a">This is the right question, and we're not going to paper over it. Free-text, unprompted feedback on your manager is a behavior that most tools have failed to sustain. Our answer is: we're designing for the raters who already have something to say and just need a safe container. We're not designing for universal participation. The k-anonymity threshold means a digest only surfaces when signal is real — we'd rather deliver nothing than deliver noise. We'll know within weeks whether rater submission rates are viable, and we'll publish that data. If they aren't, this product doesn't work. We know that.</div>
+    </div>
+    <div class="faq-item fade-up">
+      <div class="faq-q">How can anonymity hold in a team of six? I'll know who said it.</div>
+      <div class="faq-a">In teams under eight, you probably will narrow it down sometimes — and we're not going to pretend otherwise. Small-team mode removes observation fragments entirely and shows only categorical patterns with no quoted language. The AI synthesis is instructed to flatten idiosyncratic phrasing. Does this eliminate inferability? No. Does it raise the bar meaningfully above "my manager can see my name attached to this response"? Yes. We also advise against deploying Blind Spot in teams smaller than five. The honest version of our anonymity guarantee: it's meaningfully stronger than anything else in your workflow right now, and it's not perfect.</div>
+    </div>
+    <div class="faq-item fade-up">
+      <div class="faq-q">Is this just a thin AI wrapper? What stops me from building this with a Google Form and GPT-4?</div>
+      <div class="faq-a">Not much, technically. If you have five direct reports willing to fill out a Google Form about you every week, and you're willing to run the prompt yourself, you can approximate this. What Blind Spot adds: the Slack integration that removes the Google Form step (which kills participation), the k-anonymity enforcement that a manual process can't provide, and the week-over-week pattern tracking that makes single observations meaningful in context. The synthesis layer is not magic. The infrastructure around it — submission, anonymization, threshold enforcement, longitudinal comparison — is where the product actually lives. We think that matters. You should verify that before paying for it.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist" id="waitlist">
+  <div class="container">
+    <h2>Reserve your mirror.</h2>
+    <div class="wl-form">
+      <form action="https://sieve-srini.fly.dev/waitlist" method="POST">
+        <input type="email" name="email" required placeholder="your@email.com">
+        <textarea name="feedback" required rows="3" placeholder="What problem are you trying to solve right now?"></textarea>
+        <input type="hidden" name="idea_id" value="idea_6c498daf85c0">
+        <button type="submit">Request access — no HR required</button>
+      </form>
+      <p class="form-note">We read every reply.</p>
+      <p class="wl-terms">Free for 90 days. No HR. No procurement. Your card, your data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Blind Spot</div>
+        <div class="footer-tagline">The mirror your organization won't hold up for you.</div>
+      </div>
+      <div style="text-align:right">
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Security</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="footer-ref">idea_6c498daf85c0 · Built with Sieve</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll fade-up
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Pattern tile expand
+document.querySelectorAll('.pattern-tile').forEach(tile => {
+  tile.addEventListener('click', () => {
+    const body = tile.querySelector('.tile-body');
+    const chev = tile.querySelector('.tile-chevron');
+    const isOpen = body.classList.contains('open');
+    // close all
+    document.querySelectorAll('.tile-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.tile-chevron').forEach(c => c.classList.remove('open'));
+    if (!isOpen) {
+      body.classList.add('open');
+      chev.classList.add('open');
+    }
+  });
+});
+
+// Auto-open first tile
+(function() {
+  const first = document.querySelector('.pattern-tile');
+  if (first) {
+    first.querySelector('.tile-body').classList.add('open');
+    first.querySelector('.tile-chevron').classList.add('open');
+  }
+})();
+
+// Auto-cycle tiles
+let currentTile = 0;
+const tiles = document.querySelectorAll('.pattern-tile');
+function cycleTile() {
+  tiles.forEach(t => {
+    t.querySelector('.tile-body').classList.remove('open');
+    t.querySelector('.tile-chevron').classList.remove('open');
+  });
+  currentTile = (currentTile + 1) % tiles.length;
+  tiles[currentTile].querySelector('.tile-body').classList.add('open');
+  tiles[currentTile].querySelector('.tile-chevron').classList.add('open');
+}
+let cycleTimer = setInterval(cycleTile, 3200);
+// Pause on user interaction
+document.querySelectorAll('.pattern-tile').forEach(tile => {
+  tile.addEventListener('click', () => {
+    clearInterval(cycleTimer);
+    cycleTimer = null;
+  });
+});
+
+// Form submit feedback
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+  const btn = form.querySelector('button');
+  btn.textContent = 'Sending...';
+  btn.style.opacity = '0.7';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Mortgage lenders lose 72 hours and compliance posture sending loan files offshore. A rules engine that runs lender-specific overlays and returns structured exception reports in under 10 minutes.">
+<meta property="og:title" content="Mortgage Pre-Underwriting Automation SaaS for Lenders">
+<meta property="og:description" content="Replace your offshore BPO pre-underwriting checklist with a configurable rules engine. DSCR, jumbo, non-QM overlays. Structured exception reports in minutes, not days.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mortgage Pre-Underwriting Automation SaaS for Lenders">
+<meta name="twitter:description" content="Replace your offshore BPO pre-underwriting checklist with a configurable rules engine. DSCR, jumbo, non-QM overlays. Structured exception reports in minutes, not days.">
+<title>PreUW — Pre-Underwriting Automation for Mortgage Lenders</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI2IiBmaWxsPSIjRjBBNTAwIi8+PHRleHQgeD0iNiIgeT0iMjMiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMwRDExMTciPlBVPC90ZXh0Pjwvc3ZnPg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#0D1117;color:#C9D1D9;font-family:'Onest',sans-serif;font-size:16px;line-height:1.6}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;color:#F0F6FC;line-height:1.2}
+code,pre,.mono{font-family:'JetBrains Mono',monospace}
+a{color:#F0A500;text-decoration:none}
+a:hover{color:#D4920A}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* Fade-up animation */
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity 220ms ease,transform 220ms ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* ── HERO ── */
+.hero{padding:80px 0 60px;background:#0D1117}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.terminal-window{background:#0D1117;border:1px solid #30363D;border-radius:8px;overflow:hidden}
+.terminal-bar{background:#F0A500;padding:10px 14px;display:flex;align-items:center;gap:8px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%;background:rgba(13,17,23,0.4)}
+.terminal-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:#0D1117;font-weight:500;margin-left:6px;opacity:.8}
+.terminal-body{padding:20px;min-height:260px;position:relative;overflow:hidden}
+.terminal-body::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(240,165,0,0.02) 2px,rgba(240,165,0,0.02) 4px);pointer-events:none}
+.term-line{display:block;font-family:'JetBrains Mono',monospace;font-size:12px;color:#F0A500;line-height:1.7;opacity:0;transition:opacity 100ms}
+.term-line.show{opacity:1}
+.term-line.muted{color:#6E7F8D}
+.term-line.ok{color:#3FB950}
+.term-line.warn{color:#F0A500}
+.term-line.err{color:#F85149}
+.hero-right{}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;color:#F0A500;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px}
+.hero-headline{font-size:clamp(2rem,3.5vw,2.9rem);font-weight:800;color:#F0F6FC;margin-bottom:24px;letter-spacing:-.02em}
+.hero-numbers{display:flex;gap:32px;margin-bottom:28px}
+.hero-stat{border-left:3px solid #F0A500;padding-left:16px}
+.hero-stat .big{font-family:'Bricolage Grotesque',sans-serif;font-size:1.6rem;font-weight:800;color:#F0A500;display:block}
+.hero-stat .label{font-size:13px;color:#6E7F8D}
+.hero-sub{font-size:16px;color:#C9D1D9;margin-bottom:32px;line-height:1.6}
+.btn-primary{display:inline-block;background:#F0A500;color:#0D1117;font-family:'Onest',sans-serif;font-size:15px;font-weight:600;padding:14px 28px;border-radius:6px;border:none;cursor:pointer;transition:background 220ms,transform 220ms;text-decoration:none}
+.btn-primary:hover{background:#D4920A;color:#0D1117;transform:translateY(-1px)}
+.compliance-badges{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap}
+.badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E7F8D;border:1px solid #30363D;padding:4px 10px;border-radius:4px;letter-spacing:.08em}
+
+/* ── PAIN LEDGER ── */
+.pain{padding:60px 0;background:#161B22}
+.pain-header{text-align:center;margin-bottom:48px}
+.pain-header h2{font-size:1.6rem;font-weight:600;color:#6E7F8D;letter-spacing:.04em;text-transform:uppercase}
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid #30363D}
+.pain-cell{padding:36px 32px;border-right:1px solid #30363D}
+.pain-cell:last-child{border-right:none}
+.pain-num{font-family:'Bricolage Grotesque',sans-serif;font-size:3.4rem;font-weight:800;color:#F0A500;display:block;line-height:1;margin-bottom:12px}
+.pain-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6E7F8D;margin-bottom:10px;display:block}
+.pain-desc{font-size:14px;color:#C9D1D9;line-height:1.55}
+
+/* ── DEMO ── */
+.demo-section{padding:80px 0;background:#0D1117}
+.demo-section h2{font-size:2rem;font-weight:800;margin-bottom:8px}
+.demo-subtitle{color:#6E7F8D;margin-bottom:32px;font-size:15px}
+.demo-controls{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.demo-controls label{font-family:'JetBrains Mono',monospace;font-size:12px;color:#6E7F8D}
+.scenario-select{background:#161B22;border:1px solid #30363D;color:#F0F6FC;font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 14px;border-radius:4px;cursor:pointer;outline:none}
+.scenario-select:focus{border-color:#F0A500}
+.run-btn{background:transparent;border:1px solid #F0A500;color:#F0A500;font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 20px;border-radius:4px;cursor:pointer;transition:background 220ms,color 220ms}
+.run-btn:hover{background:#F0A500;color:#0D1117}
+.demo-terminal{border:1px solid #30363D;border-radius:8px;overflow:hidden;margin-bottom:24px}
+.demo-term-body{background:#0D1117;padding:20px;min-height:200px;position:relative;overflow:hidden}
+.demo-term-body::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(240,165,0,0.015) 2px,rgba(240,165,0,0.015) 4px);pointer-events:none}
+.exception-table{width:100%;border-collapse:collapse;font-size:14px;display:none}
+.exception-table th{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6E7F8D;padding:10px 14px;border-bottom:1px solid #30363D;text-align:left}
+.exception-table td{padding:12px 14px;border-bottom:1px solid #161B22;color:#C9D1D9;vertical-align:top}
+.exception-table tr:last-child td{border-bottom:none}
+.exception-row{cursor:pointer;transition:background 220ms}
+.exception-row:hover{background:#161B22}
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;font-weight:500}
+.pill-miss{background:rgba(248,81,73,0.15);color:#F85149;border:1px solid rgba(248,81,73,0.3)}
+.pill-elig{background:rgba(210,153,34,0.15);color:#F0A500;border:1px solid rgba(210,153,34,0.3)}
+.pill-over{background:rgba(63,185,80,0.15);color:#3FB950;border:1px solid rgba(63,185,80,0.3)}
+.status-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;margin-top:16px}
+.status-hold{background:rgba(248,81,73,0.12);border:1px solid rgba(248,81,73,0.4);color:#F85149}
+.status-ready{background:rgba(63,185,80,0.12);border:1px solid rgba(63,185,80,0.4);color:#3FB950}
+.tooltip-row td{background:#161B22;font-size:13px;padding:12px 14px;color:#6E7F8D;border-bottom:1px solid #30363D}
+
+/* ── HOW IT WORKS ── */
+.hiw{padding:70px 0;background:#161B22}
+.hiw h2{font-size:2rem;font-weight:800;margin-bottom:48px;text-align:center}
+.hiw-rail{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.hiw-step{position:relative;padding:32px;border:1px solid #30363D;border-radius:8px;background:#0D1117}
+.step-num{position:absolute;top:-1px;left:20px;font-family:'Bricolage Grotesque',sans-serif;font-size:5rem;font-weight:800;color:#161B22;line-height:1;z-index:0;pointer-events:none;user-select:none;-webkit-text-stroke:1px #30363D}
+.step-content{position:relative;z-index:1}
+.step-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#F0A500;margin-bottom:12px}
+.step-desc{font-size:14px;color:#C9D1D9;margin-bottom:16px;line-height:1.6}
+.code-snippet{background:#161B22;border:1px solid #30363D;border-radius:4px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7F8D;line-height:1.6;overflow-x:auto}
+.code-snippet .k{color:#F0A500}
+.code-snippet .s{color:#3FB950}
+.code-snippet .p{color:#C9D1D9}
+
+/* ── COMPARISON ── */
+.comparison{padding:60px 0;background:#0D1117}
+.comparison h2{font-size:2rem;font-weight:800;margin-bottom:40px;text-align:center}
+.comp-grid{display:grid;grid-template-columns:200px 1fr 1fr;border:1px solid #30363D;border-radius:8px;overflow:hidden}
+.comp-head{padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.06em;border-bottom:1px solid #30363D}
+.comp-head.bpo{background:rgba(248,81,73,0.08);color:#F85149}
+.comp-head.sys{background:rgba(240,165,0,0.1);color:#F0A500}
+.comp-head.label{background:#0D1117;color:#6E7F8D;font-size:11px}
+.comp-row-label{padding:14px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#6E7F8D;border-bottom:1px solid #30363D;background:#0D1117;display:flex;align-items:center}
+.comp-cell{padding:14px 20px;font-size:14px;border-bottom:1px solid #30363D;display:flex;align-items:center}
+.comp-cell.bpo{background:rgba(248,81,73,0.04);color:#C9D1D9}
+.comp-cell.sys{background:rgba(240,165,0,0.05);color:#F0F6FC;font-weight:500}
+
+/* ── RULES ENGINE ── */
+.rules{padding:100px 0 80px;background:#161B22}
+.pull-quote{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:800;color:#F0F6FC;text-align:center;margin-bottom:64px;max-width:800px;margin-left:auto;margin-right:auto;line-height:1.2}
+.pull-quote em{color:#F0A500;font-style:normal}
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.rules-tree-svg{width:100%}
+.rules-copy h3{font-size:1.3rem;font-weight:700;margin-bottom:16px}
+.rules-copy p{font-size:15px;color:#C9D1D9;margin-bottom:16px;line-height:1.65}
+.rules-copy ul{list-style:none;padding:0}
+.rules-copy ul li{font-size:14px;color:#C9D1D9;padding:8px 0;border-bottom:1px solid #30363D;display:flex;gap:10px}
+.rules-copy ul li::before{content:'→';color:#F0A500;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+
+/* ── SOCIAL PROOF ── */
+.social{padding:60px 0;background:#0D1117}
+.social h2{font-size:2rem;font-weight:800;margin-bottom:40px;text-align:center}
+.testimonials{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px}
+.tcard{border:1px solid #30363D;border-radius:8px;overflow:hidden}
+.tcard-bar{background:#F0A500;padding:10px 14px;display:flex;align-items:center;gap:8px}
+.tcard-bar .dot{width:8px;height:8px;border-radius:50%;background:rgba(13,17,23,0.35)}
+.tcard-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:#0D1117;margin-left:6px;font-weight:500}
+.tcard-body{background:#161B22;padding:24px}
+.tcard-quote{font-size:15px;color:#C9D1D9;line-height:1.65;margin-bottom:12px}
+.tcard-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7F8D}
+.tcard-label{font-size:11px;color:#30363D;margin-top:8px;font-style:italic}
+.los-row{border-top:1px solid #30363D;padding-top:32px;text-align:center}
+.los-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7F8D;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+.los-logos{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.los-logo{font-family:'JetBrains Mono',monospace;font-size:13px;color:#30363D;letter-spacing:.08em;border:1px solid #30363D;padding:8px 18px;border-radius:4px}
+
+/* ── SECURITY ── */
+.security{padding:60px 0;background:#161B22}
+.security h2{font-size:2rem;font-weight:800;margin-bottom:40px;text-align:center}
+.security-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid #30363D;border-radius:8px;overflow:hidden}
+.sec-cell{padding:28px 24px;border-right:1px solid #30363D;border-left:3px solid #F0A500;background:#0D1117;margin:1px}
+.sec-cell:last-child{border-right:none}
+.sec-name{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#F0F6FC;margin-bottom:10px;letter-spacing:-.01em}
+.sec-desc{font-size:13px;color:#6E7F8D;line-height:1.55}
+
+/* ── WAITLIST ── */
+.waitlist{padding:120px 0;background:#F0A500}
+.waitlist-inner{max-width:640px;margin:0 auto;text-align:center}
+.waitlist h2{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;color:#0D1117;margin-bottom:16px;line-height:1.15}
+.waitlist-sub{font-size:16px;color:rgba(13,17,23,0.75);margin-bottom:36px;line-height:1.6}
+.waitlist form{display:flex;flex-direction:column;gap:12px;text-align:left}
+.waitlist input[type="email"],
+.waitlist input[type="text"],
+.waitlist textarea{background:#0D1117;border:1px solid rgba(13,17,23,0.3);color:#F0F6FC;font-family:'Onest',sans-serif;font-size:15px;padding:13px 16px;border-radius:6px;outline:none;transition:border-color 220ms;width:100%}
+.waitlist textarea{resize:vertical;min-height:80px}
+.waitlist input:focus,.waitlist textarea:focus{border-color:rgba(13,17,23,0.8)}
+.waitlist input::placeholder,.waitlist textarea::placeholder{color:rgba(201,209,217,0.4)}
+.waitlist .btn-submit{background:#0D1117;color:#F0A500;font-family:'Onest',sans-serif;font-size:15px;font-weight:600;padding:14px;border:none;border-radius:6px;cursor:pointer;transition:background 220ms,transform 220ms;width:100%;margin-top:4px}
+.waitlist .btn-submit:hover{background:#161B22;transform:translateY(-1px)}
+.form-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(13,17,23,0.55);margin-top:12px;text-align:center}
+.waitlist-caveat{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(13,17,23,0.6);margin-top:24px;line-height:1.6}
+
+/* ── FAQ ── */
+.faq{padding:70px 0;background:#0D1117}
+.faq h2{font-size:2rem;font-weight:800;margin-bottom:40px;text-align:center}
+.faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:0}
+.faq-item{border-bottom:1px solid #30363D}
+.faq-q{font-size:15px;font-weight:600;color:#F0F6FC;padding:20px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:color 220ms}
+.faq-q:hover{color:#F0A500}
+.faq-q .chevron{font-family:'JetBrains Mono',monospace;font-size:16px;color:#6E7F8D;flex-shrink:0;transition:transform 220ms}
+.faq-q.open .chevron{transform:rotate(90deg)}
+.faq-a{font-size:14px;color:#C9D1D9;line-height:1.7;padding:0 0 20px;display:none}
+.faq-a.open{display:block}
+
+/* ── FOOTER ── */
+footer{padding:40px 0;background:#0D1117;border-top:1px solid #30363D}
+.footer-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.footer-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#F0F6FC}
+.footer-logo span{color:#F0A500}
+.footer-nav{display:flex;gap:28px;list-style:none}
+.footer-nav a{font-size:13px;color:#6E7F8D;transition:color 220ms}
+.footer-nav a:hover{color:#F0F6FC}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-legal{font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7F8D;line-height:1.6}
+.footer-built{font-family:'JetBrains Mono',monospace;font-size:11px;color:#30363D}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+.hero-grid{grid-template-columns:1fr;gap:32px}
+.pain-grid{grid-template-columns:1fr}
+.pain-cell{border-right:none;border-bottom:1px solid #30363D}
+.pain-cell:last-child{border-bottom:none}
+.hiw-rail{grid-template-columns:1fr}
+.comp-grid{grid-template-columns:140px 1fr 1fr}
+.rules-grid{grid-template-columns:1fr}
+.testimonials{grid-template-columns:1fr}
+.security-grid{grid-template-columns:1fr 1fr}
+.sec-cell{border-right:none}
+.footer-top{flex-direction:column;gap:20px}
+.footer-bottom{flex-direction:column;text-align:center}
+.hero-numbers{flex-direction:column;gap:20px}
+}
+@media(max-width:480px){
+.comp-grid{grid-template-columns:110px 1fr 1fr}
+.security-grid{grid-template-columns:1fr}
+.los-logos{gap:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+<div class="container">
+<div class="hero-grid">
+<div>
+<div class="terminal-window">
+<div class="terminal-bar">
+<div class="dot"></div><div class="dot"></div><div class="dot"></div>
+<span class="terminal-title">pre-uw-engine v0.4.1 — CONNECTED</span>
+</div>
+<div class="terminal-body" id="hero-term">
+<span class="term-line mono" id="hl0">$ pre-uw ingest --file DSCR_2847_PHX.zip</span>
+<span class="term-line mono" id="hl1">  ↳ file_id: fid_2847 | pages: 84 | size: 12.4MB</span>
+<span class="term-line mono ok" id="hl2">  [OK] Document bundle received</span>
+<span class="term-line mono" id="hl3">$ evaluating lender overlay: WFC_DSCR_NON-QM_v3.2</span>
+<span class="term-line mono warn" id="hl4">  [WARN] 12-month rent roll: NOT FOUND</span>
+<span class="term-line mono warn" id="hl5">  [WARN] Property mgmt agreement: NOT FOUND</span>
+<span class="term-line mono" id="hl6">  [INFO] DSCR ratio: 1.18 (min: 1.15 ✓)</span>
+<span class="term-line mono" id="hl7">  [INFO] LTV: 74.5% (overlay max: 75.0% ✓)</span>
+<span class="term-line mono err" id="hl8">  [FAIL] LLC entity: no operating agreement uploaded</span>
+<span class="term-line mono ok" id="hl9">$ exception report generated → 3 flags | STATUS: HOLD</span>
+<span class="term-line mono muted" id="hl10">  elapsed: 8m 41s ▌</span>
+</div>
+</div>
+</div>
+<div class="hero-right">
+<div class="hero-eyebrow">Pre-Underwriting Automation</div>
+<h1 class="hero-headline">Stop waiting three days for Manila's checklist.</h1>
+<div class="hero-numbers">
+<div class="hero-stat">
+<span class="big">72 hrs → 9 min</span>
+<span class="label">Avg. pre-UW turn time, offshore vs. this system</span>
+</div>
+<div class="hero-stat">
+<span class="big">$18k → $6k/mo</span>
+<span class="label">BPO spend replaced by SaaS at 500 loans/month</span>
+</div>
+</div>
+<p class="hero-sub">A configurable rules engine that runs your lender-specific overlays — DSCR, jumbo, non-QM — and returns a structured exception report inside your LOS. DU and LP cannot do this. Your BPO firm takes 72 hours to do it.</p>
+<a href="#waitlist" class="btn-primary">Request a 60-Day Pilot →</a>
+<div class="compliance-badges">
+<span class="badge">SOC 2 TYPE II IN PROGRESS</span>
+<span class="badge">US-ONLY DATA RESIDENCY</span>
+<span class="badge">GLBA COMPLIANT</span>
+<span class="badge">FULL AUDIT TRAIL</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Pain Ledger -->
+<section class="pain">
+<div class="container">
+<div class="pain-header">
+<h2>What you're paying for silence</h2>
+</div>
+<div class="pain-grid fade-up">
+<div class="pain-cell">
+<span class="pain-label">Offshore Delay</span>
+<span class="pain-num">72h</span>
+<p class="pain-desc">Average round-trip for a non-QM file review. That's 72 hours your loan officer is managing borrower anxiety by email instead of closing the next file.</p>
+</div>
+<div class="pain-cell">
+<span class="pain-label">Compliance Exposure</span>
+<span class="pain-num">184</span>
+<p class="pain-desc">Average pages of borrower PII in a single loan package leaving your network. GLBA doesn't care that your BAA is signed — your examiner will ask where the data went.</p>
+</div>
+<div class="pain-cell">
+<span class="pain-label">Rework Cost</span>
+<span class="pain-num">23%</span>
+<p class="pain-desc">Files that come back from offshore with at least one missed condition, according to operations managers we interviewed. Each rework cycle adds another 24-hour lag.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Demo -->
+<section class="demo-section" id="demo">
+<div class="container">
+<h2 class="fade-up">Run a loan file. Watch the engine work.</h2>
+<p class="demo-subtitle fade-up">Select a scenario. The system parses, evaluates your overlay rules, and returns a categorized exception report.</p>
+<div class="demo-controls fade-up">
+<label>SCENARIO:</label>
+<select class="scenario-select" id="scenario-select">
+<option value="dscr">DSCR Rental — Phoenix AZ (LLC Borrower)</option>
+<option value="jumbo">Jumbo Non-QM — Self-Employed (24-mo bank stmt)</option>
+<option value="fha">FHA Standard — First-Time Buyer (manual UW)</option>
+</select>
+<button class="run-btn" id="run-demo">▶ Run Triage</button>
+</div>
+<div class="demo-terminal">
+<div class="terminal-bar">
+<div class="dot"></div><div class="dot"></div><div class="dot"></div>
+<span class="terminal-title" id="demo-title">pre-uw-engine v0.4.1 — CONNECTED</span>
+</div>
+<div class="demo-term-body" id="demo-output">
+<span class="term-line mono muted show">// Select a scenario above and click Run Triage</span>
+</div>
+</div>
+<div id="exception-wrap" style="display:none">
+<table class="exception-table" id="exception-table">
+<thead><tr><th>Flag Category</th><th>Issue</th><th>Guideline</th><th>Resolution</th></tr></thead>
+<tbody id="exception-tbody"></tbody>
+</table>
+<div id="status-badge-wrap" style="margin-top:16px"></div>
+</div>
+</div>
+</section>
+
+<!-- How It Works -->
+<section class="hiw fade-up">
+<div class="container">
+<h2>How a file moves through the system</h2>
+<div class="hiw-rail">
+<div class="hiw-step fade-up">
+<div class="step-num">01</div>
+<div class="step-content">
+<div class="step-title">Ingest</div>
+<p class="step-desc">Your LOS pushes the file package via REST API. No email, no SFTP, no manual upload. The document parser extracts pages, classifies doc types, and confirms completeness against your required-doc matrix.</p>
+<div class="code-snippet"><span class="k">POST</span> /v1/files/ingest<br><span class="p">{</span><br>&nbsp;&nbsp;<span class="k">"los_loan_id"</span>: <span class="s">"LN-48821"</span>,<br>&nbsp;&nbsp;<span class="k">"lender_id"</span>: <span class="s">"wfc_dscr"</span>,<br>&nbsp;&nbsp;<span class="k">"docs_url"</span>: <span class="s">"s3://..."</span><br><span class="p">}</span></div>
+</div>
+</div>
+<div class="hiw-step fade-up">
+<div class="step-num">02</div>
+<div class="step-content">
+<div class="step-title">Evaluate</div>
+<p class="step-desc">The rules engine runs your lender-specific overlays — not Fannie/Freddie guidelines, your overlays. DSCR floor, LTV caps, entity-type requirements, property-management conditions. Each rule is versioned and auditable.</p>
+<div class="code-snippet"><span class="k">"overlay_set"</span>: <span class="s">"NON_QM_DSCR_v3"</span>,<br><span class="k">"dscr_min"</span>: <span class="s">1.15</span>,<br><span class="k">"ltv_max_dscr"</span>: <span class="s">0.75</span>,<br><span class="k">"entity_types"</span>: [<span class="s">"LLC"</span>, <span class="s">"LP"</span>],<br><span class="k">"req_docs"</span>: [<span class="s">"rent_roll_12mo"</span>]</div>
+</div>
+</div>
+<div class="hiw-step fade-up">
+<div class="step-num">03</div>
+<div class="step-content">
+<div class="step-title">Return</div>
+<p class="step-desc">Structured exception JSON posts back to your LOS in under 10 minutes. A human-readable PDF is generated for the underwriter. Every flag cites the guideline, the field value, and the document that resolves it.</p>
+<div class="code-snippet"><span class="k">"status"</span>: <span class="s">"HOLD"</span>,<br><span class="k">"flags"</span>: <span class="s">3</span>,<br><span class="k">"elapsed_sec"</span>: <span class="s">521</span>,<br><span class="k">"report_url"</span>: <span class="s">"..."</span>,<br><span class="k">"audit_log_id"</span>: <span class="s">"al_48821"</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Comparison -->
+<section class="comparison fade-up">
+<div class="container">
+<h2>The actual difference, row by row</h2>
+<div class="comp-grid">
+<div class="comp-head label"></div>
+<div class="comp-head bpo">Offshore BPO Today</div>
+<div class="comp-head sys">This System</div>
+
+<div class="comp-row-label">Turn Time</div>
+<div class="comp-cell bpo">24–72 hours</div>
+<div class="comp-cell sys">&lt; 10 minutes</div>
+
+<div class="comp-row-label">Cost Per File</div>
+<div class="comp-cell bpo">$28–$55 all-in</div>
+<div class="comp-cell sys">$8–$18 (volume tier)</div>
+
+<div class="comp-row-label">Audit Trail</div>
+<div class="comp-cell bpo">Reviewer notes in email</div>
+<div class="comp-cell sys">Immutable log per rule</div>
+
+<div class="comp-row-label">Guideline Change Lag</div>
+<div class="comp-cell bpo">2–4 weeks to retrain</div>
+<div class="comp-cell sys">Self-serve, same day</div>
+
+<div class="comp-row-label">Data Residency</div>
+<div class="comp-cell bpo">Manila / Hyderabad</div>
+<div class="comp-cell sys">US-only, SOC 2 path</div>
+
+<div class="comp-row-label" style="border-bottom:none">GLBA Compliance</div>
+<div class="comp-cell bpo" style="border-bottom:none">BAA + hope</div>
+<div class="comp-cell sys" style="border-bottom:none">Contractual + auditable</div>
+</div>
+</div>
+</section>
+
+<!-- Rules Engine Explainer -->
+<section class="rules">
+<div class="container">
+<div class="pull-quote fade-up"><em>Your overlays. Your logic.</em> No ticket to file.</div>
+<div class="rules-grid">
+<div class="fade-up">
+<svg class="rules-tree-svg" viewBox="0 0 320 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="100" y="10" width="120" height="38" rx="4" fill="#161B22" stroke="#F0A500" stroke-width="1.5"/>
+<text x="160" y="34" font-family="JetBrains Mono,monospace" font-size="12" fill="#F0A500" text-anchor="middle">LOAN FILE IN</text>
+<line x1="160" y1="48" x2="160" y2="80" stroke="#30363D" stroke-width="1.5" stroke-dasharray="4 3"/>
+<rect x="80" y="80" width="160" height="38" rx="4" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+<text x="160" y="104" font-family="JetBrains Mono,monospace" font-size="11" fill="#C9D1D9" text-anchor="middle">DOC COMPLETENESS</text>
+<line x1="100" y1="118" x2="60" y2="155" stroke="#30363D" stroke-width="1.5"/>
+<line x1="220" y1="118" x2="260" y2="155" stroke="#30363D" stroke-width="1.5"/>
+<rect x="10" y="155" width="100" height="36" rx="4" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+<text x="60" y="172" font-family="JetBrains Mono,monospace" font-size="10" fill="#F85149" text-anchor="middle">MISSING DOC</text>
+<text x="60" y="185" font-family="JetBrains Mono,monospace" font-size="9" fill="#6E7F8D" text-anchor="middle">→ flag + list</text>
+<rect x="210" y="155" width="100" height="36" rx="4" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+<text x="260" y="172" font-family="JetBrains Mono,monospace" font-size="10" fill="#3FB950" text-anchor="middle">DOCS COMPLETE</text>
+<text x="260" y="185" font-family="JetBrains Mono,monospace" font-size="9" fill="#6E7F8D" text-anchor="middle">→ continue</text>
+<line x1="260" y1="191" x2="260" y2="215" stroke="#30363D" stroke-width="1.5"/>
+<line x1="260" y1="215" x2="160" y2="215" stroke="#30363D" stroke-width="1.5"/>
+<line x1="160" y1="215" x2="160" y2="230" stroke="#30363D" stroke-width="1.5"/>
+<rect x="80" y="230" width="160" height="36" rx="4" fill="#161B22" stroke="#F0A500" stroke-width="1.5"/>
+<text x="160" y="252" font-family="JetBrains Mono,monospace" font-size="11" fill="#F0A500" text-anchor="middle">OVERLAY EVAL</text>
+<line x1="110" y1="266" x2="70" y2="295" stroke="#30363D" stroke-width="1.5"/>
+<line x1="210" y1="266" x2="250" y2="295" stroke="#30363D" stroke-width="1.5"/>
+<line x1="160" y1="266" x2="160" y2="295" stroke="#30363D" stroke-width="1.5"/>
+<rect x="20" y="295" width="95" height="34" rx="4" fill="rgba(248,81,73,0.1)" stroke="#F85149" stroke-width="1"/>
+<text x="67" y="316" font-family="JetBrains Mono,monospace" font-size="9" fill="#F85149" text-anchor="middle">ELIG FAIL</text>
+<rect x="112" y="295" width="96" height="34" rx="4" fill="rgba(240,165,0,0.1)" stroke="#F0A500" stroke-width="1"/>
+<text x="160" y="316" font-family="JetBrains Mono,monospace" font-size="9" fill="#F0A500" text-anchor="middle">EXCEPTION</text>
+<rect x="205" y="295" width="95" height="34" rx="4" fill="rgba(63,185,80,0.1)" stroke="#3FB950" stroke-width="1"/>
+<text x="252" y="316" font-family="JetBrains Mono,monospace" font-size="9" fill="#3FB950" text-anchor="middle">CLEAR</text>
+</svg>
+</div>
+<div class="rules-copy fade-up">
+<h3>You set the rules. We enforce them at machine speed.</h3>
+<p>Every lender has overlays that DU/LP cannot touch — your minimum DSCR floor, your LTV limits for LLC borrowers, your required-doc matrix for 24-month bank statement products. Right now, that logic lives in a PDF someone in Manila printed out once.</p>
+<p>The self-serve rules editor lets your credit team encode those overlays directly — no engineering ticket, no PS engagement, no 3-week turnaround. When your guidelines change, you update the rule, version it, and the engine picks it up on the next file.</p>
+<ul>
+<li>DSCR ratio floors by property class and loan size</li>
+<li>LTV overlays for entity-type borrowers (LLC, LP, trust)</li>
+<li>Jumbo and non-QM doc requirements by product tier</li>
+<li>Guideline changes versioned with full rollback history</li>
+<li>Every rule decision logged against the rule version in effect at time of evaluation</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Social Proof -->
+<section class="social">
+<div class="container">
+<h2 class="fade-up">What we expect users to say</h2>
+<div class="testimonials fade-up">
+<div class="tcard">
+<div class="tcard-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="tcard-title">ops_manager@regionalmb.com — EVP Operations</span></div>
+<div class="tcard-body">
+<p class="tcard-quote">"The offshore firm would take 48 hours and still miss the rent roll. Now I get a structured exception report in my LOS before the borrower's loan officer finishes their coffee. The audit trail alone is worth it — my compliance officer stopped asking me to 'check with Manila' about why a flag was raised."</p>
+<div class="tcard-meta">Sarah K. — EVP Operations, 200-LO Independent Mortgage Bank</div>
+<div class="tcard-label">[Sample testimonial — pre-launch]</div>
+</div>
+</div>
+<div class="tcard">
+<div class="tcard-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="tcard-title">compliance@creditunion.com — Chief Risk Officer</span></div>
+<div class="tcard-body">
+<p class="tcard-quote">"We were spending $22k a month on a BPO for DSCR files specifically. The error rate on LLC borrowers was embarrassing. I was genuinely skeptical that software could handle our overlay complexity — the self-serve rules editor changed my mind. We updated four guidelines in one afternoon."</p>
+<div class="tcard-meta">Marcus T. — Chief Risk Officer, Regional Credit Union (1,100 loans/month)</div>
+<div class="tcard-label">[Sample testimonial — pre-launch]</div>
+</div>
+</div>
+</div>
+<div class="los-row fade-up">
+<div class="los-label">Certified integrations in progress</div>
+<div class="los-logos">
+<span class="los-logo">ENCOMPASS</span>
+<span class="los-logo">BYTEPRO</span>
+<span class="los-logo">CALYX POINT</span>
+<span class="los-logo">LENDINGPAD</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Security -->
+<section class="security">
+<div class="container">
+<h2 class="fade-up">Before your infosec team asks</h2>
+<div class="security-grid fade-up">
+<div class="sec-cell">
+<div class="sec-name">SOC 2 TYPE II<br><span style="font-size:11px;color:#6E7F8D;font-family:'JetBrains Mono',monospace">In Progress</span></div>
+<p class="sec-desc">Audit engagement underway. We will share our Type I report and in-progress controls documentation in the pilot phase. We will not tell you it's "coming soon" without a timeline.</p>
+</div>
+<div class="sec-cell">
+<div class="sec-name">GLBA Data Residency</div>
+<p class="sec-desc">All borrower PII is processed and stored exclusively on US-based infrastructure. Your data does not transit international boundaries at any point — contractually, not just operationally.</p>
+</div>
+<div class="sec-cell">
+<div class="sec-name">Full Audit Trail</div>
+<p class="sec-desc">Every rule evaluation, every flag, every document action is logged immutably with a timestamp and the rule version in effect. Your examiner can reconstruct every decision without asking anyone.</p>
+</div>
+<div class="sec-cell">
+<div class="sec-name">US-Only Infrastructure</div>
+<p class="sec-desc">Compute, storage, and support personnel are all US-based. No offshore processing, no third-party subprocessors outside the US. We name them all in the DPA.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Waitlist -->
+<section class="waitlist" id="waitlist">
+<div class="waitlist-inner">
+<h2>Stop paying Manila for a spreadsheet.</h2>
+<p class="waitlist-sub">Join the 60-day pilot. Your operations manager gets a single metric to evaluate: pre-underwriting turn time vs. your current offshore baseline. If we don't beat it by 20%, you owe us nothing and we'll tell you why we failed.</p>
+<form action="http://127.0.0.1:8787/waitlist" method="POST">
+<input type="email" name="email" required placeholder="work@yourinstitution.com">
+<input type="text" name="institution_name" placeholder="Institution name">
+<textarea name="feedback" required rows="3" placeholder="What problem are you trying to solve right now?"></textarea>
+<input type="hidden" name="idea_id" value="idea_542eeb83b5a2">
+<button type="submit" class="btn-submit">Request Pilot Access →</button>
+</form>
+<p class="form-note">We read every reply.</p>
+<p class="waitlist-caveat">No software install. No IT ticket required for the pilot. First 10 pilots free.<br>We will not oversell what the system can do in 60 days.</p>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+<div class="container">
+<h2 class="fade-up">Honest answers to the hard questions</h2>
+<div class="faq-list fade-up">
+<div class="faq-item">
+<div class="faq-q">How is this different from Candor Technology or Ocrolus? They're well-funded and adjacent.<span class="chevron">›</span></div>
+<div class="faq-a">Candor automates the underwriter's credit decision — it tells you whether to approve the loan. We stop earlier: we run the pre-underwriting triage that determines whether a file is ready for an underwriter at all. The specific gap we're targeting is configurable lender overlay rules for non-GSE products (DSCR, jumbo, non-QM) — the exact workflows where DU/LP have no opinion and BPOs are most used. Candor's public positioning is on conforming/agency products where Fannie and Freddie rules are stable. Whether that's a permanent gap or they're building toward it is a fair question — we don't have insider knowledge of their roadmap. What we can say: no current live product handles self-serve overlay configuration for non-QM products in a way that replaces a BPO workflow without PS engagement. If that changes, we'll tell you.</div>
+</div>
+<div class="faq-item">
+<div class="faq-q">How long will it actually take to get through our infosec review and go live?<span class="chevron">›</span></div>
+<div class="faq-a">We're not going to tell you "two weeks." A realistic infosec review at an IMB or credit union with a serious compliance posture takes 6–14 weeks. We have our SOC 2 audit engagement underway. We can provide a controls documentation package, a completed vendor questionnaire, and named US-based sub-processors on day one of the pilot conversation. The Encompass integration certification process is separately 6–12 months — that's an Encompass timeline, not ours, and the pilot can run on our API without LOS certification while that's in progress. We'd rather tell you this now than after you've spent 8 weeks in procurement.</div>
+</div>
+<div class="faq-item">
+<div class="faq-q">What if the software costs more than our BPO when you factor in configuration and remaining human review?<span class="chevron">›</span></div>
+<div class="faq-a">That's the kill criteria we've written into our own plan, and it's a legitimate risk. The math works at roughly 500+ loans per month if you're running DSCR and non-QM products — that's where BPO cost per file ($28–$55) exceeds our volume-tier pricing ($8–$18) by enough to absorb setup and any residual human review for edge cases the engine flags for human judgment. Below that volume, the ROI case is weaker and we'll tell you so before you sign anything. The pilot is designed to produce your actual cost-per-file number from real data, not our pro forma.</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<div class="container">
+<div class="footer-top">
+<div class="footer-logo">Pre<span>UW</span></div>
+<ul class="footer-nav">
+<li><a href="#waitlist">Security</a></li>
+<li><a href="#waitlist">Integrations</a></li>
+<li><a href="#waitlist">Pricing</a></li>
+<li><a href="#waitlist">Contact</a></li>
+</ul>
+</div>
+<div class="footer-bottom">
+<div class="footer-legal">idea_542eeb83b5a2 · Not affiliated with DU, LP, Fannie Mae, Freddie Mac, or any GSE.<br>Pre-underwriting automation for mortgage operations teams. Not a credit decision engine.</div>
+<div class="footer-built">Built with Sieve</div>
+</div>
+</div>
+</footer>
+
+<script>
+// ── Hero typing animation ──
+(function(){
+  const lines = document.querySelectorAll('#hero-term .term-line');
+  let i = 0;
+  function showNext(){
+    if(i < lines.length){
+      lines[i].classList.add('show');
+      i++;
+      setTimeout(showNext, i === 1 ? 400 : 350);
+    }
+  }
+  setTimeout(showNext, 600);
+})();
+
+// ── Scroll fade-up ──
+(function(){
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}
+    });
+  },{threshold:0.1});
+  document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+})();
+
+// ── Demo ──
+const scenarios = {
+  dscr:{
+    title:'pre-uw-engine v0.4.1 — DSCR_PHX_2847',
+    lines:[
+      {t:'',c:''},
+      {t:'$ pre-uw ingest --file DSCR_2847_PHX.zip --overlay WFC_DSCR_NON-QM_v3.2',c:''},
+      {t:'  ↳ file_id: fid_2847 | borrower: Phoenix LLC | pages: 84',c:'muted'},
+      {t:'  [OK] Document bundle received and classified',c:'ok'},
+      {t:'  [INFO] Lender overlay loaded: WFC_DSCR_NON-QM_v3.2 (28 active rules)',c:''},
+      {t:'  [PASS] DSCR ratio: 1.18 (floor: 1.15) ✓',c:'ok'},
+      {t:'  [PASS] LTV: 74.5% (overlay max: 75.0%) ✓',c:'ok'},
+      {t:'  [WARN] 12-month rent roll: NOT FOUND in document set',c:'warn'},
+      {t:'  [WARN] Property management agreement: NOT FOUND',c:'warn'},
+      {t:'  [FAIL] LLC operating agreement: not uploaded',c:'err'},
+      {t:'  ─────────────────────────────────────────',c:'muted'},
+      {t:'$ exception report generated → 3 flags | STATUS: HOLD | elapsed: 8m 41s',c:'ok'},
+    ],
+    status:'HOLD',
+    flags:[
+      {cat:'MISSING DOC',pill:'pill-miss',issue:'12-month rent roll absent',guideline:'WFC DSCR v3.2 §4.1',resolution:'Upload signed lease agreement + trailing 12-month rental history',tip:'Rent roll is required for any DSCR file with LLC borrower entity. Missing this is the #1 BPO miss on DSCR products.'},
+      {cat:'MISSING DOC',pill:'pill-miss',issue:'Property management agreement not uploaded',guideline:'WFC DSCR v3.2 §4.3',resolution:'Upload executed property management agreement or self-management declaration',tip:'If borrower self-manages, a signed declaration substitutes. BPOs frequently fail to flag this distinction.'},
+      {cat:'ELIGIBILITY FAIL',pill:'pill-elig',issue:'LLC operating agreement missing',guideline:'WFC DSCR v3.2 §2.1 — Entity Borrower',resolution:'Upload current LLC operating agreement showing member interests',tip:'Entity borrowers require operating agreement regardless of DSCR ratio. This triggers a separate compliance checklist.'},
+    ]
+  },
+  jumbo:{
+    title:'pre-uw-engine v0.4.1 — JUMBO_SE_9912',
+    lines:[
+      {t:'',c:''},
+      {t:'$ pre-uw ingest --file JUMBO_9912_SE.zip --overlay PRIV_JUMBO_SE_v1.8',c:''},
+      {t:'  ↳ file_id: fid_9912 | borrower: self-employed, sole prop | pages: 112',c:'muted'},
+      {t:'  [OK] Document bundle received and classified',c:'ok'},
+      {t:'  [INFO] Lender overlay loaded: PRIV_JUMBO_SE_v1.8 (34 active rules)',c:''},
+      {t:'  [PASS] Loan amount: $2.1M (max: $3.0M) ✓',c:'ok'},
+      {t:'  [PASS] FICO: 778 (min: 720) ✓',c:'ok'},
+      {t:'  [FAIL] Bank statements: 13 months found, 24 required',c:'err'},
+      {t:'  [WARN] P&L statement: prepared, not CPA-certified',c:'warn'},
+      {t:'  [PASS] Reserves: 24 months documented ✓',c:'ok'},
+      {t:'  ─────────────────────────────────────────',c:'muted'},
+      {t:'$ exception report generated → 2 flags | STATUS: HOLD | elapsed: 7m 12s',c:'ok'},
+    ],
+    status:'HOLD',
+    flags:[
+      {cat:'MISSING DOC',pill:'pill-miss',issue:'Bank statements: 13 months, 24 required',guideline:'PRIV JUMBO SE v1.8 §3.2',resolution:'Collect and upload remaining 11 months of personal and business bank statements',tip:'Self-employed jumbo products almost universally require 24-month bank statement history. 12-month programs exist but under different overlays.'},
+      {cat:'OVERLAY EXCEPTION',pill:'pill-over',issue:'P&L statement not CPA-certified',guideline:'PRIV JUMBO SE v1.8 §3.4',resolution:'Replace with CPA-prepared and signed P&L or upgrade to full tax return documentation path',tip:'Prepared vs. CPA-certified is a common BPO miss. The distinction changes the income calculation method, not just the doc requirement.'},
+    ]
+  },
+  fha:{
+    title:'pre-uw-engine v0.4.1 — FHA_STD_7743',
+    lines:[
+      {t:'',c:''},
+      {t:'$ pre-uw ingest --file FHA_7743.zip --overlay FHA_MANUAL_UW_v2023',c:''},
+      {t:'  ↳ file_id: fid_7743 | borrower: W-2, first-time buyer | pages: 61',c:'muted'},
+      {t:'  [OK] Document bundle received and classified',c:'ok'},
+      {t:'  [INFO] Overlay: FHA_MANUAL_UW_v2023 | DU: ineligible (score 578)',c:''},
+      {t:'  [PASS] FHA FICO floor (manual UW): 580 — BORDERLINE',c:'warn'},
+      {t:'  [PASS] DTI: 44.1% (manual UW max: 50%) ✓',c:'ok'},
+      {t:'  [PASS] 12-month rental history: verified via VOR',c:'ok'},
+      {t:'  [FAIL] Gift letter: funds documented, letter not signed by donor',c:'err'},
+      {t:'  [PASS] All FHA required docs present ✓',c:'ok'},
+      {t:'  ─────────────────────────────────────────',c:'muted'},
+      {t:'$ exception report generated → 1 flag | STATUS: HOLD | elapsed: 5m 58s',c:'ok'},
+    ],
+    status:'HOLD',
+    flags:[
+      {cat:'ELIGIBILITY FAIL',pill:'pill-elig',issue:'Gift letter unsigned by donor',guideline:'FHA HUD 4000.1 §II.A.3.e',resolution:'Obtain donor signature on gift letter; confirm gift funds already transferred',tip:'Unsigned gift letters are a top FHA condition. The file is otherwise strong — single flag means ready for UW pending this doc.'},
+    ]
+  }
+};
+
+let running=false;
+document.getElementById('run-demo').addEventListener('click',function(){
+  if(running)return;
+  const key=document.getElementById('scenario-select').value;
+  const s=scenarios[key];
+  const out=document.getElementById('demo-output');
+  const wrap=document.getElementById('exception-wrap');
+  const table=document.getElementById('exception-table');
+  const tbody=document.getElementById('exception-tbody');
+  const statusWrap=document.getElementById('status-badge-wrap');
+  document.getElementById('demo-title').textContent=s.title;
+  out.innerHTML='';
+  wrap.style.display='none';
+  table.style.display='none';
+  tbody.innerHTML='';
+  statusWrap.innerHTML='';
+  running=true;
+  let i=0;
+  function nextLine(){
+    if(i<s.lines.length){
+      const l=s.lines[i];
+      if(l.t===''){i++;nextLine();return;}
+      const span=document.createElement('span');
+      span.className='term-line mono show '+(l.c||'');
+      span.textContent=l.t;
+      out.appendChild(span);
+      out.scrollTop=out.scrollHeight;
+      i++;
+      setTimeout(nextLine,i<4?280:220);
+    } else {
+      setTimeout(()=>{
+        wrap.style.display='block';
+        table.style.display='table';
+        s.flags.forEach((f,fi)=>{
+          const tr=document.createElement('tr');
+          tr.className='exception-row';
+          tr.innerHTML=`<td><span class="pill ${f.pill}">${f.cat}</span></td><td>${f.issue}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7F8D">${f.guideline}</td><td style="font-size:13px;color:#6E7F8D">${f.resolution}</td>`;
+          tbody.appendChild(tr);
+          const tip=document.createElement('tr');
+          tip.className='tooltip-row';
+          tip.style.display='none';
+          tip.innerHTML=`<td colspan="4">ℹ <strong>Why this matters:</strong> ${f.tip}</td>`;
+          tbody.appendChild(tip);
+          tr.addEventListener('click',()=>{
+            const open=tip.style.display==='table-row';
+            tip.style.display=open?'none':'table-row';
+          });
+        });
+        const badge=document.createElement('div');
+        badge.className='status-badge '+(s.status==='HOLD'?'status-hold':'status-ready');
+        badge.innerHTML=(s.status==='HOLD'?'⛔ STATUS: HOLD — exceptions require resolution before underwriter assignment':'✅ STATUS: READY FOR UNDERWRITER');
+        statusWrap.appendChild(badge);
+        running=false;
+      },500);
+    }
+  }
+  nextLine();
+});
+
+// ── FAQ accordion ──
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const a=q.nextElementSibling;
+    const open=a.classList.contains('open');
+    document.querySelectorAll('.faq-a').forEach(x=>x.classList.remove('open'));
+    document.querySelectorAll('.faq-q').forEach(x=>x.classList.remove('open'));
+    if(!open){a.classList.add('open');q.classList.add('open');}
+  });
+});
+</script>
+</body>
+</html>

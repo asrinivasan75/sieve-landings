@@ -1,0 +1,1612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustDraft — Auto-Draft Revocable Living Trusts for Solo T&E Attorneys</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #FAF7F2;
+    --surface: #FFFFFF;
+    --ink: #1A1714;
+    --ink-mid: #4A4540;
+    --ink-muted: #8A8480;
+    --accent: #B45309;
+    --accent-light: #FEF3C7;
+    --accent-dark: #92400E;
+    --border: #E5E0D8;
+    --border-light: #F0EDE8;
+    --mono: 'Courier New', monospace;
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'Inter', system-ui, sans-serif;
+    --radius: 6px;
+    --radius-lg: 10px;
+    --shadow: 0 1px 4px rgba(26,23,20,0.08), 0 4px 16px rgba(26,23,20,0.06);
+    --shadow-sm: 0 1px 3px rgba(26,23,20,0.10);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  section { padding: 80px 0; }
+  section + section { border-top: 1px solid var(--border); }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-brand {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .nav-brand span {
+    color: var(--accent);
+  }
+
+  .nav-cta {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-dark);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .nav-cta:hover { background: var(--accent); color: white; }
+
+  /* ── Hero ── */
+  #hero {
+    padding: 96px 0 80px;
+    border-top: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 20px;
+    max-width: 640px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent-dark);
+  }
+
+  .hero-tagline {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink-mid);
+    max-width: 560px;
+    margin-bottom: 12px;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 36px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    line-height: 1;
+  }
+
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    display: inline-block;
+    color: var(--ink-mid);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 12px 0;
+  }
+
+  .btn-ghost:hover { color: var(--ink); }
+
+  .hero-stat-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .hero-stat strong {
+    display: block;
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .hero-stat span {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  /* ── Demo Section ── */
+  #demo { padding: 80px 0; }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .section-sub {
+    color: var(--ink-mid);
+    font-size: 16px;
+    margin-bottom: 40px;
+    max-width: 520px;
+  }
+
+  /* Browser Frame */
+  .browser-frame {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow), 0 0 0 1px var(--border);
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .browser-chrome {
+    background: #F0EDE8;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .browser-dots {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .browser-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-red { background: #FC5F57; }
+  .dot-yellow { background: #FDBD2E; }
+  .dot-green { background: #27C840; }
+
+  .browser-url {
+    flex: 1;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .browser-body {
+    padding: 0;
+    min-height: 520px;
+  }
+
+  /* Demo App UI */
+  .demo-app {
+    display: flex;
+    min-height: 520px;
+    font-size: 14px;
+  }
+
+  .demo-sidebar {
+    width: 220px;
+    background: #F7F4EF;
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    flex-shrink: 0;
+  }
+
+  .demo-sidebar-logo {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid var(--border-light);
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .demo-sidebar-logo span { color: var(--accent); }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--ink-mid);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.12s;
+    user-select: none;
+  }
+
+  .sidebar-item:hover { background: var(--border-light); color: var(--ink); }
+
+  .sidebar-item.active {
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-left-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .sidebar-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding: 12px 16px 4px;
+  }
+
+  .demo-main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-topbar {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .demo-topbar-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .demo-topbar-sub {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .demo-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  /* Tab switcher */
+  .demo-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--border-light);
+    border-radius: var(--radius);
+    padding: 3px;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+
+  .demo-tab {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--ink-muted);
+    border: none;
+    background: none;
+    transition: all 0.12s;
+    user-select: none;
+  }
+
+  .demo-tab:hover { color: var(--ink); }
+
+  .demo-tab.active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+    font-weight: 600;
+  }
+
+  /* Tab panels */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Intake form panel */
+  .intake-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .intake-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .intake-field.full { grid-column: 1 / -1; }
+
+  .intake-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .intake-value {
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+    line-height: 1.4;
+  }
+
+  .intake-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 100%;
+    transition: width 0.4s;
+  }
+
+  .intake-flag {
+    background: #FFFBEB;
+    border: 1px solid #FCD34D;
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #78350F;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 4px;
+  }
+
+  .draft-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s;
+    margin-top: 4px;
+  }
+
+  .draft-btn:hover { background: var(--accent-dark); }
+
+  /* Draft output panel */
+  .draft-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .draft-meta {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+
+  .draft-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .draft-action-btn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .draft-action-btn.outline {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--ink-mid);
+  }
+
+  .draft-action-btn.outline:hover { border-color: var(--ink-mid); color: var(--ink); }
+
+  .draft-action-btn.filled {
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: white;
+  }
+
+  .draft-action-btn.filled:hover { background: var(--accent-dark); }
+
+  .draft-document {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--ink);
+    max-height: 320px;
+    overflow-y: auto;
+    font-family: 'Georgia', serif;
+  }
+
+  .draft-document h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .draft-document .doc-center {
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+
+  .draft-document p { margin-bottom: 8px; }
+
+  .draft-document .clause-title {
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    color: var(--ink-mid);
+  }
+
+  .highlight-clause {
+    background: #FEF9C3;
+    border-left: 2px solid #EAB308;
+    padding: 4px 8px;
+    margin: 4px 0;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .clause-flag-inline {
+    font-size: 10px;
+    background: #FEF3C7;
+    color: #92400E;
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin-left: 4px;
+    font-family: var(--sans);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+  }
+
+  .draft-flags {
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .draft-flags-header {
+    background: #FFFBEB;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #78350F;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #FCD34D;
+  }
+
+  .draft-flag-item {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--ink-mid);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  .draft-flag-item:last-child { border-bottom: none; }
+
+  /* History panel */
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .history-table th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-muted);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .history-table td {
+    padding: 9px 8px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--ink-mid);
+    vertical-align: middle;
+  }
+
+  .history-table td:first-child { color: var(--ink); font-weight: 500; }
+
+  .history-table tr:hover td { background: var(--border-light); cursor: pointer; }
+
+  .status-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-ready { background: #D1FAE5; color: #065F46; }
+  .badge-review { background: #FEF3C7; color: #92400E; }
+  .badge-draft { background: #E0E7FF; color: #3730A3; }
+
+  /* Draft generation animation */
+  .draft-generating {
+    text-align: center;
+    padding: 60px 20px;
+    display: none;
+  }
+
+  .draft-generating.visible { display: block; }
+
+  .generating-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .generating-text {
+    font-size: 14px;
+    color: var(--ink-mid);
+    font-style: italic;
+  }
+
+  .generating-steps {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 8px;
+    height: 20px;
+  }
+
+  /* ── How it Works ── */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 40px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--accent-light);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+  }
+
+  .step-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+
+  .step-connector {
+    display: none;
+  }
+
+  /* ── Testimonials ── */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 32px;
+  }
+
+  .testimonial-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: box-shadow 0.15s;
+  }
+
+  .testimonial-card:hover { box-shadow: var(--shadow); }
+
+  .testimonial-stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .star {
+    color: #F59E0B;
+    font-size: 14px;
+  }
+
+  .testimonial-quote {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.65;
+    font-style: italic;
+    flex: 1;
+  }
+
+  .testimonial-author {
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
+  }
+
+  .author-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .author-role {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  .testimonials-disclaimer {
+    font-size: 12px;
+    color: var(--ink-muted);
+    background: var(--border-light);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  /* ── FAQ ── */
+  .faq-list {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .faq-item:last-child { border-bottom: none; }
+
+  .faq-q {
+    padding: 18px 20px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    user-select: none;
+    background: var(--surface);
+    transition: background 0.1s;
+    line-height: 1.5;
+  }
+
+  .faq-q:hover { background: var(--border-light); }
+
+  .faq-chevron {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
+
+  .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+  .faq-a {
+    display: none;
+    padding: 0 20px 18px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink-mid);
+    background: var(--surface);
+  }
+
+  .faq-item.open .faq-a { display: block; }
+
+  .faq-a strong { color: var(--ink); }
+
+  /* ── Waitlist ── */
+  #waitlist {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+
+  .waitlist-inner {
+    max-width: 560px;
+  }
+
+  .waitlist-form {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .form-input, .form-textarea {
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    width: 100%;
+  }
+
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(180,83,9,0.10);
+  }
+
+  .form-textarea {
+    min-height: 90px;
+    resize: vertical;
+    line-height: 1.55;
+  }
+
+  .form-hint {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .form-submit {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 13px 24px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    align-self: flex-start;
+  }
+
+  .form-submit:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .form-submit:active { transform: translateY(0); }
+
+  .form-note {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .footer-text {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 680px) {
+    section { padding: 56px 0; }
+    #hero { padding: 64px 0 48px; }
+
+    .demo-sidebar { display: none; }
+
+    .steps-grid { grid-template-columns: 1fr; gap: 24px; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .intake-grid { grid-template-columns: 1fr; }
+
+    .draft-actions { flex-direction: column; }
+
+    .demo-tabs { flex-wrap: wrap; }
+
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* Focus styles */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Trust<span>Draft</span></div>
+  <a href="#waitlist" class="nav-cta">Get early access</a>
+</nav>
+
+<!-- ── 1. HERO ── -->
+<section id="hero">
+  <div class="container">
+    <p class="hero-eyebrow">For solo T&amp;E attorneys</p>
+    <h1 class="hero-title">A 12-question intake form that <em>outputs a ready-to-review trust draft</em> in under 5 minutes</h1>
+    <p class="hero-tagline">Built by a former T&amp;E paralegal, not a generic template engine. Jurisdiction-aware clause logic, edge-case flags included. $40 per trust instead of $150 in paralegal hours.</p>
+    <p class="hero-sub">For solo or small T&amp;E practices billing 20–100+ revocable living trusts per year.</p>
+    <div class="hero-actions">
+      <a href="#demo" class="btn-primary">Try the demo</a>
+      <a href="#waitlist" class="btn-ghost">Join the waitlist →</a>
+    </div>
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <strong>$110</strong>
+        <span>saved per trust in paralegal cost</span>
+      </div>
+      <div class="hero-stat">
+        <strong>&lt; 5 min</strong>
+        <span>from intake to review-ready draft</span>
+      </div>
+      <div class="hero-stat">
+        <strong>$40</strong>
+        <span>per trust, no subscription required</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 2. DEMO ── -->
+<section id="demo">
+  <div class="container">
+    <p class="section-label">Live preview</p>
+    <h2 class="section-title">See the product working</h2>
+    <p class="section-sub">This is the actual interface. Click through the tabs below — submit an intake, read the output, check the draft history.</p>
+
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-url">app.trustdraft.io / new-trust</div>
+      </div>
+      <div class="browser-body">
+        <div class="demo-app">
+
+          <!-- Sidebar -->
+          <div class="demo-sidebar">
+            <div class="demo-sidebar-logo">Trust<span>Draft</span></div>
+            <div class="sidebar-section-label">Workflow</div>
+            <div class="sidebar-item active" data-panel="intake" onclick="switchSidebarItem(this, 'intake')">
+              <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="12" height="12" rx="1.5"/>
+                <line x1="5" y1="5.5" x2="11" y2="5.5"/>
+                <line x1="5" y1="8" x2="11" y2="8"/>
+                <line x1="5" y1="10.5" x2="9" y2="10.5"/>
+              </svg>
+              New intake
+            </div>
+            <div class="sidebar-item" data-panel="draft" onclick="switchSidebarItem(this, 'draft')">
+              <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 2h7l3 3v9H3z"/>
+                <polyline points="10 2 10 5 13 5"/>
+                <line x1="5" y1="8" x2="11" y2="8"/>
+                <line x1="5" y1="10.5" x2="9" y2="10.5"/>
+              </svg>
+              Draft output
+            </div>
+            <div class="sidebar-item" data-panel="history" onclick="switchSidebarItem(this, 'history')">
+              <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="8" cy="8" r="5.5"/>
+                <polyline points="8 5.5 8 8 10 9.5"/>
+              </svg>
+              Trust history
+            </div>
+            <div class="sidebar-section-label">Settings</div>
+            <div class="sidebar-item" onclick="">
+              <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="8" cy="8" r="2"/>
+                <path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.6 3.6l1.1 1.1M11.3 11.3l1.1 1.1M3.6 12.4l1.1-1.1M11.3 4.7l1.1-1.1"/>
+              </svg>
+              State library
+            </div>
+          </div>
+
+          <!-- Main pane -->
+          <div class="demo-main">
+            <div class="demo-topbar">
+              <div>
+                <div class="demo-topbar-title" id="topbar-title">New Revocable Living Trust — Intake</div>
+                <div class="demo-topbar-sub" id="topbar-sub">Massachusetts · Common law state</div>
+              </div>
+            </div>
+            <div class="demo-content">
+
+              <!-- Tab bar -->
+              <div class="demo-tabs">
+                <button class="demo-tab active" onclick="switchTab(this, 'intake')">1. Intake</button>
+                <button class="demo-tab" onclick="switchTab(this, 'draft')">2. Draft output</button>
+                <button class="demo-tab" onclick="switchTab(this, 'history')">3. Trust history</button>
+              </div>
+
+              <!-- INTAKE TAB -->
+              <div id="panel-intake" class="tab-panel active">
+                <div class="intake-progress">
+                  <span>12 of 12 questions complete</span>
+                  <div class="progress-bar"><div class="progress-fill"></div></div>
+                  <span style="color: var(--accent); font-weight: 600;">Ready</span>
+                </div>
+                <div class="intake-grid">
+                  <div class="intake-field">
+                    <div class="intake-label">Grantor full name</div>
+                    <div class="intake-value">Margaret R. Holloway</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">State of domicile</div>
+                    <div class="intake-value">Massachusetts</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Marital status</div>
+                    <div class="intake-value">Married — spouse is co-trustee</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Spouse / co-trustee</div>
+                    <div class="intake-value">Thomas B. Holloway</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Successor trustee (1st)</div>
+                    <div class="intake-value">Patricia Holloway-Reyes (daughter)</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Successor trustee (2nd)</div>
+                    <div class="intake-value">James A. Holloway (son)</div>
+                  </div>
+                  <div class="intake-field full">
+                    <div class="intake-label">Primary beneficiaries</div>
+                    <div class="intake-value">Patricia Holloway-Reyes (50%) · James A. Holloway (50%)</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Minor children?</div>
+                    <div class="intake-value">No minor children</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Real property to fund?</div>
+                    <div class="intake-value">Yes — 2 properties (MA)</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Incapacity standard</div>
+                    <div class="intake-value">Two licensed physicians</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Special needs beneficiary?</div>
+                    <div class="intake-value">No</div>
+                  </div>
+                  <div class="intake-field">
+                    <div class="intake-label">Per stirpes / per capita</div>
+                    <div class="intake-value">Per stirpes</div>
+                  </div>
+                </div>
+                <div class="intake-flag">
+                  <span>⚑</span>
+                  <span><strong>Clause flag:</strong> Real property in MA — deed transfer language and Schedule A funding instructions auto-included. Attorney review recommended for title status.</span>
+                </div>
+                <div style="margin-top: 14px;">
+                  <button class="draft-btn" onclick="runDraftGeneration()">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2">
+                      <polyline points="2 8 6 12 14 4"/>
+                    </svg>
+                    Generate trust draft
+                  </button>
+                </div>
+              </div>
+
+              <!-- DRAFT OUTPUT TAB -->
+              <div id="panel-draft" class="tab-panel">
+                <div id="draft-generating" class="draft-generating">
+                  <div class="generating-spinner"></div>
+                  <div class="generating-text">Assembling jurisdiction-specific clauses…</div>
+                  <div class="generating-steps" id="gen-step-text">Mapping MA common law requirements</div>
+                </div>
+                <div id="draft-output" style="display:none;">
+                  <div class="draft-header">
+                    <div class="draft-meta">
+                      <strong style="color:var(--ink); font-size:14px;">Holloway Revocable Living Trust</strong><br>
+                      Massachusetts · Generated in 3.8 seconds · 4 attorney-review flags
+                    </div>
+                    <div class="draft-actions">
+                      <button class="draft-action-btn outline">Copy .docx</button>
+                      <button class="draft-action-btn filled">Download draft</button>
+                    </div>
+                  </div>
+                  <div class="draft-document">
+                    <h3>Margaret R. Holloway Revocable Living Trust</h3>
+                    <div class="doc-center">Established under the laws of the Commonwealth of Massachusetts</div>
+                    <p>This Revocable Living Trust Agreement ("Agreement") is entered into this ___ day of __________, 2025, by and between <strong>Margaret R. Holloway</strong> of [City], Massachusetts (hereinafter "Grantor") and <strong>Margaret R. Holloway and Thomas B. Holloway</strong> (hereinafter collectively "Trustee").</p>
+                    <div class="clause-title">Article I — Declaration of Trust</div>
+                    <p>The Grantor hereby transfers to the Trustee the property listed in Schedule A, which is attached hereto and incorporated by reference. The Trustee agrees to hold, manage, and distribute such property in accordance with the terms of this Agreement.</p>
+                    <div class="clause-title">Article II — Revocability</div>
+                    <p>During the Grantor's lifetime, the Grantor reserves the right to revoke, amend, or modify this Trust in whole or in part, at any time and without consent of any beneficiary, by delivering written notice to the Trustee.</p>
+                    <div class="clause-title">Article III — Incapacity</div>
+                    <div class="highlight-clause">
+                      <p>The Grantor shall be deemed incapacitated upon the written certification of <strong>two (2) licensed physicians</strong> that the Grantor is unable to manage financial affairs. <span class="clause-flag-inline">Review</span></p>
+                    </div>
+                    <p>Upon such incapacity, the successor Trustee shall assume full administrative authority without court intervention, consistent with Massachusetts General Laws Chapter 203E.</p>
+                    <div class="clause-title">Article IV — Successor Trustees</div>
+                    <p>Upon the death, incapacity, or resignation of the initial Trustee(s), <strong>Patricia Holloway-Reyes</strong> shall serve as First Successor Trustee. If Patricia Holloway-Reyes is unable or unwilling to serve, <strong>James A. Holloway</strong> shall serve as Second Successor Trustee.</p>
+                    <div class="clause-title">Article V — Distribution on Death</div>
+                    <p>Upon the death of the Grantor, the Trustee shall distribute the trust estate as follows: <strong>fifty percent (50%)</strong> to Patricia Holloway-Reyes and <strong>fifty percent (50%)</strong> to James A. Holloway, per stirpes, free of trust.</p>
+                    <div class="clause-title">Schedule A — Real Property</div>
+                    <div class="highlight-clause">
+                      <p>[Property 1 legal description — to be completed by attorney] <span class="clause-flag-inline">Complete</span><br>[Property 2 legal description — to be completed by attorney] <span class="clause-flag-inline">Complete</span></p>
+                    </div>
+                  </div>
+                  <div class="draft-flags">
+                    <div class="draft-flags-header">
+                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v12M3 2l9 3-9 4"/></svg>
+                      4 attorney-review flags
+                    </div>
+                    <div class="draft-flag-item">
+                      <span>1.</span>
+                      <span><strong>Schedule A — real property descriptions:</strong> Confirm title status and current deed vesting before transferring; two MA properties require individual deed preparation.</span>
+                    </div>
+                    <div class="draft-flag-item">
+                      <span>2.</span>
+                      <span><strong>Incapacity standard:</strong> Client selected two-physician standard. Confirm alignment with any existing health care proxy or power of attorney.</span>
+                    </div>
+                    <div class="draft-flag-item">
+                      <span>3.</span>
+                      <span><strong>Pour-over will coordination:</strong> Confirm whether a pour-over will is being drafted concurrently; Schedule A funding gap language included by default.</span>
+                    </div>
+                    <div class="draft-flag-item">
+                      <span>4.</span>
+                      <span><strong>Co-trustee authority:</strong> Verify client intent on whether co-trustee must act jointly or either trustee may act independently.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- HISTORY TAB -->
+              <div id="panel-history" class="tab-panel">
+                <table class="history-table">
+                  <thead>
+                    <tr>
+                      <th>Grantor</th>
+                      <th>State</th>
+                      <th>Date</th>
+                      <th>Flags</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Margaret R. Holloway</td>
+                      <td>MA</td>
+                      <td>Today, 2:14 pm</td>
+                      <td>4</td>
+                      <td><span class="status-badge badge-review">Pending review</span></td>
+                    </tr>
+                    <tr>
+                      <td>David &amp; Susan Nguyen</td>
+                      <td>MA</td>
+                      <td>Jun 3, 2025</td>
+                      <td>2</td>
+                      <td><span class="status-badge badge-ready">Ready</span></td>
+                    </tr>
+                    <tr>
+                      <td>Robert C. Albanese</td>
+                      <td>NH</td>
+                      <td>Jun 1, 2025</td>
+                      <td>1</td>
+                      <td><span class="status-badge badge-ready">Ready</span></td>
+                    </tr>
+                    <tr>
+                      <td>Elaine M. Prentiss</td>
+                      <td>MA</td>
+                      <td>May 29, 2025</td>
+                      <td>3</td>
+                      <td><span class="status-badge badge-ready">Ready</span></td>
+                    </tr>
+                    <tr>
+                      <td>Carlos &amp; Ana Fontaine</td>
+                      <td>CT</td>
+                      <td>May 27, 2025</td>
+                      <td>0</td>
+                      <td><span class="status-badge badge-ready">Ready</span></td>
+                    </tr>
+                    <tr>
+                      <td>William H. Graves</td>
+                      <td>MA</td>
+                      <td>May 24, 2025</td>
+                      <td>5</td>
+                      <td><span class="status-badge badge-review">Pending review</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div><!-- /demo-content -->
+          </div><!-- /demo-main -->
+        </div><!-- /demo-app -->
+      </div><!-- /browser-body -->
+    </div><!-- /browser-frame -->
+
+    <p style="font-size: 12px; color: var(--ink-muted); margin-top: 12px; text-align: center;">Sample data — this is a pre-launch product preview. All client names are fictional.</p>
+  </div>
+</section>
+
+<!-- ── 3. HOW IT WORKS ── -->
+<section id="how">
+  <div class="container">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">From client call notes to review-ready draft</h2>
+    <p class="section-sub">No paralegal handoff. No WealthDocx license. No waiting until Monday.</p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <line x1="8" y1="9" x2="16" y2="9"/>
+            <line x1="8" y1="13" x2="16" y2="13"/>
+            <line x1="8" y1="17" x2="12" y2="17"/>
+          </svg>
+        </div>
+        <div class="step-number">Step 01</div>
+        <div class="step-title">Complete the 12-question intake</div>
+        <div class="step-desc">Fill in the grantor's details, trustee chain, beneficiaries, and property — all the questions a paralegal would ask, distilled to the decisions that actually change clause language.</div>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 3 21 3 21 8"/>
+            <line x1="4" y1="20" x2="21" y2="3"/>
+            <polyline points="21 16 21 21 16 21"/>
+            <line x1="15" y1="15" x2="21" y2="21"/>
+          </svg>
+        </div>
+        <div class="step-number">Step 02</div>
+        <div class="step-title">Jurisdiction-aware clauses assemble automatically</div>
+        <div class="step-desc">The clause library maps your answers to state-specific language — handling community property vs. common law distinctions, incapacity standards, and funding mechanics — and flags anything that needs your eye.</div>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <polyline points="9 15 12 18 15 15"/>
+            <line x1="12" y1="12" x2="12" y2="18"/>
+          </svg>
+        </div>
+        <div class="step-number">Step 03</div>
+        <div class="step-title">Download a .docx, review, and sign with the client</div>
+        <div class="step-desc">You receive a Word-compatible draft annotated with attorney-review flags at every clause that warrants your professional judgment. You finalize, you sign — the work and the liability stay yours.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 4. TESTIMONIALS ── -->
+<section id="social-proof">
+  <div class="container">
+    <p class="section-label">Early feedback</p>
+    <h2 class="section-title">What we expect attorneys to say</h2>
+    <span class="testimonials-disclaimer">Sample testimonials — pre-launch. These are personas, not real users.</span>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="testimonial-quote">"I do about 60 trusts a year, all solo. This is the first tool where the clause flags actually reflect real drafting decisions — not just generic 'consult an attorney' boilerplate."</div>
+        <div class="testimonial-author">
+          <div class="author-name">Catherine M.</div>
+          <div class="author-role">Solo T&amp;E attorney, Connecticut</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="testimonial-quote">"My paralegal spends 2–3 hours per trust just on document assembly. At $40/trust I'd pay for this before I even finished the first one. The real question is whether the MA clauses hold up — that's what I'd test first."</div>
+        <div class="testimonial-author">
+          <div class="author-name">David R.</div>
+          <div class="author-role">2-attorney estate planning practice, Massachusetts</div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="testimonial-quote">"The part that matters is whether the edge cases are handled correctly — blended families, co-trustee authority language, real property funding. If those are right, I'd replace my paralegal's assembly time immediately."</div>
+        <div class="testimonial-author">
+          <div class="author-name">Susan K.</div>
+          <div class="author-role">Solo T&amp;E attorney, New Hampshire</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 5. FAQ ── -->
+<section id="faq">
+  <div class="container">
+    <p class="section-label">Honest answers</p>
+    <h2 class="section-title">Questions worth asking</h2>
+    <p class="section-sub">The three concerns attorneys raise most — answered as directly as we can, including the parts we're still figuring out.</p>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How is this different from CaseMark or WealthDocx, which also claim fast trust generation?
+          <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="5 8 10 13 15 8"/>
+          </svg>
+        </div>
+        <div class="faq-a">
+          <p>That's the right question to push on, and we won't pretend the claim "built with real paralegal judgment" is self-evidently true. <strong>What we can say specifically:</strong> the clause library was built by someone who spent years at a large T&amp;E practice mapping client intake answers to Massachusetts, New Hampshire, and Connecticut-specific language — not adapting a generic legal document API.</p>
+          <p>The real test is whether a pilot attorney who has also evaluated CaseMark finds the output materially better on edge cases: co-trustee authority language, incapacity thresholds, real property funding clauses. We're asking exactly that question during our pilot. Until we have that comparison from a real attorney, the differentiation is our assertion — not proof. We'd rather say that clearly than oversell it.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What's my liability exposure if a draft from this tool contains an error?
+          <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="5 8 10 13 15 8"/>
+          </svg>
+        </div>
+        <div class="faq-a">
+          <p>Your liability posture is the same as when a paralegal drafts and you review. <strong>You are the attorney of record. You review the draft. You sign off on it.</strong> TrustDraft outputs a document for attorney review — it does not provide legal advice to the client, does not sign anything, and is not the attorney. This is the same model HotDocs and WealthDocx operate under.</p>
+          <p>That said: UPL risk is real, and we take it seriously. We've designed the output explicitly as an "attorney-review-ready draft" — not a finished client deliverable. Every document carries a header flagging attorney review flags. If a state bar ethics opinion emerges from our pilot attorneys that requires product changes, we will make those changes before expanding. This is one of our explicit kill criteria, not a footnote. We'd rather hear about a concern from one pilot attorney than from the ACTEC listserv.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Which states are supported at launch, and what if my practice is in California or Texas?
+          <svg class="faq-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="5 8 10 13 15 8"/>
+          </svg>
+        </div>
+        <div class="faq-a">
+          <p>We're launching with a focused set of common law states — Massachusetts, Connecticut, New Hampshire, Rhode Island, and New York — where the clause logic is well-mapped and the founder has direct drafting experience. <strong>If your practice is primarily in California, Texas, or Arizona, TrustDraft is not ready for you at launch.</strong> Community property states require materially different clause logic — separate property treatment, spousal consent provisions, community/separate property characterization — and we won't ship those until the clause library reflects actual community property drafting, not an adapted common law template.</p>
+          <p>We're naming this directly because a solo attorney in CA discovering the community property clauses are wrong after paying $40 is exactly the outcome we want to avoid. State coverage expansion is on the roadmap; we'll announce it when it's ready and tested.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── 6. WAITLIST ── -->
+<section id="waitlist">
+  <div class="container">
+    <div class="waitlist-inner">
+      <p class="section-label">Early access</p>
+      <h2 class="section-title">Get early access + help shape what we build first</h2>
+      <p class="section-sub">We're opening the pilot to a small group of T&amp;E attorneys. Tell us what problem you're actually trying to solve — we read every response and use it to decide what to build in week one.</p>
+
+      <form class="waitlist-form" action="http://127.0.0.1:8787/waitlist" method="POST">
+        <input type="hidden" name="idea_id" value="idea_899487570a19">
+
+        <div class="form-field">
+          <label class="form-label" for="email">Your email address</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="you@yourfirm.com" required>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="firm_context">Tell us about your current trust drafting process</label>
+          <textarea class="form-textarea" id="firm_context" name="firm_context" placeholder="E.g. how many trusts per month, how you handle document prep today (paralegal, WealthDocx, Word templates), and the biggest friction point you'd want this to fix first." required></textarea>
+          <span class="form-hint">Even one sentence is useful. This goes directly to the founder — not a CRM.</span>
+        </div>
+
+        <button type="submit" class="form-submit">Get early access →</button>
+      </form>
+      <p class="form-note">We read every reply.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 7. FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span class="footer-text">TrustDraft · idea_899487570a19 · Built with Sieve · Pre-launch product preview, not legal advice</span>
+      <span class="footer-text">© 2025</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Tab switching
+  function switchTab(btn, panelId) {
+    document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + panelId).classList.add('active');
+
+    // Sync sidebar
+    document.querySelectorAll('.sidebar-item[data-panel]').forEach(s => {
+      s.classList.toggle('active', s.dataset.panel === panelId);
+    });
+
+    // Update topbar
+    var titles = {
+      intake: 'New Revocable Living Trust — Intake',
+      draft: 'Holloway RLT — Draft Output',
+      history: 'Trust History — All Drafts'
+    };
+    var subs = {
+      intake: 'Massachusetts · Common law state',
+      draft: 'Generated today · 4 review flags',
+      history: '6 drafts · Last 30 days'
+    };
+    document.getElementById('topbar-title').textContent = titles[panelId] || '';
+    document.getElementById('topbar-sub').textContent = subs[panelId] || '';
+  }
+
+  function switchSidebarItem(el, panelId) {
+    // Find the matching tab button and click it
+    var tabs = document.querySelectorAll('.demo-tab');
+    var panelOrder = ['intake', 'draft', 'history'];
+    var idx = panelOrder.indexOf(panelId);
+    if (idx >= 0 && tabs[idx]) {
+      switchTab(tabs[idx], panelId);
+    }
+  }
+
+  // Draft generation flow
+  function runDraftGeneration() {
+    // Switch to draft tab
+    var tabs = document.querySelectorAll('.demo-tab');
+    switchTab(tabs[1], 'draft');
+
+    var genEl = document.getElementById('draft-generating');
+    var outEl = document.getElementById('draft-output');
+
+    genEl.style.display = 'block';
+    genEl.classList.add('visible');
+    outEl.style.display = 'none';
+
+    var steps = [
+      'Mapping MA common law requirements…',
+      'Assembling trustee succession clauses…',
+      'Applying real property funding language…',
+      'Checking incapacity standard consistency…',
+      'Generating attorney-review flags…',
+      'Finalizing .docx output…'
+    ];
+
+    var stepEl = document.getElementById('gen-step-text');
+    var i = 0;
+
+    var interval = setInterval(function() {
+      if (i < steps.length) {
+        stepEl.textContent = steps[i];
+        i++;
+      }
+    }, 380);
+
+    setTimeout(function() {
+      clearInterval(interval);
+      genEl.style.display = 'none';
+      genEl.classList.remove('visible');
+      outEl.style.display = 'block';
+    }, 2400);
+  }
+
+  // FAQ accordion
+  function toggleFaq(el) {
+    var item = el.parentElement;
+    var wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(fi) {
+      fi.classList.remove('open');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+    }
+  }
+
+  // Open first FAQ by default
+  document.addEventListener('DOMContentLoaded', function() {
+    var firstFaq = document.querySelector('.faq-item .faq-q');
+    if (firstFaq) toggleFaq(firstFaq);
+  });
+</script>
+
+</body>
+</html>

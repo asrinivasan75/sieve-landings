@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Stop learning from your own failures. FailureForecast ingests your feature spec and outputs a ranked list of realistic failure modes grounded in real incident patterns — before you commit to a launch date.">
+<meta property="og:title" content="Pre-Launch Failure Forecast for Product Teams">
+<meta property="og:description" content="Pattern-matched failure mode generation from a corpus of real incidents. Turn a vague spec into a ranked list of plausible failure scenarios with historical precedent.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Pre-Launch Failure Forecast for Product Teams">
+<meta name="twitter:description" content="Pattern-matched failure mode generation from a corpus of real incidents. Turn a vague spec into a ranked list of plausible failure scenarios with historical precedent.">
+<title>FailureForecast — Know What Breaks Before You Ship</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iI0U4NTQzQSIvPjx0ZXh0IHg9IjE2IiB5PSIyMiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC13ZWlnaHQ9IjcwMCIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzBCMEMwRiI+RkY8L3RleHQ+PC9zdmc+">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Onest:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#0B0C0F;color:#C8C9CF;font-family:'Onest',sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;color:#F0F0F2;line-height:1.15}
+a{color:#E8543A;text-decoration:none;transition:color 220ms}
+a:hover{color:#FF6B4A}
+.mono{font-family:'JetBrains Mono',monospace}
+.container{max-width:1280px;margin:0 auto;padding:0 40px}
+.muted{color:#5A5C6A}
+.accent{color:#E8543A}
+
+/* FADE UP */
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity 220ms ease,transform 220ms ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1F2128;background:rgba(11,12,15,0.92);backdrop-filter:blur(12px)}
+.nav-logo{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;color:#F0F0F2;letter-spacing:-0.3px}
+.nav-logo span{color:#E8543A}
+.nav-cta{background:#E8543A;color:#0B0C0F;font-family:'Onest',sans-serif;font-weight:500;font-size:14px;padding:8px 20px;border-radius:4px;border:none;cursor:pointer;transition:background 220ms,transform 220ms;letter-spacing:0.2px}
+.nav-cta:hover{background:#FF6B4A;transform:translateY(-1px)}
+
+/* HERO */
+.hero{padding:160px 0 0;background:#0B0C0F;overflow:hidden}
+.hero-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:flex-start}
+.hero-left{}
+.launch-badge{display:inline-flex;align-items:center;gap:8px;background:#13151A;border:1px solid #1F2128;border-radius:4px;padding:6px 14px;margin-bottom:32px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#E8543A;letter-spacing:0.5px}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:#E8543A;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+.hero h1{font-size:clamp(48px,5.5vw,80px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:28px}
+.hero h1 .strike{text-decoration:line-through;color:#5A5C6A;position:relative}
+.hero h1 .replace{color:#E8543A}
+.hero-sub{font-size:18px;color:#C8C9CF;line-height:1.65;max-width:480px;margin-bottom:40px}
+.hero-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.btn-primary{background:#E8543A;color:#0B0C0F;font-family:'Onest',sans-serif;font-weight:500;font-size:15px;padding:14px 28px;border-radius:4px;border:none;cursor:pointer;transition:background 220ms,transform 220ms}
+.btn-primary:hover{background:#FF6B4A;transform:translateY(-2px)}
+.btn-ghost{color:#5A5C6A;font-size:14px;font-family:'JetBrains Mono',monospace;letter-spacing:0.3px}
+.hero-right{position:relative}
+.mini-forecast{background:#13151A;border:1px solid #1F2128;border-radius:6px;overflow:hidden;transform:perspective(1000px) rotateY(-6deg) rotateX(2deg);box-shadow:40px 40px 80px rgba(0,0,0,0.6)}
+.forecast-strip{background:#0B0C0F;border-bottom:1px solid #1F2128;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.forecast-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#E8543A;letter-spacing:1px;font-weight:500}
+.mini-row{padding:12px 16px;border-bottom:1px solid #1F2128;display:flex;align-items:center;gap:12px}
+.mini-row:last-child{border-bottom:none}
+.sev-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;padding:3px 8px;border-radius:3px;white-space:nowrap}
+.sev-critical{background:rgba(232,84,58,0.15);color:#E8543A;border:1px solid rgba(232,84,58,0.3)}
+.sev-high{background:rgba(255,160,50,0.12);color:#FFA032;border:1px solid rgba(255,160,50,0.25)}
+.sev-medium{background:rgba(90,92,106,0.2);color:#9A9CAA;border:1px solid rgba(90,92,106,0.3)}
+.mini-text{font-size:13px;color:#C8C9CF;flex:1}
+.mini-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5A5C6A;white-space:nowrap}
+
+/* DEMO */
+.demo-section{padding:0 0 64px;background:#0B0C0F}
+.demo-wrap{max-width:1280px;margin:0 auto;padding:0 40px}
+.demo-panel{border:1px solid #1F2128;border-radius:6px;overflow:hidden;display:grid;grid-template-columns:1fr 1.2fr}
+.demo-input-col{background:#0D0E12;border-right:1px solid #1F2128;display:flex;flex-direction:column}
+.demo-col-header{padding:14px 20px;border-bottom:1px solid #1F2128;display:flex;align-items:center;gap:8px}
+.demo-col-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:#5A5C6A;font-weight:500}
+.demo-textarea{flex:1;background:transparent;border:none;outline:none;color:#C8C9CF;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;padding:20px;resize:none;min-height:220px}
+.demo-run-btn{margin:16px 20px 20px;background:#E8543A;color:#0B0C0F;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;font-weight:500;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;transition:background 220ms,transform 220ms;text-align:center}
+.demo-run-btn:hover{background:#FF6B4A;transform:translateY(-1px)}
+.demo-output-col{background:#13151A;display:flex;flex-direction:column}
+.forecast-header{padding:14px 20px;border-bottom:1px solid #1F2128;display:flex;align-items:center;justify-content:space-between}
+.forecast-modes{flex:1;overflow-y:auto}
+.failure-item{border-bottom:1px solid #1F2128;cursor:pointer;transition:background 220ms}
+.failure-item:hover{background:#0D0E12}
+.failure-item:last-child{border-bottom:none}
+.failure-item-header{padding:14px 20px;display:flex;align-items:center;gap:12px}
+.failure-title{flex:1;font-size:13px;color:#C8C9CF;line-height:1.4}
+.failure-incidents{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5C6A}
+.failure-expand{color:#5A5C6A;font-size:16px;transition:transform 220ms;user-select:none}
+.failure-item.open .failure-expand{transform:rotate(180deg)}
+.failure-detail{display:none;padding:0 20px 16px;border-top:1px solid #1F2128;margin-top:0}
+.failure-item.open .failure-detail{display:block}
+.detail-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5C6A;letter-spacing:0.8px;margin-bottom:6px;margin-top:12px}
+.detail-text{font-size:13px;color:#9A9CAA;line-height:1.6}
+.bar-wrap{display:flex;align-items:center;gap:10px;margin-top:4px}
+.severity-bar{height:4px;border-radius:2px;background:#1F2128;flex:1}
+.severity-fill{height:100%;border-radius:2px;transition:width 600ms ease}
+.fill-critical{background:#E8543A}
+.fill-high{background:#FFA032}
+.fill-medium{background:#5A5C6A}
+
+/* MANIFESTO */
+.manifesto{padding:96px 0;background:#13151A}
+.manifesto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:64px}
+.manifesto-col{background:#0B0C0F;padding:40px 36px;position:relative;transition:transform 220ms}
+.manifesto-col:hover{transform:translateY(-2px)}
+.manifesto-col+.manifesto-col{border-left:1px solid #1F2128}
+.archetype-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5A5C6A;letter-spacing:1px;margin-bottom:24px}
+.manifesto-pull{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:600;line-height:1.35;color:#F0F0F2;margin-bottom:20px}
+.manifesto-pull::first-letter{font-size:52px;font-weight:800;color:#E8543A;float:left;line-height:0.85;margin-right:8px;margin-top:6px}
+.manifesto-body{font-size:14px;color:#5A5C6A;line-height:1.7}
+
+/* BEFORE-AFTER */
+.before-after{padding:64px 0;background:#0B0C0F}
+.ba-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5A5C6A;letter-spacing:1px;text-align:center;margin-bottom:12px}
+.section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(28px,3vw,42px);font-weight:800;letter-spacing:-1px;text-align:center;margin-bottom:48px}
+.ba-container{position:relative;border:1px solid #1F2128;border-radius:6px;overflow:hidden;height:340px;user-select:none}
+.ba-left,.ba-right{position:absolute;top:0;bottom:0;overflow:hidden}
+.ba-left{left:0;width:50%}
+.ba-right{right:0;width:50%}
+.ba-panel{padding:28px 32px;height:100%;background:#13151A}
+.ba-panel.right{background:#0D0E12}
+.ba-panel-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#5A5C6A;margin-bottom:16px}
+.ba-panel h4{font-size:14px;color:#F0F0F2;margin-bottom:12px}
+.ba-comment{background:#0B0C0F;border:1px solid #1F2128;border-radius:4px;padding:10px 14px;margin-bottom:8px;font-size:12px;color:#5A5C6A;line-height:1.5}
+.ba-divider{position:absolute;top:0;bottom:0;width:3px;background:#E8543A;left:50%;transform:translateX(-50%);cursor:ew-resize;z-index:10}
+.ba-divider::after{content:'↔';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#E8543A;color:#0B0C0F;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;display:grid;place-items:center}
+.forecast-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #1F2128}
+.forecast-row:last-child{border-bottom:none}
+.fr-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5C6A;width:16px}
+.fr-text{font-size:12px;color:#C8C9CF;flex:1;line-height:1.4}
+.fr-badge{font-family:'JetBrains Mono',monospace;font-size:10px}
+
+/* HOW IT WORKS */
+.how{padding:80px 0;background:#13151A}
+.steps{display:flex;flex-direction:column;gap:0;margin-top:64px;max-width:720px;margin-left:auto;margin-right:auto}
+.step{display:grid;grid-template-columns:80px 1fr;gap:32px;align-items:flex-start;padding:40px 0;border-bottom:1px solid #1F2128;position:relative}
+.step:last-child{border-bottom:none}
+.step-num{font-family:'Bricolage Grotesque',sans-serif;font-size:72px;font-weight:800;color:#1F2128;line-height:1;position:relative}
+.step-content{}
+.step-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:#F0F0F2;margin-bottom:10px}
+.step-desc{font-size:14px;color:#5A5C6A;line-height:1.7;margin-bottom:14px}
+.step-annotation{font-family:'JetBrains Mono',monospace;font-size:11px;color:#E8543A;background:rgba(232,84,58,0.08);border:1px solid rgba(232,84,58,0.2);border-radius:4px;padding:6px 12px;display:inline-block}
+
+/* DATA VIZ */
+.dataviz{padding:64px 0;background:#0B0C0F}
+.dataviz-inner{max-width:760px;margin:0 auto;padding:0 40px}
+.scatter-wrap{position:relative;margin-top:48px;border:1px solid #1F2128;border-radius:6px;padding:40px 40px 40px 60px;background:#13151A}
+.scatter-y-label{position:absolute;left:12px;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5C6A;letter-spacing:0.5px;white-space:nowrap}
+.scatter-x-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5C6A;letter-spacing:0.5px}
+.scatter-plot{position:relative;width:100%;height:280px}
+.scatter-dot{position:absolute;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer;transition:transform 220ms,box-shadow 220ms}
+.scatter-dot:hover{transform:translate(-50%,-50%) scale(1.8)}
+.scatter-dot.critical{background:#E8543A;box-shadow:0 0 0 0 rgba(232,84,58,0.4)}
+.scatter-dot.high{background:#FFA032;box-shadow:0 0 0 0 rgba(255,160,50,0.4)}
+.scatter-dot.medium{background:#5A5C6A;box-shadow:0 0 0 0 rgba(90,92,106,0.4)}
+.scatter-tooltip{display:none;position:absolute;background:#0B0C0F;border:1px solid #1F2128;border-radius:4px;padding:10px 14px;font-size:12px;color:#C8C9CF;white-space:nowrap;z-index:20;pointer-events:none;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%)}
+.scatter-dot:hover .scatter-tooltip{display:block}
+.scatter-dot .scatter-tooltip{font-family:'JetBrains Mono',monospace;font-size:11px}
+
+/* SOCIAL PROOF */
+.social-proof{padding:64px 0;background:#13151A}
+.slack-wall{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:48px}
+.slack-msg{background:#0B0C0F;border:1px solid #1F2128;border-radius:6px;padding:20px 20px 20px 20px;transition:transform 220ms,border-color 220ms}
+.slack-msg:hover{transform:translateY(-2px);border-color:#2A2D38}
+.slack-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.slack-avatar{width:32px;height:32px;border-radius:4px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#0B0C0F;flex-shrink:0}
+.slack-meta{flex:1}
+.slack-username{font-family:'JetBrains Mono',monospace;font-size:12px;color:#F0F0F2;font-weight:500}
+.slack-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5C6A;margin-left:8px}
+.slack-body{font-size:14px;color:#C8C9CF;line-height:1.65}
+.slack-body strong{color:#F0F0F2}
+.slack-sample-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5C6A;margin-top:10px;letter-spacing:0.3px}
+
+/* WAITLIST */
+.waitlist{padding:120px 0;background:#E8543A}
+.waitlist .container{text-align:center}
+.waitlist h2{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(32px,4vw,54px);font-weight:800;color:#0B0C0F;letter-spacing:-1.5px;margin-bottom:16px}
+.waitlist-sub{font-size:17px;color:rgba(11,12,15,0.7);margin-bottom:48px;max-width:480px;margin-left:auto;margin-right:auto}
+.waitlist-form{background:rgba(11,12,15,0.12);border:1px solid rgba(11,12,15,0.2);border-radius:8px;padding:36px;max-width:540px;margin:0 auto 24px;text-align:left}
+.waitlist-form label{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(11,12,15,0.6);letter-spacing:0.8px;margin-bottom:8px;margin-top:20px}
+.waitlist-form label:first-of-type{margin-top:0}
+.waitlist-form input[type="email"],.waitlist-form textarea{width:100%;background:rgba(11,12,15,0.15);border:1px solid rgba(11,12,15,0.25);border-radius:4px;padding:12px 14px;color:#0B0C0F;font-family:'Onest',sans-serif;font-size:15px;outline:none;transition:border-color 220ms;resize:vertical}
+.waitlist-form input[type="email"]::placeholder,.waitlist-form textarea::placeholder{color:rgba(11,12,15,0.4)}
+.waitlist-form input[type="email"]:focus,.waitlist-form textarea:focus{border-color:rgba(11,12,15,0.5)}
+.waitlist-submit{width:100%;margin-top:20px;background:#0B0C0F;color:#E8543A;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.2px;padding:14px 28px;border:none;border-radius:4px;cursor:pointer;transition:background 220ms,transform 220ms}
+.waitlist-submit:hover{background:#1A1C22;transform:translateY(-1px)}
+.form-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(11,12,15,0.55);text-align:center;max-width:540px;margin:0 auto 32px}
+.trust-signals{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.trust-item{font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(11,12,15,0.6);letter-spacing:0.3px}
+.trust-item::before{content:'✓ ';color:rgba(11,12,15,0.5)}
+
+/* FAQ */
+.faq{padding:80px 0;background:#0B0C0F}
+.faq-list{margin-top:56px;max-width:760px;margin-left:auto;margin-right:auto}
+.faq-item{border-bottom:1px solid #1F2128}
+.faq-q{display:flex;align-items:flex-start;gap:20px;padding:24px 0;cursor:pointer;list-style:none}
+.faq-q::-webkit-details-marker{display:none}
+.faq-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5A5C6A;width:24px;flex-shrink:0;padding-top:3px}
+.faq-qtext{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:600;color:#F0F0F2;flex:1;line-height:1.4}
+.faq-icon{color:#5A5C6A;font-size:18px;transition:transform 220ms;margin-left:12px;flex-shrink:0}
+details[open] .faq-icon{transform:rotate(45deg);color:#E8543A}
+.faq-answer{padding:0 0 24px 44px;font-size:15px;color:#C8C9CF;line-height:1.7}
+.faq-blockquote{border-left:3px solid #E8543A;padding:14px 20px;background:#13151A;border-radius:0 4px 4px 0;font-size:14px;color:#9A9CAA;line-height:1.65;margin-top:14px;font-style:italic}
+
+/* FOOTER */
+footer{padding:40px 0;background:#13151A;border-top:1px solid #1F2128}
+.footer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.footer-wordmark{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:20px;color:#F0F0F2}
+.footer-wordmark span{color:#E8543A}
+.footer-tagline{font-family:'JetBrains Mono',monospace;font-size:12px;color:#5A5C6A}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid #1F2128}
+.footer-copy{font-size:13px;color:#5A5C6A}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:13px;color:#5A5C6A;transition:color 220ms}
+.footer-links a:hover{color:#C8C9CF}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:16px 20px}
+  .container{padding:0 20px}
+  .hero-inner{grid-template-columns:1fr;gap:48px}
+  .hero-right{display:none}
+  .hero{padding:120px 0 0}
+  .demo-panel{grid-template-columns:1fr}
+  .demo-input-col{border-right:none;border-bottom:1px solid #1F2128}
+  .manifesto-grid{grid-template-columns:1fr}
+  .manifesto-col+.manifesto-col{border-left:none;border-top:1px solid #1F2128}
+  .slack-wall{grid-template-columns:1fr}
+  .footer-top{flex-direction:column;gap:8px;text-align:center}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+  .trust-signals{flex-direction:column;align-items:center;gap:12px}
+  .demo-wrap{padding:0 20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Failure<span>Forecast</span></div>
+  <a href="#waitlist"><button class="nav-cta">Join Closed Beta</button></a>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left fade-up">
+      <div class="launch-badge">
+        <span class="badge-dot"></span>
+        <span>LAUNCH RISK DETECTED</span>
+      </div>
+      <h1>Stop shipping on <span class="strike">gut-feel</span><br><span class="replace">data</span>.</h1>
+      <p class="hero-sub">Paste your feature spec. Get a ranked list of exactly how it breaks — matched against patterns from real incidents, before you cut the release branch.</p>
+      <div class="hero-actions">
+        <a href="#waitlist"><button class="btn-primary">Request Beta Access</button></a>
+        <a href="#demo" class="btn-ghost">↓ see a forecast</a>
+      </div>
+    </div>
+    <div class="hero-right fade-up">
+      <div class="mini-forecast">
+        <div class="forecast-strip">
+          <span class="badge-dot"></span>
+          <span class="forecast-label">FAILURE FORECAST</span>
+        </div>
+        <div class="mini-row">
+          <span class="sev-badge sev-critical">CRITICAL</span>
+          <span class="mini-text">Session token collision under high load</span>
+          <span class="mini-count mono">22 incidents</span>
+        </div>
+        <div class="mini-row">
+          <span class="sev-badge sev-high">HIGH</span>
+          <span class="mini-text">Payment retry loop on 3DS challenge</span>
+          <span class="mini-count mono">31 incidents</span>
+        </div>
+        <div class="mini-row">
+          <span class="sev-badge sev-high">HIGH</span>
+          <span class="mini-text">GDPR consent gap on guest email capture</span>
+          <span class="mini-count mono">19 incidents</span>
+        </div>
+        <div class="mini-row">
+          <span class="sev-badge sev-high">HIGH</span>
+          <span class="mini-text">Address validation bypass → failed deliveries</span>
+          <span class="mini-count mono">14 incidents</span>
+        </div>
+        <div class="mini-row">
+          <span class="sev-badge sev-medium">MEDIUM</span>
+          <span class="mini-text">Mobile keyboard obscuring checkout CTA</span>
+          <span class="mini-count mono">8 incidents</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="demo-section" id="demo">
+  <div class="demo-wrap">
+    <div class="demo-panel fade-up">
+      <div class="demo-input-col">
+        <div class="demo-col-header">
+          <span class="demo-col-title">FEATURE SPEC INPUT</span>
+        </div>
+        <textarea class="demo-textarea" id="specInput">Feature: Guest Checkout Shortcut
+
+Allow users to complete a purchase without creating an account. Guest users enter email + shipping address + payment details in a single-page flow. A guest session token is created on page load. After purchase, users are prompted to save their details as an account.
+
+Target: B2C e-commerce, mobile-first, peak traffic ~40k concurrent sessions on sale events.</textarea>
+        <button class="demo-run-btn" id="runForecast">▶ RUN FAILURE FORECAST</button>
+      </div>
+      <div class="demo-output-col">
+        <div class="forecast-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="badge-dot"></span>
+            <span class="mono" style="font-size:11px;color:#E8543A;letter-spacing:1px">FAILURE FORECAST</span>
+          </div>
+          <span class="mono" style="font-size:10px;color:#5A5C6A">6 modes · sorted by severity</span>
+        </div>
+        <div class="forecast-modes" id="forecastModes"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto fade-up">
+  <div class="container">
+    <div class="ba-label">THE PM ARCHETYPES WE'VE ALL BEEN</div>
+    <div class="manifesto-grid">
+      <div class="manifesto-col">
+        <div class="archetype-label">ARCHETYPE_01 / THE OPTIMIST</div>
+        <div class="manifesto-pull">Every launch has a "we'll monitor it closely" phase. Monitoring doesn't prevent the incident — it just tells you how bad it got.</div>
+        <p class="manifesto-body">You've run the sprint. The QA is green. The demo killed in the all-hands. There is no risk doc because everyone agreed it was low risk. Two weeks post-launch, you're in a bridge call explaining why checkout conversion dropped 11 points on iOS 17.</p>
+      </div>
+      <div class="manifesto-col">
+        <div class="archetype-label">ARCHETYPE_02 / THE SPREADSHEET HERO</div>
+        <div class="manifesto-pull">A 5x5 risk matrix scored by people who are emotionally invested in shipping is not a risk assessment. It's a consensus document in disguise.</div>
+        <p class="manifesto-body">Column A: risk. Column B: likelihood (1-5). Column C: impact (1-5). Column D: mitigation. All cells filled. All cells wrong. The failure modes that actually fire are the ones nobody thought to add as rows.</p>
+      </div>
+      <div class="manifesto-col">
+        <div class="archetype-label">ARCHETYPE_03 / THE POST-MORTEM REGRET</div>
+        <div class="manifesto-pull">Every post-mortem has a section called "what we'd do differently." That section is just a pre-mortem written six weeks too late.</div>
+        <p class="manifesto-body">The document is well-written. The contributing factors are clear. The action items have owners. And somewhere in the timeline you see a comment from three months ago that read "should we test this under load?" Nobody answered it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="before-after fade-up">
+  <div class="container">
+    <div class="ba-label">BEFORE / AFTER</div>
+    <div class="section-title">Your current risk review vs. a failure forecast</div>
+    <div class="ba-container" id="baContainer">
+      <div class="ba-left" id="baLeft">
+        <div class="ba-panel">
+          <div class="ba-panel-label">BEFORE — CONFLUENCE RISK DOC</div>
+          <h4>Launch Risk Assessment — Guest Checkout v2</h4>
+          <div class="ba-comment">@sarah.chen risk level? — <span style="color:#5A5C6A;font-size:11px">2 days ago</span></div>
+          <div class="ba-comment">@mike.r probably medium? flows look okay — <span style="color:#5A5C6A;font-size:11px">1 day ago</span></div>
+          <div class="ba-comment">@sarah.chen cool marking as reviewed ✓ — <span style="color:#5A5C6A;font-size:11px">23 hrs ago</span></div>
+          <div style="margin-top:16px;height:60px;border:1px dashed #1F2128;border-radius:4px;display:grid;place-items:center"><span style="font-size:12px;color:#5A5C6A">[ Risk matrix — empty ]</span></div>
+        </div>
+      </div>
+      <div class="ba-right" id="baRight">
+        <div class="ba-panel right">
+          <div class="ba-panel-label">AFTER — FAILURE FORECAST</div>
+          <h4>Guest Checkout Shortcut · 7 failure modes</h4>
+          <div class="forecast-row"><span class="fr-num">01</span><span class="fr-text">Session token collision at scale</span><span class="fr-badge sev-badge sev-critical" style="font-size:9px">CRITICAL</span></div>
+          <div class="forecast-row"><span class="fr-num">02</span><span class="fr-text">3DS payment retry loop</span><span class="fr-badge sev-badge sev-high" style="font-size:9px">HIGH</span></div>
+          <div class="forecast-row"><span class="fr-num">03</span><span class="fr-text">GDPR consent on email capture</span><span class="fr-badge sev-badge sev-high" style="font-size:9px">HIGH</span></div>
+          <div class="forecast-row"><span class="fr-num">04</span><span class="fr-text">Address validation bypass</span><span class="fr-badge sev-badge sev-high" style="font-size:9px">HIGH</span></div>
+          <div class="forecast-row"><span class="fr-num">05</span><span class="fr-text">Mobile keyboard occlusion</span><span class="fr-badge sev-badge sev-medium" style="font-size:9px">MEDIUM</span></div>
+        </div>
+      </div>
+      <div class="ba-divider" id="baDivider"></div>
+    </div>
+  </div>
+</section>
+
+<section class="how fade-up">
+  <div class="container">
+    <div class="ba-label" style="text-align:center">HOW IT WORKS</div>
+    <div class="section-title">Three steps between you and knowing</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <div class="step-title">Paste Your Spec</div>
+          <p class="step-desc">Drop in a feature description from Linear, Jira, Notion — plain text is fine. No required format. A paragraph from a PRD is enough to start pattern matching.</p>
+          <span class="step-annotation">// accepts plain text, markdown, or copy-pasted ticket descriptions</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <div class="step-title">Forecast Runs</div>
+          <p class="step-desc">The engine matches your feature's surface area against a corpus of real incident patterns — covering product, UX, infrastructure, compliance, and support flood failure modes. Not a checklist. Not a generic risk scan.</p>
+          <span class="step-annotation">// ranked by severity × likelihood × historical precedent count</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <div class="step-title">Ship With Eyes Open</div>
+          <p class="step-desc">You get a ranked forecast with mitigation notes and historical match counts. Share it in your launch review, paste it in the Jira ticket, or use it to brief your VP when they ask "what could go wrong."</p>
+          <span class="step-annotation">// shareable link · no account required for beta testers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dataviz fade-up">
+  <div class="dataviz-inner">
+    <div class="ba-label" style="text-align:center">RISK MATRIX</div>
+    <div class="section-title" style="font-size:clamp(24px,2.5vw,36px)">Guest Checkout · failure mode scatter</div>
+    <div class="scatter-wrap">
+      <div class="scatter-y-label">SEVERITY →</div>
+      <div class="scatter-x-label">LIKELIHOOD →</div>
+      <div class="scatter-plot" id="scatterPlot"></div>
+    </div>
+  </div>
+</section>
+
+<section class="social-proof fade-up">
+  <div class="container">
+    <div class="ba-label" style="text-align:center">WHAT EARLY TESTERS SAY</div>
+    <div class="section-title">From the beta waitlist</div>
+    <div class="slack-wall">
+      <div class="slack-msg">
+        <div class="slack-header">
+          <div class="slack-avatar" style="background:#4A90D9">JL</div>
+          <div class="slack-meta">
+            <span class="slack-username mono">jess.liu_pm</span>
+            <span class="slack-time mono">Today at 9:14 AM</span>
+          </div>
+        </div>
+        <div class="slack-body">We ran our onboarding redesign through it and the <strong>GDPR consent gap on email capture</strong> came back as High. We had it on zero pre-launch checklists. That one alone would have been a legal fire drill.</div>
+        <div class="slack-sample-note">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="slack-msg">
+        <div class="slack-header">
+          <div class="slack-avatar" style="background:#27AE60">MK</div>
+          <div class="slack-meta">
+            <span class="slack-username mono">marcus.k_eng</span>
+            <span class="slack-time mono">Yesterday at 4:52 PM</span>
+          </div>
+        </div>
+        <div class="slack-body">The <strong>payment retry loop pattern</strong> — I've personally been paged for that at two different companies. Never thought to flag it before this feature because it wasn't in our scope. It 100% was.</div>
+        <div class="slack-sample-note">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="slack-msg">
+        <div class="slack-header">
+          <div class="slack-avatar" style="background:#8B5CF6">AR</div>
+          <div class="slack-meta">
+            <span class="slack-username mono">anita.r_prodlead</span>
+            <span class="slack-time mono">Tuesday at 11:30 AM</span>
+          </div>
+        </div>
+        <div class="slack-body">I sent the forecast report to my VP instead of a blank risk doc. She said it was the first time she'd seen a pre-launch review that looked like it was written by someone who'd actually seen a production failure before.</div>
+        <div class="slack-sample-note">[Sample testimonial — pre-launch]</div>
+      </div>
+      <div class="slack-msg">
+        <div class="slack-header">
+          <div class="slack-avatar" style="background:#E8543A">DW</div>
+          <div class="slack-meta">
+            <span class="slack-username mono">dan.walsh_staff</span>
+            <span class="slack-time mono">Monday at 3:08 PM</span>
+          </div>
+        </div>
+        <div class="slack-body">The <strong>session token collision under load</strong> mode had 22 historical matches. We stress test but we don't do chaos on auth specifically. This is now in our pre-launch runbook permanently.</div>
+        <div class="slack-sample-note">[Sample testimonial — pre-launch]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="waitlist" id="waitlist">
+  <div class="container">
+    <h2>Get early access.</h2>
+    <p class="waitlist-sub">Closed beta. We onboard in small batches and personally debrief every team on their first forecast.</p>
+    <div class="waitlist-form">
+      <form action="https://sieve-srini.fly.dev/waitlist" method="POST">
+        <label for="wl-email">WORK EMAIL</label>
+        <input type="email" id="wl-email" name="email" required placeholder="your@email.com">
+        <label for="wl-feedback">WHAT PROBLEM ARE YOU TRYING TO SOLVE RIGHT NOW?</label>
+        <textarea id="wl-feedback" name="feedback" required rows="3" placeholder="What problem are you trying to solve right now?"></textarea>
+        <input type="hidden" name="idea_id" value="idea_43c4ee463cfa">
+        <button type="submit" class="waitlist-submit">Request Beta Access →</button>
+      </form>
+    </div>
+    <p class="form-note">We read every reply.</p>
+    <div class="trust-signals">
+      <span class="trust-item">No credit card</span>
+      <span class="trust-item">Closed beta invites weekly</span>
+      <span class="trust-item">Your spec stays private</span>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="container">
+    <div class="ba-label" style="text-align:center">FAQ</div>
+    <div class="section-title">Reasonable concerns</div>
+    <div class="faq-list">
+
+      <details class="faq-item" open>
+        <summary class="faq-q">
+          <span class="faq-num mono">01</span>
+          <span class="faq-qtext">If this is just pattern-matching against public post-mortems, why wouldn't I get the same output from ChatGPT?</span>
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-answer">
+          That's the honest version of the most important question to ask us. The short answer is: with a thin corpus, you'd be right. Public GitHub post-mortems and engineering blogs skew heavily toward infrastructure failures — they almost never capture product UX failures, support flood patterns, or compliance gaps like the GDPR consent issue above.
+          <blockquote class="faq-blockquote">The differentiation we're building is a corpus of product-layer and UX failure modes that are almost never published — sourced through direct partnerships, structured beta user contributions, and a concierge-first data collection phase. The beta is specifically designed to test whether the pattern quality beats a senior PM's intuition. If it doesn't, we'll tell you before you pay anything.</blockquote>
+          We've set an explicit kill criterion on this: if fewer than 3 of 10 beta users report forecasted failure modes they hadn't already considered, we stop. We're not interested in building a prettier wrapper around something free.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span class="faq-num mono">02</span>
+          <span class="faq-qtext">I'm already under deadline pressure. Why would I run a tool that might surface more blockers right before launch?</span>
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-answer">
+          This is a real behavioral tension we haven't fully resolved yet, and we're not going to pretend otherwise. Optimism bias is structural — it doesn't go away because a tool exists.<br><br>
+          What we've seen in early testing: the forecast's value shifts depending on timing. Run it during sprint planning, it becomes a scoping tool. Run it a week before launch, it becomes a "here's what to monitor closely" brief. Run it the day of launch, it becomes the post-mortem you write in advance.<br><br>
+          The artifact is shareable. That matters. When the PM can hand their VP a ranked failure forecast instead of a blank risk doc, the political dynamic around surfacing risks changes. We're not naive about this — we're specifically interviewing PMs who've shipped features that caused support floods to understand exactly when and how they'd want to use this.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span class="faq-num mono">03</span>
+          <span class="faq-qtext">What happens if every feature gets a 20-item failure list? Won't people start ignoring it the same way they ignore linter warnings?</span>
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-answer">
+          Linter warning fatigue is exactly the failure mode we're trying to avoid, and it's an explicit design constraint on the output format.<br><br>
+          The forecast is ranked, not exhaustive. We surface the top failure modes by severity × likelihood × historical match count, not every theoretical edge case. The goal is 5–8 high-signal items that feel specific to your feature — not a comprehensive taxonomy of everything that's ever gone wrong in software.<br><br>
+          If users rate the output quality below 3.5/5 on average, that's a kill criterion we've committed to. The signal-to-noise ratio is the product. We'd rather ship fewer, sharper failure modes than pad a list to look thorough.
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-wordmark">Failure<span>Forecast</span></div>
+      <div class="footer-tagline mono">Know what breaks before you ship.</div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy muted">idea_43c4ee463cfa · Built with Sieve</div>
+      <div class="footer-links">
+        <a href="#demo">See Demo</a>
+        <a href="#waitlist">Join Beta</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Failure modes data
+const failureModes = [
+  {
+    id:1, severity:'CRITICAL', sev_class:'critical', title:'Session token collision under high load',
+    incidents:22, likelihood:85, severityScore:95,
+    description:'Guest session tokens generated on page load use a weak entropy source. Under concurrent load (≥40k sessions), collision probability exceeds 0.1%, causing users to land in each other\'s checkout sessions.',
+    mitigation:'Use a CSPRNG with at least 128 bits of entropy for session token generation. Add server-side collision detection with exponential backoff.',
+    precedent:'22 documented incidents across e-commerce platforms, 8 resulting in GDPR notifications.'
+  },
+  {
+    id:2, severity:'HIGH', sev_class:'high', title:'Payment retry loop on 3DS challenge',
+    incidents:31, likelihood:72, severityScore:80,
+    description:'When a 3DS authentication challenge is triggered, the guest flow has no explicit handling for the intermediate redirect state. Users who complete 3DS auth land on a blank page; ~18% retry payment, triggering duplicate charge attempts.',
+    mitigation:'Implement idempotency keys on all payment intent creation calls. Handle 3DS redirect state explicitly with a loading/polling UI.',
+    precedent:'31 incidents, highest concentration on mobile Safari where 3DS popup behavior differs from intent.'
+  },
+  {
+    id:3, severity:'HIGH', sev_class:'high', title:'GDPR consent gap on guest email capture',
+    incidents:19, likelihood:68, severityScore:78,
+    description:'Capturing guest user email for order confirmation without an explicit consent checkbox and purpose statement violates GDPR Article 6 for EU users. The "save your details" post-purchase prompt compounds this if it pre-ticks marketing consent.',
+    mitigation:'Add explicit consent checkbox with granular purpose labeling (transactional vs. marketing). Geo-fence consent UI for EU/UK sessions. Log consent timestamp and version.',
+    precedent:'19 regulatory findings, 3 resulting in formal ICO inquiries.'
+  },
+  {
+    id:4, severity:'HIGH', sev_class:'high', title:'Address validation bypass causing failed deliveries',
+    incidents:14, likelihood:61, severityScore:74,
+    description:'Client-side address validation can be bypassed by disabling JS or using automated checkout tools. Server-side validation is missing for the guest flow specifically (registered flow has it). Orders ship to undeliverable addresses.',
+    mitigation:'Enforce address validation server-side at order creation. Use a postal validation API (not just regex) for address line 2 and postcode verification.',
+    precedent:'14 incidents, correlated with promotional events where high-velocity automated checkout tools are active.'
+  },
+  {
+    id:5, severity:'MEDIUM', sev_class:'medium', title:'Mobile keyboard obscuring checkout CTA',
+    incidents:8, likelihood:78, severityScore:48,
+    description:'On iOS and Android, the virtual keyboard pushes the viewport, causing the primary CTA button to be obscured behind the keyboard on single-page checkout flows. Affects payment detail step specifically. Measured conversion impact: 7–14% drop on mobile.',
+    mitigation:'Use `visualViewport` API to detect keyboard presence and adjust scroll position. Test on iPhone SE viewport specifically (smallest common target).',
+    precedent:'8 usability incidents reported via support; likely underreported due to silent abandonment.'
+  },
+  {
+    id:6, severity:'MEDIUM', sev_class:'medium', title:'Analytics event loss on guest-to-registered conversion',
+    incidents:6, likelihood:55, severityScore:40,
+    description:'When a guest user creates an account post-purchase, the session stitching between the anonymous guest analytics ID and the new registered user ID fails silently. Attribution for this conversion event is lost, making the feature\'s business impact unmeasurable.',
+    mitigation:'Implement client-side identity merge call immediately on account creation. Pass the guest session ID as a property on the registration event. Verify in your analytics tool\'s identity graph.',
+    precedent:'6 analytics integrity reports; commonly discovered 2–3 sprints after launch when cohort analysis shows gaps.'
+  }
+];
+
+function renderForecast() {
+  const container = document.getElementById('forecastModes');
+  container.innerHTML = '';
+  failureModes.forEach((mode, idx) => {
+    const item = document.createElement('div');
+    item.className = 'failure-item';
+    const barWidth = mode.severityScore;
+    const fillClass = mode.sev_class === 'critical' ? 'fill-critical' : mode.sev_class === 'high' ? 'fill-high' : 'fill-medium';
+    item.innerHTML = `
+      <div class="failure-item-header">
+        <span class="sev-badge sev-${mode.sev_class}">${mode.severity}</span>
+        <span class="failure-title">${mode.title}</span>
+        <span class="failure-incidents mono">${mode.incidents} incidents</span>
+        <span class="failure-expand">▾</span>
+      </div>
+      <div class="failure-detail">
+        <div class="bar-wrap">
+          <span class="mono" style="font-size:10px;color:#5A5C6A;white-space:nowrap">SEVERITY SCORE</span>
+          <div class="severity-bar"><div class="severity-fill ${fillClass}" style="width:0%" data-width="${barWidth}%"></div></div>
+          <span class="mono" style="font-size:10px;color:#5A5C6A">${barWidth}</span>
+        </div>
+        <div class="detail-label">FAILURE DESCRIPTION</div>
+        <div class="detail-text">${mode.description}</div>
+        <div class="detail-label">MITIGATION</div>
+        <div class="detail-text">${mode.mitigation}</div>
+        <div class="detail-label">HISTORICAL PRECEDENT</div>
+        <div class="detail-text">${mode.precedent}</div>
+      </div>`;
+    item.querySelector('.failure-item-header').addEventListener('click', () => {
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.failure-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) {
+        item.classList.add('open');
+        const fill = item.querySelector('.severity-fill');
+        setTimeout(() => { fill.style.width = fill.dataset.width; }, 50);
+      }
+    });
+    container.appendChild(item);
+  });
+}
+renderForecast();
+
+// Open first item by default
+setTimeout(() => {
+  const first = document.querySelector('.failure-item');
+  if (first) {
+    first.classList.add('open');
+    const fill = first.querySelector('.severity-fill');
+    if (fill) fill.style.width = fill.dataset.width;
+  }
+}, 300);
+
+// Re-run forecast button
+document.getElementById('runForecast').addEventListener('click', function() {
+  this.textContent = '⟳ ANALYZING...';
+  this.disabled = true;
+  const modes = document.getElementById('forecastModes');
+  modes.style.opacity = '0';
+  setTimeout(() => {
+    renderForecast();
+    modes.style.opacity = '1';
+    modes.style.transition = 'opacity 300ms';
+    this.textContent = '▶ RUN FAILURE FORECAST';
+    this.disabled = false;
+  }, 900);
+});
+
+// Scatter plot
+const scatterData = [
+  {label:'Session token collision',sev:'critical',x:85,y:92},
+  {label:'3DS retry loop',sev:'high',x:72,y:78},
+  {label:'GDPR consent gap',sev:'high',x:68,y:75},
+  {label:'Address validation bypass',sev:'high',x:61,y:71},
+  {label:'Mobile keyboard occlusion',sev:'medium',x:78,y:44},
+  {label:'Analytics event loss',sev:'medium',x:55,y:38}
+];
+const plot = document.getElementById('scatterPlot');
+scatterData.forEach(d => {
+  const dot = document.createElement('div');
+  dot.className = `scatter-dot ${d.sev}`;
+  dot.style.left = d.x + '%';
+  dot.style.bottom = d.y + '%';
+  dot.innerHTML = `<div class="scatter-tooltip">${d.label}</div>`;
+  plot.appendChild(dot);
+});
+
+// Before/After draggable divider
+const baContainer = document.getElementById('baContainer');
+const baLeft = document.getElementById('baLeft');
+const baRight = document.getElementById('baRight');
+const baDivider = document.getElementById('baDivider');
+let dragging = false;
+baDivider.addEventListener('mousedown', e => { dragging = true; e.preventDefault(); });
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const rect = baContainer.getBoundingClientRect();
+  let pct = (e.clientX - rect.left) / rect.width * 100;
+  pct = Math.max(20, Math.min(80, pct));
+  baLeft.style.width = pct + '%';
+  baRight.style.width = (100 - pct) + '%';
+  baDivider.style.left = pct + '%';
+});
+document.addEventListener('mouseup', () => { dragging = false; });
+baDivider.addEventListener('touchstart', e => { dragging = true; });
+document.addEventListener('touchmove', e => {
+  if (!dragging) return;
+  const rect = baContainer.getBoundingClientRect();
+  let pct = (e.touches[0].clientX - rect.left) / rect.width * 100;
+  pct = Math.max(20, Math.min(80, pct));
+  baLeft.style.width = pct + '%';
+  baRight.style.width = (100 - pct) + '%';
+  baDivider.style.left = pct + '%';
+});
+document.addEventListener('touchend', () => { dragging = false; });
+
+// Scroll fade-up
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Hero typing effect
+const tagline = document.querySelector('.hero-sub');
+if (tagline) {
+  const text = tagline.textContent;
+  tagline.textContent = '';
+  tagline.style.opacity = '1';
+  let i = 0;
+  const type = () => {
+    if (i < text.length) {
+      tagline.textContent += text[i++];
+      setTimeout(type, 18);
+    }
+  };
+  setTimeout(type, 600);
+}
+
+// FAQ accordion icon toggle
+document.querySelectorAll('details.faq-item').forEach(d => {
+  d.addEventListener('toggle', () => {});
+});
+</script>
+</body>
+</html>

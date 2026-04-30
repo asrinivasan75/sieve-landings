@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Pre-underwriting automation that eliminates the 12–48 hour offshore BPO loop. Income analysis, asset review, and conditions clearing as deterministic software output with a full audit trail.">
+<meta property="og:title" content="ClearFile — Mortgage Pre-Underwriting Automation">
+<meta property="og:description" content="Replaces Manila and India BPO turnaround with software output your investors will accept. Per-file cost, eliminated.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ClearFile — Mortgage Pre-Underwriting Automation">
+<meta name="twitter:description" content="Replaces Manila and India BPO turnaround with software output your investors will accept. Per-file cost, eliminated.">
+<title>ClearFile — Mortgage Pre-Underwriting Automation</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI2IiBmaWxsPSIjRThBODM4Ii8+PHRleHQgeD0iNSIgeT0iMjMiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iNzAwIiBmb250LXNpemU9IjE2IiBmaWxsPSIjMEYxMTE3Ij5DRjwvdGV4dD48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#0F1117;color:#C8CDD8;font-family:'Onest',sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Gloock',serif;color:#F0F2F7;line-height:1.2}
+a{color:#E8A838;text-decoration:none}
+a:hover{color:#F5BF5A}
+.mono{font-family:'JetBrains Mono',monospace}
+.container{max-width:1200px;margin:0 auto;padding:0 32px}
+.accent{color:#E8A838}
+
+/* Fade-up animation */
+.fade-up{opacity:0;transform:translateY(20px);transition:opacity 0.25s ease,transform 0.25s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* HERO */
+.hero{padding:80px 0 60px;background:#0F1117}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:#E8A838;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-size:clamp(36px,4vw,56px);margin-bottom:16px;line-height:1.1}
+.hero-rule{width:48px;height:2px;background:#E8A838;margin:24px 0}
+.hero-sub{font-size:17px;color:#C8CDD8;max-width:420px;margin-bottom:32px}
+.hero-cta{display:inline-block;background:#E8A838;color:#0F1117;font-family:'Onest',sans-serif;font-weight:600;font-size:15px;padding:13px 28px;letter-spacing:0.04em;transition:background 0.25s}
+.hero-cta:hover{background:#F5BF5A;color:#0F1117}
+
+/* Audit trail panel */
+.audit-panel{background:#0A0C12;border:1px solid #252A38;padding:0;font-family:'JetBrains Mono',monospace;font-size:13px}
+.audit-tab{background:#171B25;border-bottom:1px solid #252A38;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.tab-dot{width:10px;height:10px;border-radius:50%;background:#252A38}
+.tab-dot.active{background:#E8A838}
+.tab-label{font-size:11px;color:#6B7280}
+.tab-label.active-tab{color:#C8CDD8}
+.audit-rows{padding:16px}
+.audit-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid #1a1e2a}
+.audit-row:last-child{border-bottom:none}
+.row-label{color:#6B7280;font-size:12px}
+.row-value{color:#C8CDD8;font-size:12px}
+.badge{font-size:10px;font-weight:500;padding:2px 7px;letter-spacing:0.05em}
+.badge-pass{background:rgba(34,197,94,0.1);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
+.badge-review{background:rgba(232,168,56,0.1);color:#E8A838;border:1px solid rgba(232,168,56,0.2)}
+.badge-fail{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+.audit-hash{padding:10px 16px;border-top:1px solid #252A38;color:#6B7280;font-size:10px}
+
+/* MANIFESTO */
+.manifesto{padding:64px 0;background:#171B25;text-align:center}
+.manifesto-line{font-family:'Gloock',serif;font-style:italic;font-size:clamp(20px,2.5vw,28px);color:#F0F2F7;padding:28px 0}
+.manifesto-rule{width:100%;max-width:480px;height:1px;background:#E8A838;margin:0 auto;opacity:0.5}
+
+/* DEMO */
+.demo-section{padding:80px 0;background:#0F1117}
+.demo-section h2{text-align:center;font-size:clamp(28px,3vw,40px);margin-bottom:12px}
+.demo-sub{text-align:center;color:#6B7280;margin-bottom:48px;font-size:15px}
+.browser-chrome{border:1px solid #252A38;background:#0A0C12;overflow:hidden}
+.browser-bar{background:#171B25;border-bottom:1px solid #252A38;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.browser-dots{display:flex;gap:6px}
+.browser-dot{width:11px;height:11px;border-radius:50%}
+.bd-r{background:#3a1a1a}
+.bd-y{background:#3a2e0a}
+.bd-g{background:#0a2e0a}
+.browser-tabs{display:flex;gap:1px;margin-left:12px}
+.browser-tab{font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 14px;background:#252A38;color:#6B7280;border-radius:4px 4px 0 0}
+.browser-tab.active{background:#0A0C12;color:#C8CDD8}
+.browser-url{font-family:'JetBrains Mono',monospace;font-size:11px;color:#6B7280;margin-left:auto;background:#0F1117;padding:4px 12px;border:1px solid #252A38}
+.worksheet{padding:24px}
+.ws-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.ws-borrower{font-size:14px;color:#F0F2F7;font-weight:600}
+.ws-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#6B7280}
+.ws-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:13px}
+.ws-table th{text-align:left;padding:8px 12px;color:#6B7280;font-size:11px;border-bottom:1px solid #252A38;font-weight:400}
+.ws-table td{padding:10px 12px;border-bottom:1px solid #1a1e2a;color:#C8CDD8}
+.ws-table tr:last-child td{border-bottom:none}
+.ws-table .val{text-align:right;color:#C8CDD8}
+.ws-table .val.highlight{color:#E8A838;font-weight:500}
+.cell-tooltip{position:relative;cursor:help}
+.cell-tooltip .tip{display:none;position:absolute;right:0;top:100%;z-index:10;background:#171B25;border:1px solid #E8A838;padding:8px 12px;font-size:10px;color:#C8CDD8;width:220px;line-height:1.5}
+.cell-tooltip:hover .tip{display:block}
+.ws-result{margin-top:16px;padding:14px 16px;background:#171B25;border-left:3px solid #E8A838;display:flex;justify-content:space-between;align-items:center}
+.ws-result-label{font-size:13px;color:#6B7280}
+.ws-result-val{font-family:'JetBrains Mono',monospace;font-size:22px;color:#E8A838;font-weight:500}
+.run-btn{display:inline-block;background:transparent;border:1px solid #E8A838;color:#E8A838;font-family:'JetBrains Mono',monospace;font-size:13px;padding:10px 22px;cursor:pointer;transition:all 0.25s;margin-top:20px}
+.run-btn:hover{background:#E8A838;color:#0F1117}
+.ws-conditions{margin-top:20px;border-top:1px solid #252A38;padding-top:16px}
+.cond-title{font-size:11px;color:#6B7280;font-family:'JetBrains Mono',monospace;margin-bottom:10px;letter-spacing:0.08em;text-transform:uppercase}
+.cond-item{display:flex;align-items:center;gap:10px;padding:5px 0;font-family:'JetBrains Mono',monospace;font-size:12px;color:#6B7280}
+.cond-item.checked{color:#C8CDD8}
+.cond-check{width:14px;height:14px;border:1px solid #252A38;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px}
+.cond-item.checked .cond-check{border-color:#4ade80;color:#4ade80}
+.audit-footer{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#6B7280;border-top:1px solid #252A38;padding-top:10px}
+
+/* HOW IT WORKS */
+.how{padding:72px 0;background:#171B25}
+.how h2{text-align:center;font-size:clamp(28px,3vw,38px);margin-bottom:48px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step-card{background:#0F1117;border:1px solid #252A38;border-left:3px solid #E8A838;padding:28px 24px}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:#E8A838;letter-spacing:0.1em;margin-bottom:16px}
+.step-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border:1px solid #252A38;color:#6B7280;margin-bottom:14px}
+.step-card h3{font-size:18px;margin-bottom:10px;font-family:'Gloock',serif}
+.step-card p{font-size:14px;color:#6B7280;line-height:1.6}
+
+/* COMPARISON */
+.comparison{padding:60px 0;background:#0F1117}
+.comparison h2{text-align:center;font-size:clamp(28px,3vw,38px);margin-bottom:40px}
+.comp-table{width:100%;border-collapse:collapse}
+.comp-table th{padding:14px 20px;font-size:13px;font-weight:600;font-family:'Onest',sans-serif;border-bottom:2px solid #252A38}
+.comp-table th:first-child{color:#6B7280;text-align:left}
+.comp-table th:last-child{color:#E8A838}
+.comp-table td{padding:14px 20px;border-bottom:1px solid #1a1e2a;font-size:14px}
+.comp-table td:first-child{color:#6B7280;font-size:13px}
+.comp-table td:nth-child(2){color:#6B7280;text-align:center}
+.comp-table td:nth-child(3){color:#F0F2F7;text-align:center}
+.comp-table tr:hover td{background:#0a0c12}
+
+/* SOCIAL PROOF */
+.social{padding:64px 0;background:#171B25}
+.social h2{text-align:center;font-size:clamp(24px,2.5vw,34px);margin-bottom:8px}
+.social-note{text-align:center;font-size:12px;color:#6B7280;font-family:'JetBrains Mono',monospace;margin-bottom:48px}
+.quotes{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.quote-block{padding:32px;background:#0F1117;border:1px solid #252A38;position:relative}
+.quote-mark{font-family:'Gloock',serif;font-size:64px;color:#E8A838;line-height:0.6;margin-bottom:16px;opacity:0.7}
+.quote-text{font-family:'Gloock',serif;font-style:italic;font-size:clamp(16px,1.8vw,21px);color:#F0F2F7;line-height:1.5;margin-bottom:20px}
+.quote-attr{font-size:12px;color:#6B7280;font-family:'JetBrains Mono',monospace}
+.quote-metric{margin-top:16px;padding-top:16px;border-top:1px solid #252A38;font-family:'JetBrains Mono',monospace;font-size:11px;color:#E8A838}
+
+/* WAITLIST */
+.waitlist{padding:80px 0;background:#0F1117}
+.waitlist-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.stat-block{}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#6B7280;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px}
+.stat-big{font-family:'Gloock',serif;font-size:clamp(48px,6vw,88px);color:#E8A838;line-height:1;margin-bottom:8px}
+.stat-desc{font-size:15px;color:#6B7280;max-width:320px;margin-top:16px;line-height:1.6}
+.form-side h2{font-size:24px;margin-bottom:8px}
+.form-side p{font-size:14px;color:#6B7280;margin-bottom:28px}
+.wl-form input[type="email"],
+.wl-form textarea,
+.wl-form select{width:100%;background:#171B25;border:1px solid #252A38;color:#C8CDD8;font-family:'Onest',sans-serif;font-size:15px;padding:13px 16px;margin-bottom:14px;outline:none;transition:border-color 0.25s;-webkit-appearance:none}
+.wl-form textarea{resize:vertical;min-height:90px}
+.wl-form input:focus,.wl-form textarea:focus,.wl-form select:focus{border-color:#E8A838}
+.wl-form select option{background:#171B25}
+.submit-btn{width:100%;background:#E8A838;color:#0F1117;font-family:'Onest',sans-serif;font-weight:600;font-size:15px;padding:15px;border:none;cursor:pointer;letter-spacing:0.04em;transition:background 0.25s}
+.submit-btn:hover{background:#F5BF5A}
+.form-note{font-size:13px;color:#6B7280;margin-top:12px;font-family:'JetBrains Mono',monospace}
+
+/* FAQ */
+.faq{padding:64px 0;background:#171B25}
+.faq h2{text-align:center;font-size:clamp(24px,2.5vw,34px);margin-bottom:40px}
+.faq-list{max-width:760px;margin:0 auto}
+.faq-item{border-bottom:1px solid #252A38;padding:24px 0}
+.faq-q{font-size:16px;font-weight:600;color:#F0F2F7;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q:after{content:'+';color:#E8A838;font-size:20px;font-family:'JetBrains Mono',monospace;transition:transform 0.25s}
+.faq-item.open .faq-q:after{transform:rotate(45deg)}
+.faq-a{font-size:15px;color:#6B7280;line-height:1.7;display:none}
+.faq-item.open .faq-a{display:block}
+
+/* FOOTER */
+footer{padding:32px 0;background:#0A0C12;border-top:1px solid #1a1e2a}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:#6B7280}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:#6B7280;transition:color 0.25s}
+.footer-links a:hover{color:#C8CDD8}
+.footer-right{font-family:'JetBrains Mono',monospace;font-size:11px;color:#6B7280;border:1px solid #252A38;padding:4px 10px}
+
+@media(max-width:768px){
+  .hero-grid,.steps,.quotes,.waitlist-grid,.comp-table{display:block}
+  .comp-table th,.comp-table td{display:block;padding:8px 12px}
+  .comp-table tr{margin-bottom:8px;border:1px solid #252A38}
+  .quotes .quote-block,.steps .step-card{margin-bottom:20px}
+  .waitlist-grid{gap:40px}
+  .stat-big{font-size:64px}
+  .footer-inner{flex-direction:column;text-align:center}
+  .browser-tabs,.browser-url{display:none}
+  .container{padding:0 20px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+<div class="container">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-label mono">Pre-Underwriting Automation</div>
+      <h1>Stop waiting<br>48 hours for<br><span class="accent">Manila.</span></h1>
+      <div class="hero-rule"></div>
+      <p class="hero-sub">ClearFile replicates the checklist-driven income, asset, and conditions work your BPO does — as deterministic software output, in minutes, with an investor-acceptable audit trail.</p>
+      <a href="#waitlist" class="hero-cta">Request Pilot Access</a>
+    </div>
+    <div class="audit-panel">
+      <div class="audit-tab">
+        <div class="tab-dot active"></div>
+        <span class="tab-label active-tab mono">AUDIT LOG — Marcus Okafor / #CF-00419</span>
+      </div>
+      <div class="audit-rows">
+        <div class="audit-row">
+          <span class="row-label">Borrower Program</span>
+          <span class="row-value">Non-QM Bank Statement 24mo</span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">Gross Deposits / mo avg</span>
+          <span class="row-value">$18,400.00 <span class="badge badge-pass">VERIFIED</span></span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">Expense Ratio Applied</span>
+          <span class="row-value">50% (Lender Overlay A) <span class="badge badge-pass">MATCHED</span></span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">Qualifying Income</span>
+          <span class="row-value accent">$9,200.00/mo <span class="badge badge-pass">PASS</span></span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">DTI</span>
+          <span class="row-value">41.3% <span class="badge badge-pass">WITHIN 43%</span></span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">Business Account Seasoning</span>
+          <span class="row-value">24 of 24 months <span class="badge badge-pass">PASS</span></span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">Large Deposits Flagged</span>
+          <span class="row-value">2 items <span class="badge badge-review">REVIEW</span></span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">Investor Guideline Match</span>
+          <span class="row-value">DSCR-Alt v4.1 <span class="badge badge-pass">COMPLIANT</span></span>
+        </div>
+        <div class="audit-row">
+          <span class="row-label">4506-C Transcript</span>
+          <span class="row-value">Ordered 09:14 UTC <span class="badge badge-pass">QUEUED</span></span>
+        </div>
+      </div>
+      <div class="audit-hash mono">SHA-256: a3f9c2d1...7e04 · Generated 2025-01-14T09:17:43Z · ClearFile Engine v1.0</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="manifesto">
+<div class="container">
+  <div class="manifesto-line">The average BPO file costs $94 and takes 31 hours to return.</div>
+  <div class="manifesto-rule"></div>
+  <div class="manifesto-line">Every one of those hours is cycle time your competitors are not carrying.</div>
+  <div class="manifesto-rule"></div>
+  <div class="manifesto-line">Every file is CFPB-reportable data sitting on a shared drive in another country.</div>
+</div>
+</section>
+
+<section class="demo-section" id="demo">
+<div class="container">
+  <h2 class="fade-up">Watch a file run.</h2>
+  <p class="demo-sub fade-up">Non-QM bank statement borrower. Click Run Analysis. Hover any calculated cell to see the guideline that produced it.</p>
+  <div class="browser-chrome fade-up">
+    <div class="browser-bar">
+      <div class="browser-dots">
+        <div class="browser-dot bd-r"></div>
+        <div class="browser-dot bd-y"></div>
+        <div class="browser-dot bd-g"></div>
+      </div>
+      <div class="browser-tabs">
+        <div class="browser-tab">New Tab</div>
+        <div class="browser-tab active">ClearFile — Income Analysis</div>
+      </div>
+      <div class="browser-url mono">app.clearfile.io/analysis/CF-00419/income</div>
+    </div>
+    <div class="worksheet">
+      <div class="ws-header">
+        <div>
+          <div class="ws-borrower">Marcus Okafor</div>
+          <div class="ws-meta mono">Self-Employed · Landscaping · Non-QM Bank Statement 24mo · File #CF-00419</div>
+        </div>
+        <button class="run-btn mono" id="runBtn">▶ Run Analysis</button>
+      </div>
+      <table class="ws-table">
+        <thead>
+          <tr>
+            <th>Line Item</th>
+            <th style="text-align:right">Input</th>
+            <th style="text-align:right">Calculated</th>
+            <th style="text-align:right">Status</th>
+          </tr>
+        </thead>
+        <tbody id="wsBody">
+          <tr><td>Total Gross Deposits (24mo)</td><td class="val" id="cell1">—</td><td class="val" id="cell1c">—</td><td class="val" id="cell1s">—</td></tr>
+          <tr><td>Monthly Average (÷24)</td><td class="val" id="cell2">—</td><td class="val cell-tooltip" id="cell2c">—<span class="tip">Fannie SEL 2022-01: Average over full 24-month statement period required for self-employed borrowers using bank statement program.</span></td><td class="val" id="cell2s">—</td></tr>
+          <tr><td>Expense Ratio Applied</td><td class="val" id="cell3">—</td><td class="val cell-tooltip" id="cell3c">—<span class="tip">Lender Overlay A: 50% expense ratio for sole-proprietor service businesses with no third-party CPA letter on file.</span></td><td class="val" id="cell3s">—</td></tr>
+          <tr><td>Qualifying Income / Month</td><td class="val" id="cell4">—</td><td class="val cell-tooltip highlight" id="cell4c">—<span class="tip">Non-QM Alt-Doc Guideline v4.1: Qualifying income = gross deposits × (1 − expense ratio). Applied per investor matrix 3B.</span></td><td class="val" id="cell4s">—</td></tr>
+          <tr><td>Proposed Monthly Debt (PITIA)</td><td class="val" id="cell5">—</td><td class="val" id="cell5c">—</td><td class="val" id="cell5s">—</td></tr>
+          <tr><td>Debt-to-Income Ratio</td><td class="val" id="cell6">—</td><td class="val cell-tooltip" id="cell6c">—<span class="tip">Investor max DTI: 43%. Back-end DTI calculated as total monthly obligations ÷ qualifying income. Ref: Matrix 3B row 7.</span></td><td class="val" id="cell6s">—</td></tr>
+        </tbody>
+      </table>
+      <div class="ws-result" id="wsResult" style="display:none">
+        <span class="ws-result-label">QUALIFYING INCOME</span>
+        <span class="ws-result-val">$9,200 / mo</span>
+      </div>
+      <div class="ws-conditions" id="wsConds" style="display:none">
+        <div class="cond-title">Conditions Checklist</div>
+        <div class="cond-item" id="cond1"><span class="cond-check"></span>24-month business bank statements uploaded and sequential</div>
+        <div class="cond-item" id="cond2"><span class="cond-check"></span>Business license verified — active status confirmed</div>
+        <div class="cond-item" id="cond3"><span class="cond-check"></span>Expense ratio election documented in file</div>
+        <div class="cond-item" id="cond4"><span class="cond-check"></span>2 large deposits ($4,100, $6,800) — sourcing required</div>
+        <div class="cond-item" id="cond5"><span class="cond-check"></span>4506-C ordered and queued for IRS retrieval</div>
+        <div class="audit-footer mono" id="auditFoot" style="display:none">AUDIT HASH: a3f9c2d1e8b4f7a2c0d5e9f3b1a8c4d7e2f0b9a3c1d4e7f2a0b5c8d1e4f7a3b0 · Engine v1.0 · 2025-01-14T09:17:43Z</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="how">
+<div class="container">
+  <h2 class="fade-up">How a file moves through ClearFile.</h2>
+  <div class="steps">
+    <div class="step-card fade-up">
+      <div class="step-num mono">STEP 01</div>
+      <div class="step-badge">PDF · 1003 · 4506-C</div>
+      <h3>Upload the loan package.</h3>
+      <p>Drag paystubs, tax returns, bank statements, and the 1003. ClearFile parses document types automatically. No folder structure, no naming convention required.</p>
+    </div>
+    <div class="step-card fade-up">
+      <div class="step-num mono">STEP 02</div>
+      <div class="step-badge">ENGINE · GUIDELINE</div>
+      <h3>Engine runs the checklist.</h3>
+      <p>Income sources are calculated against your investor matrix. Asset seasoning is checked against FNMA B3-4.3. Each calculation references the guideline that produced it.</p>
+    </div>
+    <div class="step-card fade-up">
+      <div class="step-num mono">STEP 03</div>
+      <div class="step-badge">PDF · AUDIT · LOS</div>
+      <h3>Investor-ready output, instantly.</h3>
+      <p>A conditions checklist and income summary are written to your LOS or exported as a signed PDF with a SHA-256 audit hash. Your underwriter reviews, not re-works.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="comparison">
+<div class="container">
+  <h2 class="fade-up">What the offshore loop actually costs.</h2>
+  <table class="comp-table fade-up">
+    <thead>
+      <tr>
+        <th></th>
+        <th style="color:#6B7280">Offshore BPO Today</th>
+        <th style="color:#E8A838">With ClearFile</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Turnaround per file</td><td>12–48 hours</td><td>&lt; 4 minutes</td></tr>
+      <tr><td>Cost per file</td><td>$50–$150</td><td>Fixed monthly — under $10/file at 200 loans/mo</td></tr>
+      <tr><td>Audit trail</td><td>Analyst initials on a Word doc</td><td>SHA-256 hash, timestamped, guideline-cited</td></tr>
+      <tr><td>CFPB data exposure</td><td>PII on offshore shared drives</td><td>Data stays in your environment</td></tr>
+      <tr><td>Investor-acceptable output</td><td>Varies by analyst</td><td>Deterministic, same output every time</td></tr>
+      <tr><td>Scales with volume</td><td>No — headcount scales</td><td>Yes — same price at 201 loans as 200</td></tr>
+      <tr><td>Non-QM overlay support</td><td>Requires re-training per lender</td><td>Overlay rules configurable per investor matrix</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section class="social">
+<div class="container">
+  <h2 class="fade-up">What we expect pilot users to say.</h2>
+  <p class="social-note fade-up">[Sample testimonials — pre-launch. Attributed to role and institution type only.]</p>
+  <div class="quotes">
+    <div class="quote-block fade-up">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">We were paying $112 per file and waiting until the next morning to QA work that came back wrong 15% of the time anyway. The offshore QA loop was not a cost center. It was a liability we called a cost center.</p>
+      <div class="quote-attr">VP Underwriting · Southeast IMB · ~600 loans/month</div>
+      <div class="quote-metric">Est. BPO spend eliminated: $67,200/mo at full volume</div>
+    </div>
+    <div class="quote-block fade-up">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">Non-QM is where offshore QA falls apart. Every lender has overlays and the Manila team gets them wrong on bank statement expense ratios constantly. Having the overlay logic in the software instead of a training doc changes the error rate fundamentally.</p>
+      <div class="quote-attr">Operations Director · Mid-size Credit Union · Non-QM channel</div>
+      <div class="quote-metric">Target: 0 repurchase demands attributable to income calc errors</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="faq">
+<div class="container">
+  <h2 class="fade-up">Questions we'd ask if we were you.</h2>
+  <div class="faq-list">
+    <div class="faq-item fade-up">
+      <div class="faq-q">Who is liable when the software produces an incorrect income calculation that triggers a repurchase demand?</div>
+      <div class="faq-a">This is the right question and we are not going to paper over it. The lender retains origination liability — that does not change with any software vendor, including the incumbents. What ClearFile changes is the error vector: a deterministic engine with a full audit trail makes it possible to demonstrate that the calculation followed the investor's published guideline exactly, which is the relevant defense in a repurchase review. We are in active conversation with E&O brokers about coverage terms for pilot participants. We will not sell this to institutions we cannot support through a repurchase examination. If that is not resolved to your satisfaction before a pilot, do not start one.</div>
+    </div>
+    <div class="faq-item fade-up">
+      <div class="faq-q">Candor, Ocrolus, and FundMore.ai already do this. Why would I evaluate another vendor?</div>
+      <div class="faq-a">Fair. Candor is DU/LP-centric and strongest on conventional; their Non-QM overlay support requires significant custom implementation. Ocrolus is a document parsing layer — it extracts data but does not run guideline logic. FundMore targets Canadian lenders. The gap we are targeting is Non-QM bank statement and alt-doc analysis at IMBs under 1,000 loans/month where those platforms are either over-engineered or not configured for the overlays those lenders actually use. We are asking you to validate that with us in a 30-day pilot, not take our word for it.</div>
+    </div>
+    <div class="faq-item fade-up">
+      <div class="faq-q">Does the software actually eliminate my offshore cost, or does it just shift where my staff spends time?</div>
+      <div class="faq-a">We model this explicitly for pilot candidates. If your underwriters are spending 20 minutes per file on QA of BPO output, and ClearFile's output requires 8 minutes of underwriter review, the labor savings depend on your current BPO cost versus your internal UW hourly rate. For most IMBs at $80–$120/file BPO spend, the math works at 200+ loans/month. Below 100 loans/month, it probably does not — and we will tell you that before you sign anything. We are not trying to sell software to shops where the unit economics do not hold.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="waitlist" id="waitlist">
+<div class="container">
+  <div class="waitlist-grid">
+    <div class="stat-block fade-up">
+      <div class="stat-label mono">Avg BPO cost eliminated per file</div>
+      <div class="stat-big">$94</div>
+      <div class="stat-label mono" style="margin-top:32px">At 400 loans/month that is</div>
+      <div style="font-family:'Gloock',serif;font-size:40px;color:#F0F2F7;margin-top:4px">$37,600/mo</div>
+      <p class="stat-desc">We are running a 90-day paid pilot with one Non-QM correspondent lender. If your shop originates 200+ loans/month and uses an offshore BPO vendor today, we want to talk.</p>
+    </div>
+    <div class="form-side fade-up">
+      <h2>Request Pilot Access</h2>
+      <p>No sales deck. A 30-minute working session with your ops lead and a live file.</p>
+      <form class="wl-form" action="http://127.0.0.1:8787/waitlist" method="POST">
+        <input type="email" name="email" required placeholder="work@yourimb.com">
+        <textarea name="feedback" required rows="3" placeholder="What problem are you trying to solve right now?"></textarea>
+        <select name="monthly_volume">
+          <option value="" disabled selected>Monthly loan volume</option>
+          <option value="under_200">Under 200 loans/mo</option>
+          <option value="200_500">200–500 loans/mo</option>
+          <option value="500_1000">500–1,000 loans/mo</option>
+          <option value="1000_plus">1,000+ loans/mo</option>
+        </select>
+        <input type="hidden" name="idea_id" value="idea_aba8cd2fe465">
+        <button type="submit" class="submit-btn">Request Pilot Access</button>
+      </form>
+      <p class="form-note">We read every reply.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <div class="footer-inner">
+    <span class="footer-brand mono">ClearFile · idea_aba8cd2fe465</span>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Security</a>
+      <a href="#">Contact</a>
+    </div>
+    <span class="footer-right mono">Built with Sieve</span>
+  </div>
+</div>
+</footer>
+
+<script>
+// Scroll fade-up
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// FAQ toggle
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if(!wasOpen) item.classList.add('open');
+  });
+});
+
+// Demo worksheet
+const runBtn = document.getElementById('runBtn');
+const steps = [
+  { id:'cell1', input:'$441,600.00', calc:'', status:'' },
+  { id:'cell1c', input:'', calc:'$441,600.00', status:'' },
+  { id:'cell1s', input:'', calc:'', status:'<span class="badge badge-pass">VERIFIED</span>' },
+  { id:'cell2', input:'24 months', calc:'', status:'' },
+  { id:'cell2c', input:'', calc:'$18,400.00 / mo', status:'' },
+  { id:'cell2s', input:'', calc:'', status:'<span class="badge badge-pass">PASS</span>' },
+  { id:'cell3', input:'Lender Overlay A', calc:'', status:'' },
+  { id:'cell3c', input:'', calc:'50%', status:'' },
+  { id:'cell3s', input:'', calc:'', status:'<span class="badge badge-pass">MATCHED</span>' },
+  { id:'cell4', input:'—', calc:'', status:'' },
+  { id:'cell4c', input:'', calc:'$9,200.00 / mo', status:'' },
+  { id:'cell4s', input:'', calc:'', status:'<span class="badge badge-pass">PASS</span>' },
+  { id:'cell5', input:'$3,795.00', calc:'', status:'' },
+  { id:'cell5c', input:'', calc:'$3,795.00 PITIA', status:'' },
+  { id:'cell5s', input:'', calc:'', status:'<span class="badge badge-pass">CALC</span>' },
+  { id:'cell6', input:'—', calc:'', status:'' },
+  { id:'cell6c', input:'', calc:'41.3%', status:'' },
+  { id:'cell6s', input:'', calc:'', status:'<span class="badge badge-pass">WITHIN 43%</span>' },
+];
+
+function typeValue(el, value, isHTML, cb) {
+  if(isHTML){ el.innerHTML = value; if(cb) cb(); return; }
+  let i = 0; el.textContent = '';
+  const iv = setInterval(() => {
+    el.textContent += value[i]; i++;
+    if(i >= value.length){ clearInterval(iv); if(cb) cb(); }
+  }, 28);
+}
+
+let running = false;
+runBtn.addEventListener('click', () => {
+  if(running) return;
+  running = true;
+  runBtn.textContent = '⏳ Running...';
+  runBtn.disabled = true;
+  // Reset
+  ['cell1','cell1c','cell1s','cell2','cell2c','cell2s','cell3','cell3c','cell3s','cell4','cell4c','cell4s','cell5','cell5c','cell5s','cell6','cell6c','cell6s'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.textContent = '—'; el.innerHTML = '—'; }
+    // restore tooltips
+    if(id === 'cell2c'){
+      const el2 = document.getElementById(id);
+      el2.innerHTML = '—<span class="tip">Fannie SEL 2022-01: Average over full 24-month statement period required for self-employed borrowers using bank statement program.</span>';
+      el2.children[0] && (el2.firstChild.textContent = '—');
+    }
+  });
+  document.getElementById('wsResult').style.display = 'none';
+  document.getElementById('wsConds').style.display = 'none';
+  ['cond1','cond2','cond3','cond4','cond5'].forEach(id => document.getElementById(id).classList.remove('checked'));
+  document.getElementById('auditFoot').style.display = 'none';
+
+  const data = [
+    ['cell1','$441,600.00',false],['cell1c','$441,600.00',false],['cell1s','<span class="badge badge-pass">VERIFIED</span>',true],
+    ['cell2','24 months',false],['cell2c','$18,400.00 / mo',false],['cell2s','<span class="badge badge-pass">PASS</span>',true],
+    ['cell3','Overlay A — 50%',false],['cell3c','50%',false],['cell3s','<span class="badge badge-pass">MATCHED</span>',true],
+    ['cell4','—',false],['cell4c','$9,200.00 / mo',false],['cell4s','<span class="badge badge-pass">PASS</span>',true],
+    ['cell5','$3,795.00',false],['cell5c','$3,795 PITIA',false],['cell5s','<span class="badge badge-pass">CALC</span>',true],
+    ['cell6','—',false],['cell6c','41.3%',false],['cell6s','<span class="badge badge-pass">WITHIN 43%</span>',true],
+  ];
+  let idx = 0;
+  function next() {
+    if(idx >= data.length) {
+      document.getElementById('wsResult').style.display = 'flex';
+      document.getElementById('wsConds').style.display = 'block';
+      // check off conditions
+      ['cond1','cond2','cond3','cond4','cond5'].forEach((id, i) => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          el.classList.add('checked');
+          el.querySelector('.cond-check').textContent = '✓';
+          if(i === 4) {
+            setTimeout(() => {
+              document.getElementById('auditFoot').style.display = 'block';
+              runBtn.textContent = '✓ Analysis Complete';
+            }, 400);
+          }
+        }, i * 350);
+      });
+      return;
+    }
+    const [id, val, isHTML] = data[idx]; idx++;
+    const el = document.getElementById(id);
+    if(!el){ next(); return; }
+    if(isHTML){ el.innerHTML = val; setTimeout(next, 120); }
+    else { typeValue(el, val, false, () => setTimeout(next, 80)); }
+  }
+  setTimeout(next, 200);
+});
+
+// Hero typing effect
+(function(){
+  const target = document.querySelector('.hero h1');
+  if(!target) return;
+  const full = target.innerHTML;
+  target.innerHTML = '';
+  let i = 0; let inTag = false;
+  const iv = setInterval(() => {
+    if(i >= full.length){ clearInterval(iv); return; }
+    if(full[i] === '<') inTag = true;
+    if(inTag){ let end = full.indexOf('>',i); if(end > -1){ target.innerHTML += full.substring(i, end+1); i = end+1; inTag=false; } else { clearInterval(iv); target.innerHTML = full; } return; }
+    target.innerHTML += full[i]; i++;
+  }, 35);
+})();
+</script>
+</body>
+</html>

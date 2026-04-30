@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Converting images to 3D models is already solved — by five funded companies with free tiers. We're asking whether there's a specific workflow none of them nail. Help us find out.">
+<meta property="og:title" content="Image to 3D — Before We Build It">
+<meta property="og:description" content="Meshy, Tripo, Rodin, TRELLIS.2. The market isn't empty. We're looking for the one workflow they all miss.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Image to 3D — Before We Build It">
+<meta name="twitter:description" content="Meshy, Tripo, Rodin, TRELLIS.2. The market isn't empty. We're looking for the one workflow they all miss.">
+<title>Image to 3D — Before We Build It</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNCIgZmlsbD0iI0U4NUEyQSIvPjx0ZXh0IHg9IjE2IiB5PSIyMiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMwRDBEMEQiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjNEPC90ZXh0Pjwvc3ZnPg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Onest:wght@300;400;500;600&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0D0D0D;
+  --text: #C8C4BC;
+  --heading: #F0EDE8;
+  --accent: #E85A2A;
+  --accent-hover: #FF6B35;
+  --muted: #6B6560;
+  --surface: #161614;
+  --border: #2A2825;
+  --max: 1100px;
+  --dur: 0.4s;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Onest', sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+h1, h2, h3 { font-family: 'Gloock', serif; color: var(--heading); line-height: 1.15; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+
+.mono { font-family: 'Fragment Mono', monospace; }
+
+/* FADE UP */
+.fade-up {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity var(--dur) ease, transform var(--dur) ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ── HERO ── */
+.hero {
+  padding-top: 100px;
+  padding-bottom: 60px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-eyebrow {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-size: clamp(48px, 7vw, 88px);
+  font-style: italic;
+  letter-spacing: -0.02em;
+  line-height: 1.0;
+  margin-bottom: 28px;
+}
+
+.hero-title span { color: var(--accent); }
+
+.hero-sub {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text);
+  max-width: 440px;
+  margin-bottom: 36px;
+  line-height: 1.65;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.hero-badge {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  letter-spacing: 0.06em;
+}
+
+/* 3D wireframe canvas */
+.wireframe-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 420px;
+}
+
+canvas#heroWire {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 1px solid var(--border);
+}
+
+/* ── MANIFESTO ── */
+.manifesto {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.manifesto-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 64px;
+}
+
+.manifesto-col h3 {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+
+.manifesto-col p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.manifesto-col p strong { color: var(--heading); font-weight: 500; }
+
+.pull-quote {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 40px 48px;
+  text-align: center;
+}
+
+.pull-quote p {
+  font-family: 'Gloock', serif;
+  font-style: italic;
+  font-size: clamp(20px, 2.5vw, 28px);
+  color: var(--heading);
+  line-height: 1.4;
+}
+
+/* ── DEMO ── */
+.demo-section {
+  padding-top: 60px;
+  padding-bottom: 60px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.demo-label {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.demo-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+}
+
+.demo-panel {
+  position: relative;
+  min-height: 380px;
+}
+
+.demo-panel-left {
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 32px;
+  transition: background var(--dur);
+}
+
+.demo-panel-left:hover { background: rgba(232,90,42,0.03); }
+.demo-panel-left.drag-over { background: rgba(232,90,42,0.07); border-color: var(--accent); }
+
+.drop-zone-inner {
+  text-align: center;
+  pointer-events: none;
+}
+
+.drop-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  opacity: 0.35;
+}
+
+.drop-title {
+  font-size: 15px;
+  color: var(--heading);
+  margin-bottom: 8px;
+}
+
+.drop-sub {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  display: none;
+}
+
+.demo-panel-right {
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+}
+
+canvas#meshCanvas {
+  width: 100%;
+  height: 300px;
+  display: block;
+}
+
+.mesh-stage {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.stage-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background var(--dur);
+}
+.stage-dot.active { background: var(--accent); }
+
+.stage-label {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: 0.06em;
+}
+
+#fileInput { display: none; }
+
+/* ── BEFORE/AFTER TAPE ── */
+.tape-section {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background: #1A1916;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.tape-label {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.tape-scroll {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.tape-scroll::-webkit-scrollbar { display: none; }
+
+.tape-pair {
+  flex-shrink: 0;
+  display: flex;
+  border: 1px solid var(--border);
+  width: 340px;
+}
+
+.tape-half {
+  width: 170px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  font-family: 'Fragment Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  position: relative;
+  overflow: hidden;
+  background: #111110;
+}
+
+.tape-half:first-child { border-right: 1px solid var(--border); }
+
+.tape-half canvas { position: absolute; inset: 0; opacity: 0.7; }
+
+.tape-half-label {
+  position: relative;
+  z-index: 1;
+  background: rgba(10,10,10,0.7);
+  padding: 2px 6px;
+}
+
+.tape-subject {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  color: var(--text);
+  background: rgba(10,10,10,0.7);
+  padding: 2px 8px;
+}
+
+/* ── OPEN QUESTIONS ── */
+.questions {
+  padding-top: 80px;
+  padding-bottom: 60px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.questions-header {
+  margin-bottom: 56px;
+}
+
+.questions-header h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-style: italic;
+}
+
+.q-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+}
+
+.q-num {
+  font-family: 'Gloock', serif;
+  font-size: 56px;
+  color: var(--border);
+  line-height: 1;
+  font-style: italic;
+}
+
+.q-content {}
+
+.q-question {
+  font-family: 'Gloock', serif;
+  font-size: 22px;
+  color: var(--heading);
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+
+.q-answer {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.7;
+  max-width: 600px;
+}
+
+.q-answer strong { color: var(--heading); font-weight: 500; }
+
+/* ── WAITLIST ── */
+.waitlist {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.waitlist-inner {
+  max-width: 520px;
+}
+
+.waitlist-eyebrow {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.waitlist h2 {
+  font-size: clamp(28px, 4vw, 44px);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.waitlist-desc {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 40px;
+}
+
+.waitlist-desc p + p { margin-top: 12px; }
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+input[type="email"],
+textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--heading);
+  font-family: 'Onest', sans-serif;
+  font-size: 15px;
+  padding: 14px 18px;
+  outline: none;
+  transition: border-color var(--dur);
+  resize: vertical;
+}
+
+input[type="email"]::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+}
+
+input[type="email"]:focus,
+textarea:focus {
+  border-color: var(--accent);
+}
+
+.submit-btn {
+  background: var(--accent);
+  color: #0D0D0D;
+  font-family: 'Onest', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  padding: 16px 28px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background var(--dur);
+  text-align: center;
+}
+
+.submit-btn:hover { background: var(--accent-hover); }
+
+.form-note {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+
+/* ── SOCIAL PROOF ── */
+.social-proof {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 60px 0;
+}
+
+.proof-label {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+
+.proof-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.proof-card {
+  background: var(--surface);
+  padding: 28px 32px;
+}
+
+.proof-quote {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.proof-persona {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.proof-disclaimer {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 10px;
+  color: var(--border);
+  margin-top: 24px;
+  letter-spacing: 0.04em;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-name {
+  font-family: 'Gloock', serif;
+  font-size: 15px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.footer-right {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .wireframe-wrap { max-width: 320px; margin: 0 auto; }
+  .manifesto-grid { grid-template-columns: 1fr; gap: 32px; }
+  .demo-panels { grid-template-columns: 1fr; }
+  .demo-panel-left { border-right: none; border-bottom: 1px solid var(--border); }
+  .proof-grid { grid-template-columns: 1fr; }
+  .q-item { grid-template-columns: 50px 1fr; gap: 16px; }
+  .q-num { font-size: 40px; }
+  .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+  .pull-quote { padding: 28px 24px; }
+  .container { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eyebrow fade-up">Pre-launch · Discovery phase</div>
+        <h1 class="hero-title fade-up"><em>Image<br>to <span>3D.</span></em><br>Already done.</h1>
+        <p class="hero-sub fade-up">Meshy, Tripo, Rodin, and TRELLIS.2 exist. They're good. This page is about the workflow none of them nail — if it exists. Help us find out before we write a line of code.</p>
+        <div class="hero-meta fade-up">
+          <span class="hero-badge mono">not a product yet</span>
+          <span class="hero-badge mono">idea_b6e5413910f5</span>
+        </div>
+      </div>
+      <div class="wireframe-wrap fade-up">
+        <canvas id="heroWire" width="420" height="420"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Manifesto -->
+<section class="manifesto">
+  <div class="container">
+    <div class="manifesto-grid">
+      <div class="manifesto-col fade-up">
+        <h3>The honest market map</h3>
+        <p><strong>Meshy</strong> handles game-ready mesh from photo. <strong>Tripo</strong> does multi-view reconstruction fast. <strong>Rodin</strong> targets professional topology. <strong>3D AI Studio</strong> wraps them all in one dashboard. <strong>TRELLIS.2</strong> is open-source, free, and genuinely impressive. The market is not empty — it's crowded with capable tools.</p>
+      </div>
+      <div class="manifesto-col fade-up">
+        <h3>Where we think the gap is</h3>
+        <p>Every conversation with a game dev, product designer, or digital artist turns up a <strong>specific moment of failure</strong> — hand-drawn concept art that degenerates to mush, print-ready STL that can't tolerate the topology errors these tools emit, sketch-to-rigged-character that doesn't exist anywhere. We don't know yet if any of these is a real business.</p>
+      </div>
+      <div class="manifesto-col fade-up">
+        <h3>What this page does</h3>
+        <p>It is a survey with a wireframe attached. No product exists. If you have <strong>hit a wall in Meshy, Polycam, or TRELLIS.2</strong> on a specific job — not generally, but at a specific step — we want to hear that story. If nobody can tell us one, we won't build anything.</p>
+      </div>
+    </div>
+    <div class="pull-quote fade-up">
+      <p>"The question isn't whether we can convert an image to a 3D model. Every tool already does that. The question is which user, at which step, in which existing workflow, hits a wall hard enough to pay for something better."</p>
+    </div>
+  </div>
+</section>
+
+<!-- Demo -->
+<section class="demo-section">
+  <div class="container">
+    <div class="demo-label fade-up">Demo · mesh generation stages (simulated)</div>
+    <div class="demo-panels fade-up">
+      <div class="demo-panel demo-panel-left" id="dropZone">
+        <input type="file" id="fileInput" accept="image/*">
+        <div class="drop-zone-inner" id="dropZoneInner">
+          <svg class="drop-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="8" width="32" height="32" rx="2" stroke="#6B6560" stroke-width="1.5"/>
+            <circle cx="18" cy="18" r="4" stroke="#6B6560" stroke-width="1.5"/>
+            <path d="M8 34L16 26L22 32L30 22L40 34" stroke="#6B6560" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M24 8V40M8 24H40" stroke="#E85A2A" stroke-width="1" opacity="0.3"/>
+          </svg>
+          <div class="drop-title">Drop any flat image here</div>
+          <div class="drop-sub">photo · sketch · screenshot · diagram</div>
+        </div>
+        <img class="preview-image" id="previewImg" alt="preview">
+      </div>
+      <div class="demo-panel demo-panel-right">
+        <canvas id="meshCanvas" width="520" height="300"></canvas>
+        <div class="mesh-stage">
+          <div class="stage-dot active" id="dot0"></div>
+          <div class="stage-dot" id="dot1"></div>
+          <div class="stage-dot" id="dot2"></div>
+          <div class="stage-dot" id="dot3"></div>
+        </div>
+        <div class="stage-label mono" id="stageLabel">point cloud scatter</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact sheet tape -->
+<section class="tape-section">
+  <div class="container">
+    <div class="tape-label fade-up">Reference inputs · what we're thinking about</div>
+    <div class="tape-scroll fade-up" id="tapeScroll">
+    </div>
+  </div>
+</section>
+
+<!-- Open Questions / FAQ -->
+<section class="questions">
+  <div class="container">
+    <div class="questions-header fade-up">
+      <h2>What we don't know yet</h2>
+    </div>
+
+    <div class="q-item fade-up">
+      <div class="q-num">01</div>
+      <div class="q-content">
+        <div class="q-question">If Meshy, Tripo, and TRELLIS.2 already exist — why would I ever use something new?</div>
+        <div class="q-answer">You probably wouldn't. <strong>That's the honest answer.</strong> These tools are genuinely capable and have free tiers. The only scenario where a new entrant makes sense is if your specific workflow — a particular file format, topology constraint, or input type like hand-drawn concept art — fails repeatedly in all of them. Most workflows don't. If yours doesn't fail, this isn't for you and we'd rather you say so now than discover it after we've shipped.</div>
+      </div>
+    </div>
+
+    <div class="q-item fade-up">
+      <div class="q-num">02</div>
+      <div class="q-content">
+        <div class="q-question">Won't Microsoft or Meta just absorb this with TRELLIS.2 or SAM 3D Objects?</div>
+        <div class="q-answer"><strong>Almost certainly yes, if we build something generic.</strong> TRELLIS.2 is open-source and free as of 2025. Meta shipped SAM 3D Objects in late 2025. Any undifferentiated wrapper gets subsumed by the model providers themselves within months — we've seen this pattern play out. The only durable position is a workflow-specific tool that solves a problem the foundation model providers don't care about — usually because the addressable market is too small for them but large enough for a focused product. We don't know if that niche exists yet.</div>
+      </div>
+    </div>
+
+    <div class="q-item fade-up">
+      <div class="q-num">03</div>
+      <div class="q-content">
+        <div class="q-question">You haven't named a specific user or workflow — aren't you just guessing?</div>
+        <div class="q-answer"><strong>Yes, completely.</strong> The brief for this idea didn't name a target user, a specific failure scenario, or a credible wedge. That's not something we're hiding — it's the reason this page exists instead of a product. The open questions above come directly from our own evaluation criteria. We're publishing them because we'd rather filter for collaborators who have specific workflow failures to report than accumulate a waitlist of people interested in "image to 3D" generally. If you're here with a vague interest, the existing tools will serve you well.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Social Proof -->
+<section class="social-proof">
+  <div class="container">
+    <div class="proof-label fade-up">What we expect users to say · pre-launch</div>
+    <div class="proof-grid fade-up">
+      <div class="proof-card">
+        <div class="proof-quote">"I've tried Meshy three times for concept art exports and the topology always collapses around the ears and hands. Nothing I export is usable in Unity without rebuilding it manually anyway."</div>
+        <div class="proof-persona">indie game developer · solo studio · 2D-to-3D pipeline</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-quote">"We photograph products on a white sweep and need a clean GLB for web configurators. Polycam needs 30+ photos. We have one hero shot. There's no tool that bridges that gap cleanly."</div>
+        <div class="proof-persona">e-commerce product designer · DTC brand · single-shot reconstruction</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-quote">"I draw character concepts on paper and scan them. Every AI tool treats them like a photo and hallucinates shading. What I want is the mesh, not the texture — just the form, clean."</div>
+        <div class="proof-persona">digital artist · character concept pipeline · sketch-to-mesh</div>
+      </div>
+    </div>
+    <div class="proof-disclaimer">[Sample testimonial — pre-launch · these are constructed personas, not real users]</div>
+  </div>
+</section>
+
+<!-- Waitlist -->
+<section class="waitlist">
+  <div class="container">
+    <div class="waitlist-inner">
+      <div class="waitlist-eyebrow fade-up">Join the research</div>
+      <h2 class="fade-up">Tell us where the existing tools fail you.</h2>
+      <div class="waitlist-desc fade-up">
+        <p>This is a discovery survey, not a product launch. You'll receive one follow-up question about your specific workflow, not a drip sequence.</p>
+        <p>If we find a real problem worth solving, you'll hear about it first. If we don't, we'll tell you that too.</p>
+        <p>We're looking for specific failures in specific tools at specific steps — not general interest in 3D conversion.</p>
+      </div>
+      <form action="http://0.0.0.0:8080/waitlist" method="POST" class="fade-up">
+        <input type="email" name="email" required placeholder="your@email.com">
+        <textarea name="feedback" required rows="3" placeholder="What problem are you trying to solve right now?"></textarea>
+        <input type="hidden" name="idea_id" value="idea_b6e5413910f5">
+        <button type="submit" class="submit-btn">Send — I'll be specific</button>
+      </form>
+      <p class="form-note fade-up">We read every reply.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-name">Image to 3D</div>
+      <div class="footer-right">idea_b6e5413910f5 · Built with Sieve</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── SCROLL FADE ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ── HERO WIREFRAME (rotating cube wireframe) ──
+(function() {
+  const canvas = document.getElementById('heroWire');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let angle = 0;
+
+  const vertices = [
+    [-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
+    [-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]
+  ];
+  const edges = [
+    [0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],
+    [0,4],[1,5],[2,6],[3,7]
+  ];
+
+  // Inner lattice vertices
+  const innerV = [];
+  for (let x = -1; x <= 1; x += 0.5) {
+    for (let y = -1; y <= 1; y += 0.5) {
+      innerV.push([x, y, 0]);
+    }
+  }
+
+  function project(v, ax, ay) {
+    const cos = Math.cos(ax), sin = Math.sin(ax);
+    const cos2 = Math.cos(ay), sin2 = Math.sin(ay);
+    let [x, y, z] = v;
+    // rotate Y
+    let nx = x * cos - z * sin, nz = x * sin + z * cos;
+    x = nx; z = nz;
+    // rotate X
+    let ny = y * cos2 - z * sin2;
+    z = y * sin2 + z * cos2;
+    y = ny;
+    const scale = 140;
+    const fov = 4;
+    const pz = fov + z;
+    return [W/2 + (x / pz) * scale, H/2 + (y / pz) * scale];
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const ax = angle * 0.7, ay = angle * 0.4;
+
+    // Draw edges
+    ctx.strokeStyle = '#E85A2A';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.6;
+    edges.forEach(([a, b]) => {
+      const pa = project(vertices[a], ax, ay);
+      const pb = project(vertices[b], ax, ay);
+      ctx.beginPath();
+      ctx.moveTo(pa[0], pa[1]);
+      ctx.lineTo(pb[0], pb[1]);
+      ctx.stroke();
+    });
+
+    // diagonal grid lines
+    ctx.strokeStyle = '#2A2825';
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.8;
+    for (let i = -1; i <= 1; i += 0.333) {
+      const pa = project([-1, i, 0], ax, ay);
+      const pb = project([1, i, 0], ax, ay);
+      const pc = project([i, -1, 0], ax, ay);
+      const pd = project([i, 1, 0], ax, ay);
+      ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pc[0], pc[1]); ctx.lineTo(pd[0], pd[1]); ctx.stroke();
+    }
+
+    // vertices as dots
+    ctx.globalAlpha = 0.9;
+    vertices.forEach(v => {
+      const p = project(v, ax, ay);
+      ctx.fillStyle = '#E85A2A';
+      ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, Math.PI * 2); ctx.fill();
+    });
+
+    ctx.globalAlpha = 1;
+    angle += 0.005;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── MESH CANVAS DEMO ──
+(function() {
+  const canvas = document.getElementById('meshCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let stage = 0;
+  let t = 0;
+  let stageProgress = 0;
+
+  const stageNames = ['point cloud scatter', 'triangulation pass', 'edge refinement', 'faceted mesh — raw'];
+  const stageDots = [0,1,2,3].map(i => document.getElementById('dot'+i));
+  const stageLabel = document.getElementById('stageLabel');
+
+  function setStage(s) {
+    stage = s;
+    stageDots.forEach((d, i) => d.classList.toggle('active', i === s));
+    stageLabel.textContent = stageNames[s];
+  }
+
+  // Generate stable mesh points
+  const pts = [];
+  for (let i = 0; i < 120; i++) {
+    pts.push({
+      x: 60 + Math.random() * (W - 120),
+      y: 40 + Math.random() * (H - 80),
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+
+  // Generate triangle faces from pts (simple approach)
+  const faces = [];
+  for (let i = 0; i < pts.length - 2; i += 2) {
+    const a = pts[i], b = pts[i+1], c = pts[Math.min(i+2, pts.length-1)];
+    if (a && b && c) faces.push([a, b, c]);
+  }
+
+  function drawStage0(alpha) {
+    // scattered dots
+    pts.forEach((p, i) => {
+      const flicker = 0.5 + 0.5 * Math.sin(t * 0.05 + p.phase);
+      ctx.globalAlpha = alpha * flicker * 0.8;
+      ctx.fillStyle = '#E85A2A';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function drawStage1(alpha) {
+    drawStage0(0.4);
+    ctx.globalAlpha = alpha * 0.5;
+    ctx.strokeStyle = '#2A2825';
+    ctx.lineWidth = 0.5;
+    faces.slice(0, Math.floor(faces.length * alpha)).forEach(([a, b, c]) => {
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineTo(c.x, c.y);
+      ctx.closePath();
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function drawStage2(alpha) {
+    ctx.globalAlpha = 0.7;
+    ctx.strokeStyle = '#3A3630';
+    ctx.lineWidth = 0.8;
+    faces.forEach(([a, b, c]) => {
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineTo(c.x, c.y);
+      ctx.closePath();
+      ctx.stroke();
+    });
+    // Highlight accent edges
+    ctx.strokeStyle = '#E85A2A';
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = alpha * 0.3;
+    for (let i = 0; i < faces.length; i += 5) {
+      const [a, b] = faces[i];
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawStage3(alpha) {
+    // Full faceted mesh with subtle fill
+    faces.forEach(([a, b, c], i) => {
+      const shade = 0.05 + 0.08 * ((i % 4) / 4);
+      ctx.fillStyle = `rgba(232, 90, 42, ${shade})`;
+      ctx.strokeStyle = '#3A3630';
+      ctx.lineWidth = 0.7;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineTo(c.x, c.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    });
+    // Accent highlight edges
+    ctx.strokeStyle = '#E85A2A';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = alpha * 0.4;
+    for (let i = 0; i < faces.length; i += 7) {
+      const [a, b, c] = faces[i];
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  const stageFns = [drawStage0, drawStage1, drawStage2, drawStage3];
+
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+    stageProgress += 0.008;
+    if (stageProgress > 1) {
+      stageProgress = 0;
+      stage = (stage + 1) % 4;
+      setStage(stage);
+    }
+    stageFns[stage](Math.min(stageProgress * 2, 1));
+    t++;
+    requestAnimationFrame(render);
+  }
+  render();
+
+  // ── DROP ZONE ──
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const previewImg = document.getElementById('previewImg');
+  const dropZoneInner = document.getElementById('dropZoneInner');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) showPreview(file);
+  });
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) showPreview(fileInput.files[0]); });
+
+  function showPreview(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      previewImg.src = e.target.result;
+      previewImg.style.display = 'block';
+      dropZoneInner.style.display = 'none';
+      // Restart mesh animation from stage 0
+      stage = 0; stageProgress = 0; setStage(0);
+    };
+    reader.readAsDataURL(file);
+  }
+})();
+
+// ── TAPE ──
+(function() {
+  const subjects = [
+    { name: 'leather boot', type: 'photo' },
+    { name: 'dragon sketch', type: 'drawing' },
+    { name: 'ceramic mug', type: 'photo' },
+    { name: 'wrench diagram', type: 'technical' }
+  ];
+
+  const tape = document.getElementById('tapeScroll');
+  subjects.forEach(s => {
+    const pair = document.createElement('div');
+    pair.className = 'tape-pair';
+
+    const left = document.createElement('div');
+    left.className = 'tape-half';
+    left.innerHTML = `<span class="tape-half-label">INPUT · ${s.type.toUpperCase()}</span><span class="tape-subject">${s.name}</span>`;
+
+    const right = document.createElement('div');
+    right.className = 'tape-half';
+    const c = document.createElement('canvas');
+    c.width = 170; c.height = 200;
+    right.appendChild(c);
+    right.innerHTML += `<span class="tape-half-label" style="position:relative;z-index:1">MESH OUTPUT</span>`;
+
+    pair.appendChild(left);
+    pair.appendChild(right);
+    tape.appendChild(pair);
+
+    // mini wireframe in each right cell
+    const ctx = c.getContext('2d');
+    const pts = [];
+    for (let i = 0; i < 40; i++) pts.push({ x: 10 + Math.random() * 150, y: 10 + Math.random() * 180 });
+    ctx.strokeStyle = '#E85A2A';
+    ctx.lineWidth = 0.6;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < pts.length - 2; i += 1) {
+      ctx.beginPath();
+      ctx.moveTo(pts[i].x, pts[i].y);
+      ctx.lineTo(pts[i+1].x, pts[i+1].y);
+      if (i % 2 === 0) ctx.lineTo(pts[i+2].x, pts[i+2].y);
+      ctx.closePath();
+      ctx.stroke();
+    }
+    pts.forEach(p => {
+      ctx.fillStyle = '#E85A2A';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI * 2); ctx.fill();
+    });
+  });
+})();
+</script>
+</body>
+</html>
